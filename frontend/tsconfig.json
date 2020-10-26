@@ -18,15 +18,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react", // Support JSX in .tsx files
-    "sourceMap": true, // Generate corresponding .map file
-    "declaration": true, // Generate corresponding .d.ts file 
-    "noUnusedLocals": true, // Report errors on unused locals
-    "noUnusedParameters": true, // Report errors on unused parameters
-    "incremental": true,   
+    "jsx": "react", // Support JSX in .tsx files, 'preserve' will use other compiler e.g. Babel to process JSX
   },
   "include": [
-    "src/**/*"  // Files TypeScript should check
+    "src"  // Files TypeScript should check
   ],
-  "exclude": ["node_modules", "build"]  // Files to not type check
 }

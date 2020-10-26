@@ -1,4 +1,4 @@
-# Visualising-Optimisation-Data
+# Visualising Optimisation Data
 
 This is the COMP3000 Computing Project on the topic of creating "A Web Platform for Visualising Optimisation Data".
 

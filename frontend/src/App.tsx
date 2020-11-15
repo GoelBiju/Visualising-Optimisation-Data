@@ -1,14 +1,14 @@
 import React from 'react';
 import './App.css';
-import ScatterGraph from './graphs/lineChart.component';
+import BarChart from './graphs/bar/barChart.component';
+import ScatterPlot from './graphs/scatter/scatterPlot.component';
 
 function App() {
     return (
         <div className="App">
             <p>Visualising Optimisation Data</p>
-            <div>
-                <ScatterGraph />
-            </div>
+            <BarChart />
+            <ScatterPlot />
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import BarChart from './graphs/bar/barChart.component';
+import DetailScatterPlot from './graphs/scatter/detailScatterPlot.component';
 import ScatterPlot from './graphs/scatter/scatterPlot.component';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
             <p>Visualising Optimisation Data</p>
             <BarChart />
             <ScatterPlot />
+            <DetailScatterPlot />
         </div>
     );
 }

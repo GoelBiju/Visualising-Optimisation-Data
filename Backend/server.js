@@ -25,15 +25,29 @@ app.use(express.static(path.join(__dirname, "resources")));
 // Initialise the socket server.
 let io = socketIo(server);
 
+const dataNamespace = io.of("/data");
+const frontendNamespace = io.of("/frontend");
+
 // "On connection" handler
-io.on("connection", function (socket) {
-  console.log("received connection");
+dataNamespace.on("connection", function (socket) {
+  console.log("Received data connection");
 
   // TODO: Send a message to the client.
   // socket.emit("server message", "Hello World");
 
   socket.on("dataPoint", function (msg) {
     console.log("Received data point: ", msg);
+
+    // Emit the datapoint to the frontend.
+    frontendNamespace.emit("data", { x: msg.x, y: msg.y });
+  });
+});
+
+frontendNamespace.on("connection", function (socket) {
+  console.log("Frontend connection established");
+
+  socket.on("frontend-message", function (msg) {
+    console.log("Frontend message: ", msg);
   });
 });
 

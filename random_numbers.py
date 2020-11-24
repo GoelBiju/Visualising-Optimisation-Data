@@ -18,21 +18,24 @@ def disconnect():
     print("disconnected from server")
 
 
+@sio.on('data', namespace="/frontend")
+def on_data(data):
+    print("Received frontend data: ", data)
+
+
 def generateDataPoints():
     while sio.connected:
         dataPoint = {"x": random.randint(
             0, 1000), "y": random.randint(0, 1000)}
         print("Sending data point: ", dataPoint)
-        sio.emit("dataPoint", dataPoint)
+        sio.emit("dataPoint", dataPoint, namespace="/data")
 
         # Sleep a second before sending the next data point
         time.sleep(1)
-    else:
-        sio.disconnect()
 
 
 # Connect to node server
-sio.connect("http://localhost:9000")
+sio.connect("http://localhost:9000/", namespaces=['/data', '/frontend'])
 
 # Start sending data points
 sio.start_background_task(generateDataPoints)

@@ -14,7 +14,7 @@ import React from 'react';
 import './App.css';
 import DetailScatterPlot from './graphs/scatter/detailScatterPlot.component';
 
-const drawerWidth = 200;
+const drawerWidth = 300;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

@@ -28,26 +28,26 @@ let io = socketIo(server);
 const dataNamespace = io.of("/data");
 const frontendNamespace = io.of("/frontend");
 
-// "On connection" handler
-dataNamespace.on("connection", function (socket) {
-  console.log("Received data connection");
+frontendNamespace.on("connection", function (socket) {
+  console.log("Front-end connection established");
 
   // TODO: Send a message to the client.
-  // socket.emit("server message", "Hello World");
+
+  socket.on("frontend", function (msg) {
+    console.log("Frontend message: ", msg);
+  });
+});
+
+// "On connection" handler
+dataNamespace.on("connection", function (socket) {
+  // io.on("connection", function (socket) {
+  console.log("Received data connection");
 
   socket.on("dataPoint", function (msg) {
     console.log("Received data point: ", msg);
 
     // Emit the datapoint to the frontend.
-    frontendNamespace.emit("data", { x: msg.x, y: msg.y });
-  });
-});
-
-frontendNamespace.on("connection", function (socket) {
-  console.log("Frontend connection established");
-
-  socket.on("frontend-message", function (msg) {
-    console.log("Frontend message: ", msg);
+    frontendNamespace.emit("data", msg);
   });
 });
 

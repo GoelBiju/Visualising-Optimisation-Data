@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import React from 'react';
+import { initiateSocket, subscribeToData } from '../../Socket';
 
 const DetailScatterPlot = (): React.ReactElement => {
     const margin = {
@@ -11,7 +12,8 @@ const DetailScatterPlot = (): React.ReactElement => {
     const width = 760 - margin.left - margin.right;
     const height = 800 - margin.top - margin.bottom;
 
-    const dataset = [
+    const [connected, setConnected] = React.useState(false);
+    const [dataset, setDataset] = React.useState<Array<Array<number>>>([
         [34, 78],
         [109, 280],
         [310, 120],
@@ -22,10 +24,28 @@ const DetailScatterPlot = (): React.ReactElement => {
         [222, 333],
         [78, 320],
         [21, 123],
-    ];
+    ]);
 
     // Create ref for svg chart.
     const chartRef = React.createRef<SVGSVGElement>();
+
+    React.useEffect(() => {
+        if (!connected) {
+            // Start socket connections.
+            initiateSocket();
+
+            // Subscribe to the data feed.
+            subscribeToData((data) => {
+                setDataset((prevData) => [[data.x, data.y], ...prevData]);
+            });
+
+            // Set to being connected.
+            setConnected(true);
+        }
+        // return () => {
+        //     disconnectSocket();
+        // };
+    }, [connected]);
 
     React.useEffect(() => {
         console.log('setting up');
@@ -67,7 +87,7 @@ const DetailScatterPlot = (): React.ReactElement => {
             // .attr('cy', (d) => y(Number(d.SalePrice)) as number)
             .attr('cx', (d) => d[0])
             .attr('cy', (d) => d[1])
-            .attr('r', 1.5)
+            .attr('r', 3)
             .style('fill', '#69b3a2');
         //     },
         // );

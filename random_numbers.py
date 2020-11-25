@@ -18,9 +18,9 @@ def disconnect():
     print("disconnected from server")
 
 
-@sio.on('data', namespace="/frontend")
-def on_data(data):
-    print("Received frontend data: ", data)
+# @sio.on('data', namespace="/frontend")
+# def on_data(data):
+#     print("Received frontend data: ", data)
 
 
 def generateDataPoints():
@@ -35,7 +35,7 @@ def generateDataPoints():
 
 
 # Connect to node server
-sio.connect("http://localhost:9000/", namespaces=['/data', '/frontend'])
+sio.connect("http://localhost:9000", namespaces=['/data'])
 
 # Start sending data points
 sio.start_background_task(generateDataPoints)

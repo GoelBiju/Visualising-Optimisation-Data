@@ -24,15 +24,17 @@ def disconnect():
 
 
 def generateDataPoints():
+    factor = 1.0
     while sio.connected:
         # load next generation of data (mocked for optimiser)
-        dataPoint = {"x": random.randint(
-            0, 1000), "y": random.randint(0, 1000)}
+        dataPoint = {"x": round(random.randint(
+            0, 1000) * factor), "y": round(random.randint(0, 1000) * factor)}
         print("Sending data point: ", dataPoint)
         sio.emit("dataPoint", dataPoint, namespace="/data")
 
         # Sleep a second before sending the next data point
         time.sleep(1)
+        factor += 0.1
 
 
 # Connect to node server

@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 
 let socket: SocketIOClient.Socket;
 
-interface Data {
+export interface ScatterData {
     x: number;
     y: number;
 }
@@ -23,10 +23,10 @@ export const disconnectSocket = () => {
     }
 };
 
-export const subscribeToData = (callback: (data: Data) => void): void => {
+export const subscribeToData = (callback: (data: ScatterData) => void): void => {
     if (!socket) return;
 
-    socket.on('data', (data: Data) => {
+    socket.on('data', (data: ScatterData) => {
         console.log('data: ', data);
         return callback(data);
     });

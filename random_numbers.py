@@ -25,6 +25,7 @@ def disconnect():
 
 def generateDataPoints():
     while sio.connected:
+        # load next generation of data (mocked for optimiser)
         dataPoint = {"x": random.randint(
             0, 1000), "y": random.randint(0, 1000)}
         print("Sending data point: ", dataPoint)

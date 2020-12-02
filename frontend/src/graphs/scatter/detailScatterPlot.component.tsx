@@ -75,7 +75,7 @@ class DetailScatterPlot extends React.Component<unknown, ScatterPlotState> {
 
             // Subscribe to the data feed.
             subscribeToData((data) => {
-                this.setState({ data: [[data.x, data.y]] });
+                this.setState({ data: [...this.state.data, [data.x, data.y]] });
             });
 
             // Set to being connected.
@@ -109,19 +109,45 @@ class DetailScatterPlot extends React.Component<unknown, ScatterPlotState> {
         // Add y axis
         const yAxis = this.yScale.domain([0, d3.max(this.state.data, (d) => d[1]) as number]);
         svg.append('g').attr('class', 'scatter-chart-yaxis').call(d3.axisLeft(yAxis));
+
+        // Add dots
+        svg.append('g')
+            .attr('class', 'scatter-chart-points')
+            .selectAll('dot')
+            .data(this.state.data)
+            .enter()
+            .append('circle')
+            .attr('cx', (d) => d[0])
+            .attr('cy', (d) => d[1])
+            .attr('r', 3)
+            .style('fill', '#69b3a2');
     }
 
     // Update the chart when with new data.
     private updateChart(): void {
-        // Update the x-axis.
+        // Get the current SVG of the chart
+        const svg = this.currentChart();
+
+        // Update the x-axis
         const xAxis = this.xScale.domain([0, d3.max(this.state.data, (d) => d[0]) as number]);
         // NOTE: This is a shorthand to update the axis without using .call
         //       (using .call had type issues with .select).
-        d3.axisBottom(xAxis)(this.currentChart().select('.scatter-chart-xaxis'));
+        d3.axisBottom(xAxis)(svg.select('g.scatter-chart-xaxis'));
 
-        // Update the y-axis.
+        // Update the y-axis
         const yAxis = this.yScale.domain([0, d3.max(this.state.data, (d) => d[1]) as number]);
-        d3.axisLeft(yAxis)(this.currentChart().select('.scatter-chart-yaxis'));
+        d3.axisLeft(yAxis)(svg.select('g.scatter-chart-yaxis'));
+
+        // Update points
+        svg.select('g.scatter-chart-points')
+            .selectAll('dot')
+            .data(this.state.data)
+            .enter()
+            .append('circle')
+            .attr('cx', (d) => d[0])
+            .attr('cy', (d) => d[1])
+            .attr('r', 3)
+            .style('fill', '#69b3a2');
     }
 
     // React.useEffect(() => {

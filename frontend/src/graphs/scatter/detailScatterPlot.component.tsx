@@ -24,7 +24,6 @@ const sampleData = [
 
 class DetailScatterPlot extends React.Component<unknown, ScatterPlotState> {
     chartRef: React.RefObject<SVGSVGElement>;
-    // chartSvg: d3.Selection<SVGSVGElement | null, unknown, null, undefined>;
 
     margin: {
         top: number;
@@ -58,12 +57,14 @@ class DetailScatterPlot extends React.Component<unknown, ScatterPlotState> {
         this.xScale = d3.scaleLinear().range([0, this.width]);
         this.yScale = d3.scaleLinear().range([this.height, 0]);
 
+        // Initialise the state
         this.state = {
             chartConnected: false,
             data: sampleData,
         };
     }
 
+    // Get current chart a D3 selection
     currentChart = (): d3.Selection<SVGSVGElement | null, unknown, null, undefined> => d3.select(this.chartRef.current);
 
     public componentDidMount(): void {
@@ -75,6 +76,7 @@ class DetailScatterPlot extends React.Component<unknown, ScatterPlotState> {
 
             // Subscribe to the data feed.
             subscribeToData((data) => {
+                // Add the new data point.
                 this.setState({ data: [...this.state.data, [data.x, data.y]] });
             });
 
@@ -149,30 +151,6 @@ class DetailScatterPlot extends React.Component<unknown, ScatterPlotState> {
             .attr('r', 3)
             .style('fill', '#69b3a2');
     }
-
-    // React.useEffect(() => {
-    //     console.log('setting up');
-
-    //     // Read data.
-    //     // d3.csv('https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv').then(
-    //     //     (data) => {
-    //     //         console.log(data);
-
-    //     // Add dots
-    //     svg.append('g')
-    //         .selectAll('dot')
-    //         .data(dataset)
-    //         .enter()
-    //         .append('circle')
-    //         // .attr('cx', (d) => x(Number(d.GrLivArea)) as number)
-    //         // .attr('cy', (d) => y(Number(d.SalePrice)) as number)
-    //         .attr('cx', (d) => d[0])
-    //         .attr('cy', (d) => d[1])
-    //         .attr('r', 3)
-    //         .style('fill', '#69b3a2');
-    //     //     },
-    //     // );
-    // }, [dataset]);
 
     public render(): React.ReactNode {
         return (

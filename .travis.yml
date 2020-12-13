@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "lts/*"
+cache:
+  yarn: true
+install:
+  - yarn install --frozen-lockfile
+jobs:
+  include:
+    - stage: "Lint and Unit tests"
+      name: "Lint"
+      script: yarn lint
+
+    - name: "Unit tests"
+      script: yarn test

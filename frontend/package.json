@@ -23,7 +23,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --env=jsdom --coverage --watchAll=false",
-    "lint": "eslint --ext=tsx --ext=ts --ext=js --ext=jsx --fix ./src",
+    "lint": "eslint --ext=tsx --ext=ts --ext=js --ext=jsx --fix ./src && yarn build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

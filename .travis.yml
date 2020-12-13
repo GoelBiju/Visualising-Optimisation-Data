@@ -11,6 +11,6 @@ jobs:
       name: "Frontend"
       script: yarn lint:frontend
 
-    - stage: "Unit tests"
+    - stage: "Unit Tests"
       name: "Frontend"
       script: yarn test:frontend

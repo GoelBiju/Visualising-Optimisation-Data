@@ -1,0 +1,20 @@
+{
+  "name": "visualising-optimisation-data",
+  "private": true,
+  "version": "1.0.0",
+  "description": "This is the COMP3000 Computing Project on the topic of creating \"A Web Platform for Visualising Optimisation Data\".",
+  "scripts": {
+    "lint:frontend": "cd frontend/ && yarn lint",
+    "test:frontend": "cd frontend/ && yarn test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoelBiju/Visualising-Optimisation-Data.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GoelBiju/Visualising-Optimisation-Data/issues"
+  },
+  "homepage": "https://github.com/GoelBiju/Visualising-Optimisation-Data#readme"
+}

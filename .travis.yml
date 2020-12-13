@@ -7,9 +7,10 @@ install:
   - yarn install --frozen-lockfile
 jobs:
   include:
-    - stage: "Lint and Unit tests"
-      name: "Lint"
-      script: yarn lint
+    - stage: "Lint"
+      name: "Frontend"
+      script: yarn lint:frontend
 
-    - name: "Unit tests"
-      script: yarn test
+    - stage: "Unit tests"
+      name: "Frontend"
+      script: yarn test:frontend

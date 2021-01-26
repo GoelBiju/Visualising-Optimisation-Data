@@ -2,18 +2,24 @@ let express = require("express");
 let path = require("path");
 let http = require("http");
 let socketIo = require("socket.io");
-
-// var mongoose = require("mongoose");
+let mongoose = require("mongoose");
 
 // Connection information.
+let url = "mongodb://localhost:27017/optimisationdb";
+let port = 9000;
+
+// Connect
+mongoose.connect(url, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+});
 
 // Define a scheme.
-// var Schema = mongoose.Schema;
-
-// var SomeModelSchema = new Schema({
-//   a_string: String,
-//   a_date: Date,
-// });
+let Run = mongoose.model("run", {
+  title: String,
+  id: Number,
+  data: [{ x: Number, y: Number, date: String }],
+});
 
 // Set up the app and server.
 let app = express();
@@ -50,6 +56,8 @@ dataNamespace.on("connection", function (socket) {
     frontendNamespace.emit("data", msg);
   });
 });
+
+// Run.collection.insertOne()
 
 server.listen(9000, () => {
   console.log("Listening on 9000");

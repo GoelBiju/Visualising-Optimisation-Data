@@ -18,12 +18,8 @@ def disconnect():
     print("disconnected from server")
 
 
-# @sio.on('data', namespace="/frontend")
-# def on_data(data):
-#     print("Received frontend data: ", data)
-
-
 def generateDataPoints():
+    # runInfo = {title: "Sample Data", id: 1}
     factor = 1.0
     while sio.connected:
         # load next generation of data (mocked for optimiser)

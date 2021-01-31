@@ -5,9 +5,6 @@ import socketio
 
 sio = socketio.Client(logger=True, engineio_logger=True)
 
-# TODO: How to handle a message from the server.
-
-
 @sio.event
 def connect():
     print("connection established")
@@ -19,7 +16,6 @@ def disconnect():
 
 
 def generateDataPoints():
-    # runInfo = {title: "Sample Data", id: 1}
     factor = 1.0
     while sio.connected:
         # load next generation of data (mocked for optimiser)

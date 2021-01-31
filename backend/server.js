@@ -6,19 +6,12 @@ let mongoose = require("mongoose");
 
 // Connection information.
 let url = "mongodb://localhost:27017/optimisationdb";
-let port = 9000;
+let PORT = 9000;
 
 // Connect
 mongoose.connect(url, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
-});
-
-// Define a scheme.
-let Run = mongoose.model("run", {
-  title: String,
-  id: Number,
-  data: [{ x: Number, y: Number, date: String }],
 });
 
 // Set up the app and server.
@@ -57,8 +50,6 @@ dataNamespace.on("connection", function (socket) {
   });
 });
 
-// Run.collection.insertOne()
-
-server.listen(9000, () => {
-  console.log("Listening on 9000");
+server.listen(PORT, () => {
+  console.log("Listening on " + PORT);
 });

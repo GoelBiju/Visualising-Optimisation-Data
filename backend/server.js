@@ -1,8 +1,14 @@
-let express = require("express");
-let path = require("path");
-let http = require("http");
-let socketIo = require("socket.io");
-let mongoose = require("mongoose");
+const express = require("express");
+const path = require("path");
+const http = require("http");
+
+const socketIo = require("socket.io");
+const mongoose = require("mongoose");
+
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+
+let runApiRoute = require("./src/routes/run");
 
 // Connection information.
 let url = "mongodb://localhost:27017/optimisationdb";
@@ -18,8 +24,13 @@ mongoose.connect(url, {
 let app = express();
 let server = http.createServer(app);
 
-// Configure statics.
+// Configure app.
+app.use(morgan("dev"));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "resources")));
+
+// Define routes.
+app.use("/api", runApiRoute);
 
 // Initialise the socket server.
 let io = socketIo(server);
@@ -49,6 +60,8 @@ dataNamespace.on("connection", function (socket) {
     frontendNamespace.emit("data", msg);
   });
 });
+
+// Set up routes.
 
 server.listen(PORT, () => {
   console.log("Listening on " + PORT);

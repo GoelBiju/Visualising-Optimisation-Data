@@ -8,10 +8,13 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
-let runApiRoute = require("./src/routes/run");
+const runApiRoute = require("./src/routes/run");
+
+const { frontendConnection } = require("./src/sockets/frontendSocket");
+const { dataConnection } = require("./src/sockets/dataSocket");
 
 // Connection information.
-let url = "mongodb://localhost:27017/optimisationdb";
+let url = "mongodb://localhost:27017/optimisation";
 let PORT = 9000;
 
 // Connect
@@ -38,28 +41,10 @@ let io = socketIo(server);
 const dataNamespace = io.of("/data");
 const frontendNamespace = io.of("/frontend");
 
-frontendNamespace.on("connection", function (socket) {
-  console.log("Front-end connection established");
-
-  // TODO: Send a message to the client.
-
-  socket.on("frontend", function (msg) {
-    console.log("Frontend message: ", msg);
-  });
-});
+frontendNamespace.on("connection", frontendConnection);
 
 // "On connection" handler
-dataNamespace.on("connection", function (socket) {
-  // io.on("connection", function (socket) {
-  console.log("Received data connection");
-
-  socket.on("dataPoint", function (msg) {
-    console.log("Received data point: ", msg);
-
-    // Emit the datapoint to the frontend.
-    frontendNamespace.emit("data", msg);
-  });
-});
+dataNamespace.on("connection", dataConnection);
 
 // Set up routes.
 

@@ -7,56 +7,61 @@ import socketio
 BACKEND_URL = "http://localhost:9000"
 API_URL = BACKEND_URL + "/api"
 
-sio = socketio.Client(logger=True, engineio_logger=True)
-
 headers = {"content-type": "application/json"}
 
 
-def createRun(title, problem, algorithm, populationSize, generations, algorithmParameters={}, graphs=[]):
-    # Create a new optimisation run given the parameters
-    data = {
-        "title": title,
-        "problem": problem,
-        "algorithm": algorithm,
-        "populationSize": populationSize,
-        "generations": generations,
-        "algorithmParameters": algorithmParameters,
-        "graphs": graphs
-    }
-    print("Creating optmisation run: ", data)
-    response = requests.post(
-        API_URL + "/runs", json.dumps(data), headers=headers)
-    print(response.content)
+class OptimiserClient():
 
+    # sio = socketio.Client(logger=True, engineio_logger=True)
+    sio = None
+    run_id = None
 
-@sio.event
-def connect():
-    print("connection established")
+    def __init__(self):
+        # Connect to node server
+        sio = socketio.Client(logger=True, engineio_logger=True)
+        sio.connect(BACKEND_URL, namespaces=['/data'])
+        # sio.wait()
 
+    def createRun(self, title, problem, algorithm, populationSize, generations, algorithmParameters={}, graphs=[]):
+        # Create a new optimisation run given the parameters
+        data = {
+            "title": title,
+            "problem": problem,
+            "algorithm": algorithm,
+            "populationSize": populationSize,
+            "generations": generations,
+            "algorithmParameters": algorithmParameters,
+            "graphs": graphs
+        }
+        print("Creating optmisation run: ", data)
 
-@sio.event
-def disconnect():
-    print("disconnected from server")
+        # Send the request to create the run
+        response = requests.post(
+            API_URL + "/runs", json.dumps(data), headers=headers).json()
+        print(response)
 
+        if (response["created"]):
+            self.run_id = response["runId"]
+            print("Created optmisation run with ID: ", self.run_id)
+        else:
+            print("Unable to create optimisation run: ", response["message"])
 
-# def generateDataPoints():
-#     factor = 1.0
-#     while sio.connected:
-#         # load next generation of data (mocked for optimiser)
-#         dataPoint = {"x": round(random.randint(
-#             0, 1000) * factor), "y": round(random.randint(0, 1000) * factor)}
-#         print("Sending data point: ", dataPoint)
-#         sio.emit("dataPoint", dataPoint, namespace="/data")
+    # @staticmethod
+    # @sio.event
+    # def connect():
+    #     print("connection established")
 
-#         # Sleep a second before sending the next data point
-#         time.sleep(1)
-#         factor += 0.1
+    # @staticmethod
+    # @sio.event
+    # def disconnect():
+    #     print("disconnected from server")
 
-
-# sio.connect(BACKEND_URL, namespaces=['/data'])
-
-
-# Start sending data points
-# sio.start_background_task(generateDataPoints)
-
-# sio.wait()
+    def sendData(self, generation, values):
+        if self.sio.connected:
+            # Send the data
+            data = {
+                "runId": self.run_id,
+                "generation": generation,
+                "values": values
+            }
+            self.sio.emit("data", data, namespace="/data")

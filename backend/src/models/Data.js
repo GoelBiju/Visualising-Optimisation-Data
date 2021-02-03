@@ -4,8 +4,15 @@ const mongoose = require("mongoose");
 const DataSchema = mongoose.Schema({
   data: [
     {
+      generation: {
+        type: Number,
+        required: true,
+      },
       // Support 2 objectives
-      values: [Number, Number],
+      values: {
+        type: [Number, Number],
+        required: true,
+      },
       time: {
         type: Date,
         default: Date.now,

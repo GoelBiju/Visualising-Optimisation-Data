@@ -1,10 +1,13 @@
+import os
 import pickle
 import time
 
 import client
 
+dirname = os.path.dirname(__file__)
+
 # Open the optimisation data file
-dtlz1_file = open('data/DTLZ1DataFile.pkl', 'rb')
+dtlz1_file = open(os.path.join(dirname, 'data/DTLZ1DataFile.pkl'), 'rb')
 dtlz1_data = pickle.load(dtlz1_file)
 
 # Population size is 100
@@ -14,7 +17,24 @@ dtlz1_data = pickle.load(dtlz1_file)
 print("Total population size: ", len(dtlz1_data))
 # print("Total population size: ", len(dtlz2_data))
 
-print(dtlz1_data[len(dtlz1_data) - 101: len(dtlz1_data) - 1])
+populationSize = 100
+totalGenerations = 254
 
-client.createRun("Pareto front estimation of DTLZ1",
-                 "DTLZ1", "NGSA-II", 100, 254)
+# Create an optimiser client
+optimiserClient = client.OptimiserClient()
+
+# Algorithm parameters
+algorithmParameters = {
+    "Function Evaluations": 25000,
+    "sbxProb": 0.8,
+    "pmProb": 0.1
+}
+
+# Create the optimisation run
+optimiserClient.createRun("Pareto front estimation of DTLZ1", "DTLZ1",
+                          "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["pareto-front"])
+
+# Send generation data to the server
+# for values in dtlz1_data:
+#     for x in range(populationSize):
+#         print(data)

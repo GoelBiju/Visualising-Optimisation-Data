@@ -31,6 +31,14 @@ const RunSchema = mongoose.Schema(
     // TODO: Needs to define what types of graph
     //       to plot it's data on
     graphs: [String],
+    dataId: {
+      type: String,
+      required: true,
+    },
+    completed: {
+      type: Boolean,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -39,7 +39,7 @@ const createRun = async (req, res, next) => {
 
           res.json({
             created: true,
-            runId: run._id,
+            dataId,
           });
         })
         .catch((error) => {

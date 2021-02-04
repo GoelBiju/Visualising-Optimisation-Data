@@ -14,12 +14,12 @@ class OptimiserClient():
 
     # sio = socketio.Client(logger=True, engineio_logger=True)
     sio = None
-    run_id = None
+    data_id = None
 
     def __init__(self):
         # Connect to node server
-        sio = socketio.Client(logger=True, engineio_logger=True)
-        sio.connect(BACKEND_URL, namespaces=['/data'])
+        self.sio = socketio.Client(logger=True, engineio_logger=True)
+        self.sio.connect(BACKEND_URL, namespaces=['/data'])
         # sio.wait()
 
     def createRun(self, title, problem, algorithm, populationSize, generations, algorithmParameters={}, graphs=[]):
@@ -41,8 +41,8 @@ class OptimiserClient():
         print(response)
 
         if (response["created"]):
-            self.run_id = response["runId"]
-            print("Created optmisation run with ID: ", self.run_id)
+            self.data_id = response["dataId"]
+            print("Created optmisation run, data ID received: ", self.data_id)
         else:
             print("Unable to create optimisation run: ", response["message"])
 
@@ -57,10 +57,10 @@ class OptimiserClient():
     #     print("disconnected from server")
 
     def sendData(self, generation, values):
-        if self.sio.connected:
+        if self.sio.connected and self.data_id != None:
             # Send the data
             data = {
-                "runId": self.run_id,
+                "dataId": self.data_id,
                 "generation": generation,
                 "values": values
             }

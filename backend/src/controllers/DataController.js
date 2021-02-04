@@ -38,7 +38,7 @@ const addData = async (id, generation, values) => {
       // Save the data
       optimiserData.markModified("data");
       await optimiserData.save();
-      console.log("Added new data for ", data._id);
+      // console.log("Added new data for ", optimiserData._id);
 
       added = true;
     }

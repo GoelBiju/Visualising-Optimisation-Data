@@ -35,6 +35,15 @@ optimiserClient.createRun("Pareto front estimation of DTLZ1", "DTLZ1",
                           "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["pareto-front"])
 
 # Send generation data to the server
-# for values in dtlz1_data:
-#     for x in range(populationSize):
-#         print(data)
+generation = 1
+count = 1
+test_data = [[1, 2], [3, 4], [5, 6], [7, 8]]
+for values in dtlz1_data:
+    print(values, count)
+    optimiserClient.sendData(generation, values.tolist())
+
+    if (count < populationSize):
+        count += 1
+    else:
+        generation += 1
+        count = 1

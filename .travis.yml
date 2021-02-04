@@ -21,10 +21,10 @@ jobs:
       name: Frontend
       script: yarn test:frontend
 
-    # - stage: Build Frontend
-    #   script:
-    #     - yarn --cwd frontend install
-    #     - yarn --cwd frontend build
+    - stage: Build Frontend
+      script:
+        - yarn --cwd frontend install
+        - yarn --cwd frontend build
 
     - stage: Deploy Frontend
       script: skip

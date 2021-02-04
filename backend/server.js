@@ -15,7 +15,7 @@ const { dataConnection } = require("./src/sockets/dataSocket");
 
 // Connection information.
 let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";
-let PORT = 9000;
+let PORT = process.env.PORT || 9000;
 
 // Connect
 mongoose.connect(url, {

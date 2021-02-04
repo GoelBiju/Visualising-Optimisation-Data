@@ -12,7 +12,6 @@ headers = {"content-type": "application/json"}
 
 class OptimiserClient():
 
-    # sio = socketio.Client(logger=True, engineio_logger=True)
     sio = None
     data_id = None
 
@@ -45,16 +44,6 @@ class OptimiserClient():
             print("Created optmisation run, data ID received: ", self.data_id)
         else:
             print("Unable to create optimisation run: ", response["message"])
-
-    # @staticmethod
-    # @sio.event
-    # def connect():
-    #     print("connection established")
-
-    # @staticmethod
-    # @sio.event
-    # def disconnect():
-    #     print("disconnected from server")
 
     def sendData(self, generation, values):
         if self.sio.connected and self.data_id != None:

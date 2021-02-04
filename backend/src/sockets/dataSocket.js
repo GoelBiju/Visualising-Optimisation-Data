@@ -18,6 +18,8 @@ function dataConnection(socket) {
         optimiserMessage.dataId,
         optimiserMessage.generation
       );
+
+      // Check if the optimisation run is complete
     } else {
       console.log("Unable to add data for ", optmiserMessage.runId);
     }

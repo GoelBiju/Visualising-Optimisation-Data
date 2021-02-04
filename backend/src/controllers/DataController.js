@@ -1,5 +1,6 @@
 const Data = require("../models/Data");
 
+// Create a new data document for an optimisation run
 const createData = async () => {
   let dataId = null;
 
@@ -19,11 +20,13 @@ const createData = async () => {
   return dataId;
 };
 
+// Get a data document by its id
 const getData = async (id) => {
   const data = await Data.findById(id).exec();
   return data;
 };
 
+// Add optimisation data to the document
 const addData = async (id, generation, values) => {
   let added = false;
 

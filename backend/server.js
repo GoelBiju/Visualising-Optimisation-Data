@@ -14,7 +14,7 @@ const { frontendConnection } = require("./src/sockets/frontendSocket");
 const { dataConnection } = require("./src/sockets/dataSocket");
 
 // Connection information.
-let url = "mongodb://localhost:27017/optimisation";
+let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";
 let PORT = 9000;
 
 // Connect

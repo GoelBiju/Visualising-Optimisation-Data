@@ -1,26 +1,39 @@
-let express = require("express");
-let path = require("path");
-let http = require("http");
-let socketIo = require("socket.io");
+const express = require("express");
+const path = require("path");
+const http = require("http");
 
-// var mongoose = require("mongoose");
+const socketIo = require("socket.io");
+const mongoose = require("mongoose");
+
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+
+const runApiRoute = require("./src/routes/run");
+
+const { frontendConnection } = require("./src/sockets/frontendSocket");
+const { dataConnection } = require("./src/sockets/dataSocket");
 
 // Connection information.
+let url = "mongodb://localhost:27017/optimisation";
+let PORT = 9000;
 
-// Define a scheme.
-// var Schema = mongoose.Schema;
-
-// var SomeModelSchema = new Schema({
-//   a_string: String,
-//   a_date: Date,
-// });
+// Connect
+mongoose.connect(url, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+});
 
 // Set up the app and server.
 let app = express();
 let server = http.createServer(app);
 
-// Configure statics.
+// Configure app.
+app.use(morgan("dev"));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "resources")));
+
+// Define routes.
+app.use("/api", runApiRoute);
 
 // Initialise the socket server.
 let io = socketIo(server);
@@ -28,29 +41,13 @@ let io = socketIo(server);
 const dataNamespace = io.of("/data");
 const frontendNamespace = io.of("/frontend");
 
-frontendNamespace.on("connection", function (socket) {
-  console.log("Front-end connection established");
-
-  // TODO: Send a message to the client.
-
-  socket.on("frontend", function (msg) {
-    console.log("Frontend message: ", msg);
-  });
-});
+frontendNamespace.on("connection", frontendConnection);
 
 // "On connection" handler
-dataNamespace.on("connection", function (socket) {
-  // io.on("connection", function (socket) {
-  console.log("Received data connection");
+dataNamespace.on("connection", dataConnection);
 
-  socket.on("dataPoint", function (msg) {
-    console.log("Received data point: ", msg);
+// Set up routes.
 
-    // Emit the datapoint to the frontend.
-    frontendNamespace.emit("data", msg);
-  });
-});
-
-server.listen(9000, () => {
-  console.log("Listening on 9000");
+server.listen(PORT, () => {
+  console.log("Listening on " + PORT);
 });

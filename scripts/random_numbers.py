@@ -5,9 +5,6 @@ import socketio
 
 sio = socketio.Client(logger=True, engineio_logger=True)
 
-# TODO: How to handle a message from the server.
-
-
 @sio.event
 def connect():
     print("connection established")
@@ -16,11 +13,6 @@ def connect():
 @sio.event
 def disconnect():
     print("disconnected from server")
-
-
-# @sio.on('data', namespace="/frontend")
-# def on_data(data):
-#     print("Received frontend data: ", data)
 
 
 def generateDataPoints():

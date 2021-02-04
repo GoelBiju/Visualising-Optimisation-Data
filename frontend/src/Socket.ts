@@ -2,14 +2,21 @@ import io from 'socket.io-client';
 
 let socket: SocketIOClient.Socket;
 
+// Configure backend url
+const backendUrl =
+    process.env.NODE_ENV === 'development'
+        ? 'http://localhost:9000/frontend'
+        : 'https://opt-vis-backend.herokuapp.com/';
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 export interface ScatterData {
     x: number;
     y: number;
 }
 
 export const initiateSocket = () => {
-    socket = io('http://localhost:9000/frontend');
-    console.log('connected to frontend');
+    socket = io(backendUrl);
+    console.log('connected to backend');
     if (socket) {
         socket.emit('frontend', 'test');
         console.log('emited frontend test message');
@@ -19,7 +26,7 @@ export const initiateSocket = () => {
 export const disconnectSocket = () => {
     if (socket) {
         socket.disconnect();
-        console.log('disconnected frontend socket');
+        console.log('disconnected backend socket connection');
     }
 };
 

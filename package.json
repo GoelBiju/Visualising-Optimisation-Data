@@ -7,8 +7,9 @@
   ],
   "description": "This is the COMP3000 Computing Project on the topic of creating \"A Web Platform for Visualising Optimisation Data\".",
   "scripts": {
-    "lint:frontend": "cd frontend/ && yarn lint",
-    "test:frontend": "cd frontend/ && yarn test"
+    "frontend": "yarn workspace frontend start",
+    "lint:frontend": "yarn workspace frontend lint",
+    "test:frontend": "yarn workspace frontend test"
   },
   "repository": {
     "type": "git",

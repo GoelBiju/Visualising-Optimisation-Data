@@ -39,4 +39,3 @@ jobs:
         on:
           repo: GoelBiju/Visualising-Optimisation-Data
           branch: main
-        skip_cleanup: true

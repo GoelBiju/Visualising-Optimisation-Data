@@ -13,23 +13,24 @@ install:
 
 jobs:
   include:
-    - stage: Lint
-      name: Frontend
-      script: yarn lint:frontend
+    # - stage: Lint
+    #   name: Frontend
+    #   script: yarn lint:frontend
 
-    - stage: Unit Tests
-      name: Frontend
-      script: yarn test:frontend
+    # - stage: Unit Tests
+    #   name: Frontend
+    #   script: yarn test:frontend
 
-    - stage: Build Frontend
-      script:
-        - yarn --cwd frontend install
-        - yarn --cwd frontend build
+    # - stage: Build Frontend
+    #   script:
+    #     - yarn --cwd frontend install
+    #     - yarn --cwd frontend build
 
     - stage: Deploy Frontend
       script: skip
       before_deploy:
         - cd frontend
+        - yarn build
       deploy:
         provider: heroku
         api_key:

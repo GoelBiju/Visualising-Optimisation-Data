@@ -13,12 +13,11 @@ function dataConnection(socket) {
     );
 
     if (added) {
-      console.log(
-        "Added data for ",
-        optimiserMessage.dataId,
-        optimiserMessage.generation
-      );
-
+      // console.log(
+      //   "Added data for ",
+      //   optimiserMessage.dataId,
+      //   optimiserMessage.generation
+      // );
       // Check if the optimisation run is complete
     } else {
       console.log("Unable to add data for ", optmiserMessage.runId);

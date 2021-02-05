@@ -9,7 +9,16 @@ const createData = async () => {
 
   await data
     .save()
-    .then((data) => {
+    .then(async (data) => {
+      // Get the run information and create the generations objects
+      // for (num in generations) {
+      //   data.data[num] = {
+      //     values: [],
+      //   };
+      // }
+      // data.markModified("data");
+      // await data.save();
+
       console.log("Created data store: ", data._id);
       dataId = data._id;
     })

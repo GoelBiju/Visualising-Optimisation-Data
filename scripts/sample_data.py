@@ -47,4 +47,5 @@ for values in dtlz1_data:
     else:
         generation += 1
         count = 1
+
 print("Completed optimisation run")

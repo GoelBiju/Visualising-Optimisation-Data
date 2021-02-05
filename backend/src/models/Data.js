@@ -19,6 +19,7 @@ const DataSchema = mongoose.Schema({
       },
     },
   ],
+  // data: mongoose.Schema.Types.Mixed,
 });
 
 module.exports = mongoose.model("Data", DataSchema);

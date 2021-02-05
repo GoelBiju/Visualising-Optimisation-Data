@@ -36,7 +36,7 @@ ReactDOM.render(
             <App /> */}
             <Switch>
                 <Route exact path="/one" render={() => <div>One</div>} />
-                <Route exact path="/two" render={() => <div>One</div>} />
+                <Route exact path="/two" render={() => <div>Two</div>} />
             </Switch>
         </ConnectedRouter>
     </Provider>,

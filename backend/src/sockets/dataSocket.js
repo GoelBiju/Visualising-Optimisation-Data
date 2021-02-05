@@ -3,10 +3,10 @@ const { addData } = require("../controllers/DataController");
 function dataConnection(socket) {
   console.log("Received data connection");
 
-  socket.on("data", function (optimiserMessage) {
+  socket.on("data", async function (optimiserMessage) {
     // console.log("Received", optimiserMessage.dataId);
     // Store the data received
-    const added = addData(
+    const added = await addData(
       optimiserMessage.dataId,
       optimiserMessage.generation,
       optimiserMessage.values

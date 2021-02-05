@@ -46,6 +46,11 @@ frontendNamespace.on("connection", frontendConnection);
 // "On connection" handler
 dataNamespace.on("connection", dataConnection);
 
+// Display the running port
+app.get("/", (req, res) => {
+  res.send(`Running on port ${PORT}`);
+});
+
 server.listen(PORT, () => {
-  console.log("Backend listening on " + PORT);
+  console.log(`Backend listening on ${PORT} (WebSocket)`);
 });

@@ -4,7 +4,12 @@ import time
 import requests
 import socketio
 
+# http://opt-vis-backend.herokuapp.com/
+# http://localhost:9000
 BACKEND_URL = "http://localhost:9000"
+# 40185
+PORT = "9000"
+WEBSOCKET_URL = BACKEND_URL + ":" + PORT
 API_URL = BACKEND_URL + "/api"
 
 headers = {"content-type": "application/json"}

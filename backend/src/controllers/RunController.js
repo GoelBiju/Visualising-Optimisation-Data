@@ -35,7 +35,7 @@ const createRun = async (req, res, next) => {
       run
         .save()
         .then((run) => {
-          console.log("Created a run for: ", title);
+          console.log("Created a run for: ", run.title);
 
           res.json({
             created: true,

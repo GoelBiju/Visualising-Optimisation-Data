@@ -37,7 +37,7 @@ optimiserClient.createRun("Pareto front estimation of DTLZ1", "DTLZ1",
 # Send generation data to the server
 generation = 1
 count = 1
-test_data = [[1, 2], [3, 4], [5, 6], [7, 8]]
+# test_data = [[1, 2], [3, 4], [5, 6], [7, 8]]
 for values in dtlz1_data:
     print(values, count)
     optimiserClient.sendData(generation, values.tolist())
@@ -47,3 +47,4 @@ for values in dtlz1_data:
     else:
         generation += 1
         count = 1
+print("Completed optimisation run")

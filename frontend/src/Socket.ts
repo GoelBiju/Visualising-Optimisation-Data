@@ -3,10 +3,7 @@ import io from 'socket.io-client';
 let socket: SocketIOClient.Socket;
 
 // Configure backend url
-const backendUrl =
-    process.env.NODE_ENV === 'development'
-        ? 'http://localhost:9000/frontend'
-        : 'https://opt-vis-backend.herokuapp.com/';
+const backendUrl = process.env.BACKEND_URL || 'http://localhost:9000/frontend';
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
 export interface ScatterData {

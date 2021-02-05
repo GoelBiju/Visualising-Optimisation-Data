@@ -46,8 +46,6 @@ frontendNamespace.on("connection", frontendConnection);
 // "On connection" handler
 dataNamespace.on("connection", dataConnection);
 
-// Set up routes.
-
 server.listen(PORT, () => {
-  console.log("Listening on " + PORT);
+  console.log("Backend listening on " + PORT);
 });

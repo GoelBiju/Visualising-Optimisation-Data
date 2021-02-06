@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 const DataSchema = mongoose.Schema({
   data: [
     {
-      generation: {
-        type: Number,
-        required: true,
-      },
+      // generation: {
+      //   type: Number,
+      //   required: true,
+      // },
       // Support 2 objectives
       values: {
         type: [Number, Number],

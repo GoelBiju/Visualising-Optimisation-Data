@@ -1,14 +1,4 @@
-import {
-    AppBar,
-    CssBaseline,
-    Divider,
-    Drawer,
-    List,
-    ListItem,
-    ListItemText,
-    Toolbar,
-    Typography,
-} from '@material-ui/core';
+import { AppBar, CssBaseline, Toolbar, Typography } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import './App.css';
@@ -58,7 +48,7 @@ function App() {
                     </Toolbar>
                 </AppBar>
 
-                <Drawer
+                {/* <Drawer
                     className={classes.drawer}
                     variant="permanent"
                     classes={{
@@ -75,7 +65,7 @@ function App() {
                             </ListItem>
                         ))}
                     </List>
-                </Drawer>
+                </Drawer> */}
 
                 <main className={classes.content}>
                     <div className={classes.toolbar} />

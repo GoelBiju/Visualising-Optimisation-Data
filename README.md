@@ -14,3 +14,9 @@ The web platform will provide:
 - the ability for the optimisation data collected from client optimisers to be visualised in real-time,
 - the playback of saved optimisation runs,
 - a deployed web platform acting as a single tool which collects all appropriate visualisations for optimisation runs.
+
+## Deployments
+
+Frontend: http://opt-vis-frontend.herokuapp.com/
+
+Backend: http://opt-vis-backend.herokuapp.com/

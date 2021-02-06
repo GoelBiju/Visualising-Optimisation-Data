@@ -36,19 +36,21 @@ const getData = async (id) => {
 };
 
 // Add optimisation data to the document
-const addData = async (id, generation, values) => {
+const addBatchData = async (id, batch) => {
+  // generation
   let added = false;
 
   await getData(id).then(async (optimiserData) => {
     if (optimiserData) {
       // Add new data
-      optimiserData.data.push({
-        generation,
-        values,
-      });
+      for (let i = 0; i < batch.length; i++) {
+        optimiserData.data.push({
+          // generation,
+          values: batch[i],
+        });
+      }
 
       // Save the data
-      // optimiserData.markModified("data");
       await optimiserData.save();
       // console.log("Added new data for ", optimiserData._id);
 
@@ -62,5 +64,5 @@ const addData = async (id, generation, values) => {
 module.exports = {
   createData,
   getData,
-  addData,
+  addBatchData,
 };

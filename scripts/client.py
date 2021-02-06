@@ -24,7 +24,7 @@ headers = {"content-type": "application/json"}
 
 class DataNamespace(socketio.ClientNamespace):
     data_id = None
-    current_generation = -1
+    # current_generation = 0
 
     sending_data = False
     batch_queue = None
@@ -36,26 +36,39 @@ class DataNamespace(socketio.ClientNamespace):
     def on_disconnect(self):
         print("disconnected from backend websocket")
 
+    def on_save(self, data):
+        # print(data)
+        if (data['saved']):
+            # print("Saved data for generation: ", data['generation'])
+            self.sending_data = False
+        else:
+            print("Unable to save data: ", data['message'])
+
     def initialise_queue(self, data_id):
         self.data_id = data_id
-        self.start_queue_thread()
 
-    def start_queue_thread(self):
+        # Start a thread to send queue data
         threading.Thread(target=self.process_queue).start()
         print("Started process_queue thread")
 
     def process_queue(self):
-        while (self.sending_data != True):
-            batch = self.batch_queue.get()
-            print("Send batch for: ", self.current_generation)
+        while True:
+            if (self.sending_data != True):
+                # print("Processing next item, remaining: ",
+                #       self.batch_queue.qsize())
+                # Get the next batch item
+                batch = self.batch_queue.get()
 
-            # Send the data
-            data = {
-                "dataId": self.data_id,
-                "generation": self.current_generation,
-                "batch": batch
-            }
-            self.emit("data", data)
+                # Send the data
+                data = {
+                    "dataId": self.data_id,
+                    # "generation": self.current_generation,
+                    "batch": batch
+                }
+                self.emit("data", data)
+
+                # prevent any further data beng sent
+                self.sending_data = True
 
 
 class OptimiserClient():
@@ -73,7 +86,7 @@ class OptimiserClient():
         print("namespace sending data: ", self.data_namespace.sending_data)
 
         # Connect to node server
-        self.sio = socketio.Client(logger=True, engineio_logger=False)
+        self.sio = socketio.Client(logger=False, engineio_logger=False)
         # self.sio.connect(BACKEND_URL, namespaces=['/data'])
         self.sio.register_namespace(self.data_namespace)
         self.sio.connect(BACKEND_URL)
@@ -105,18 +118,7 @@ class OptimiserClient():
         else:
             print("Unable to create optimisation run: ", response["message"])
 
-    def addBatch(self, generation, batch_data):
+    def addBatch(self, batch_data):  # generation
         # Set the new generation and add the data to the queue
-        self.data_namespace.current_generation = generation
+        # self.data_namespace.current_generation = generation
         self.data_namespace.batch_queue.put(batch_data)
-
-    # def sendData(self, generation, values):
-    #     if self.sio.connected and self.data_id != None:
-    #         if (data)
-    #         # Send the data
-    #         data = {
-    #             "dataId": self.data_id,
-    #             "generation": generation,
-    #             "values": values
-    #         }
-    #         self.sio.emit("data", data, namespace="/data")

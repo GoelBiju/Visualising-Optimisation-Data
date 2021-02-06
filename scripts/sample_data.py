@@ -18,7 +18,7 @@ print("Total population size: ", len(dtlz1_data))
 # print("Total population size: ", len(dtlz2_data))
 
 populationSize = 100
-totalGenerations = 254
+totalGenerations = 282
 
 # Create an optimiser client
 optimiserClient = client.OptimiserClient(populationSize)
@@ -35,11 +35,11 @@ optimiserClient.createRun("Pareto front estimation of DTLZ1", "DTLZ1",
                           "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["pareto-front"])
 
 # Send generation data to the server
-generation = 1
+# generation = 1
 count = 1
 # test_data = [[1, 2], [3, 4], [5, 6], [7, 8]]
 data_batch = []
-for values in dtlz1_data[0:populationSize]:
+for values in dtlz1_data:
     # print(values, count)
     # optimiserClient.sendData(generation, values.tolist())
     # Add the data to the batch to send
@@ -49,12 +49,12 @@ for values in dtlz1_data[0:populationSize]:
         count += 1
     else:
         # Add the data to the client queue to send
-        print("Sending generation: ", generation)
-        optimiserClient.addBatch(generation, data_batch)
+        # print("Sending generation: ", generation)
+        optimiserClient.addBatch(data_batch)  # generation
         data_batch = []
 
-        generation += 1
+        # generation += 1
         count = 1
         # print("Next Generation: ", generation)
 
-print("Completed optimisation run")
+print("Completed sending, wait until queue has been processed")

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
-import './App.css';
 import ExampleComponent from './components/example.component';
 import MainAppBar from './pages/mainAppBar.component';
+import './stylesheets/App.css';
 
 function App() {
     return (

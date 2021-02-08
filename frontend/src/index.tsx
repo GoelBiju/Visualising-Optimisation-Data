@@ -7,11 +7,11 @@ import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import App from './App';
-import './index.css';
 import { configureFrontend } from './state/actions/frontend.actions';
 // import { frontendNotification } from './state/actions/frontend.actions';
 import AppReducer from './state/reducers/App.reducer';
 import { StateType } from './state/state.types';
+import './stylesheets/index.css';
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];

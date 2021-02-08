@@ -17,7 +17,7 @@ class PluginPlaceHolder extends React.PureComponent<{ id: string }> {
     }
 }
 
-const Routing = (props: RoutingProps): React.ReactNode => {
+const Routing = (props: RoutingProps): React.ReactElement => {
     const { plugins } = props;
     return (
         <Switch>

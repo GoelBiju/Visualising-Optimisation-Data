@@ -1,5 +1,6 @@
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
+import * as log from 'loglevel';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -8,7 +9,6 @@ import { createLogger } from 'redux-logger';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import App from './App';
 import { configureFrontend } from './state/actions/frontend.actions';
-// import { frontendNotification } from './state/actions/frontend.actions';
 import AppReducer from './state/reducers/App.reducer';
 import { StateType } from './state/state.types';
 import './stylesheets/index.css';
@@ -19,6 +19,9 @@ if (process.env.NODE_ENV === 'development') {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const logger = (createLogger as any)();
     middleware.push(logger);
+    log.setDefaultLevel(log.levels.DEBUG);
+} else {
+    log.setDefaultLevel(log.levels.ERROR);
 }
 
 /* eslint-disable no-underscore-dangle, @typescript-eslint/no-explicit-any */
@@ -26,10 +29,6 @@ const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
 /* eslint-enable */
 
 const store = createStore(AppReducer(history), composeEnhancers(applyMiddleware(...middleware)));
-
-// setTimeout(() => {
-//     store.dispatch(frontendNotification('test notifications'));
-// }, 3000);
 
 // Dispatch a call to configure the frontend
 const dispatch = store.dispatch as ThunkDispatch<StateType, null, AnyAction>;

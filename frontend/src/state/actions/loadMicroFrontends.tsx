@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // single-spa doesn't come with any types - all single-spa code should be limited to this file.
+import * as log from 'loglevel';
 import * as singleSpa from 'single-spa';
 import { Plugin } from '../state.types';
 
@@ -16,7 +17,14 @@ const runScript = async (url: string) => {
 };
 
 const loadReactApp = async (name: string, url: string) => {
-    await runScript(url);
+    try {
+        await runScript(url);
+        log.info(`Successfully loaded plugin ${name} from ${url}`);
+    } catch (error) {
+        log.error(`Failed to load plugin ${name} from ${url}`);
+        throw error;
+    }
+
     // Plugins are loaded on to the window and define their own property name so can't guess this at compile time
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     return (window as any)[name];

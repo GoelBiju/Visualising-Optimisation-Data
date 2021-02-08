@@ -12,9 +12,14 @@ export const frontendNotification = (message: string): ActionType<NotificationPa
 export const configureFrontend = (): ThunkResult<Promise<void>> => {
     return async (dispatch) => {
         // Request the settings file
-        const res = await axios.get('/settings.json');
-
-        const settings = res.data;
-        dispatch(frontendNotification(JSON.stringify(settings)));
+        await axios
+            .get('/settings.json')
+            .then((res) => {
+                const settings = res.data;
+                dispatch(frontendNotification(JSON.stringify(settings)));
+            })
+            .catch((error) => {
+                console.log(`Frontend Error: loading settings.json: ${error.message}`);
+            });
     };
 };

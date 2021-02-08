@@ -20,7 +20,7 @@ export const configureFrontend = (): ThunkResult<Promise<void>> => {
                 dispatch(frontendNotification(JSON.stringify(settings)));
 
                 // Load microfrontends
-                loadMicroFrontends.init(settings.plugin);
+                loadMicroFrontends.init(settings.plugins);
             })
             .catch((error) => {
                 console.log(`Frontend Error: loading settings.json: ${error.message}`);

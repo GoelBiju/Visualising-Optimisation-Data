@@ -9,6 +9,14 @@ interface RoutingProps {
     location: string;
 }
 
+// TODO: Use this
+class PluginPlaceHolder extends React.PureComponent<{ id: string }> {
+    public render(): React.ReactNode {
+        const { id } = this.props;
+        return <div id={id}>{id} failed to load correctly</div>;
+    }
+}
+
 const Routing = (props: RoutingProps): React.ReactNode => {
     const { plugins } = props;
     return (

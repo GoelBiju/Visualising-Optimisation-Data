@@ -1,6 +1,13 @@
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
+export interface Plugin {
+    name: string;
+    src: string;
+    enable: boolean;
+    location: 'main' | 'left' | 'right';
+}
+
 export interface FrontendState {
     notifications: string[];
 }

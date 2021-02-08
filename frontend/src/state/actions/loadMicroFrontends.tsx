@@ -36,7 +36,7 @@ async function loadApp(name: string, appURL: string) {
 async function init(plugins: Plugin[]) {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const loadingPromises: Promise<any>[] = [];
-    console.log('Plugins: ', plugins);
+    console.log('loadMicroFrontends initialise plugins: ', plugins);
     plugins
         .filter((p) => p.enable)
         .forEach((p) => {

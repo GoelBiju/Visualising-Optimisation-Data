@@ -2,6 +2,7 @@
 // single-spa doesn't come with any types - all single-spa code should be limited to this file.
 import * as log from 'loglevel';
 import * as singleSpa from 'single-spa';
+import { microFrontendMessageId, NotificationType } from '../frontend.types';
 import { Plugin } from '../state.types';
 
 const runScript = async (url: string) => {
@@ -16,39 +17,52 @@ const runScript = async (url: string) => {
     });
 };
 
-const loadReactApp = async (name: string, url: string) => {
-    try {
-        await runScript(url);
-        log.info(`Successfully loaded plugin ${name} from ${url}`);
-    } catch (error) {
-        log.error(`Failed to load plugin ${name} from ${url}`);
-        throw error;
-    }
-
+const loadReactApp = async (name: string) => {
     // Plugins are loaded on to the window and define their own property name so can't guess this at compile time
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     return (window as any)[name];
 };
 
 async function loadApp(name: string, appURL: string) {
+    await runScript(appURL);
+
     // register the app with singleSPA and pass a reference to the store of the app as well as a reference to the globalEventDistributor
     singleSpa.registerApplication(
         name,
-        () => loadReactApp(name, appURL),
-        (location: URL) => {
-            return location.pathname === '/';
-        },
+        () => loadReactApp(name),
+        () => true,
     );
 }
 
 async function init(plugins: Plugin[]) {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const loadingPromises: Promise<any>[] = [];
-    console.log('loadMicroFrontends initialise plugins: ', plugins);
+
     plugins
         .filter((p) => p.enable)
         .forEach((p) => {
-            loadingPromises.push(loadApp(p.name, p.src));
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            const loadingPromise: Promise<any> = loadApp(p.name, p.src)
+                .then(() => {
+                    log.debug(`Successfully loaded plugin ${p.name} from ${p.src}`);
+                })
+                .catch(() => {
+                    // TODO: record error back on server somewhere
+                    log.error(`Failed to load plugin ${p.name} from ${p.src}`);
+                    document.dispatchEvent(
+                        new CustomEvent(microFrontendMessageId, {
+                            detail: {
+                                type: NotificationType,
+                                payload: {
+                                    message: `Failed to load plugin ${p.name} from ${p.src}. 
+                            Try reloading the page and if the error persists contact the support team.`,
+                                    severity: 'error',
+                                },
+                            },
+                        }),
+                    );
+                });
+            loadingPromises.push(loadingPromise);
         });
 
     // wait until all stores are loaded and all apps are registered with singleSpa

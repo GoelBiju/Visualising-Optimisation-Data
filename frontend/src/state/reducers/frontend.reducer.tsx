@@ -1,9 +1,10 @@
-import { NotificationPayload, NotificationType } from '../frontend.types';
+import { NotificationPayload, NotificationType, RegisterRouteType } from '../frontend.types';
 import { FrontendState } from '../state.types';
 import createReducer from './createReducer';
 
 const initialState: FrontendState = {
     notifications: [],
+    plugins: [],
 };
 
 export function handleNotification(state: FrontendState, payload: NotificationPayload): FrontendState {
@@ -13,8 +14,19 @@ export function handleNotification(state: FrontendState, payload: NotificationPa
     };
 }
 
+export function handleRegisterPlugin(state: FrontendState, payload: RegisterPluginPayload): FrontendState {
+    const newPlugins = state.plugins.slice();
+    newPlugins.push(payload);
+
+    return {
+        ...state,
+        plugins: newPlugins,
+    };
+}
+
 const FrontendReducer = createReducer(initialState, {
     [NotificationType]: handleNotification,
+    [RegisterRouteType]: handleRegisterPlugin,
 });
 
 export default FrontendReducer;

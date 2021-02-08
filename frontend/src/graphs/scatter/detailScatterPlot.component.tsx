@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import React from 'react';
-import { initiateSocket, subscribeToData } from '../../Socket';
+import { initiateSocket, subscribeToData } from '../../sockets/Socket';
 
 // TODO: Connect to a state.
 

@@ -3,13 +3,15 @@ import { createBrowserHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Route, Switch } from 'react-router';
-import { applyMiddleware, compose, createStore } from 'redux';
+import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
-import thunk from 'redux-thunk';
+import thunk, { ThunkDispatch } from 'redux-thunk';
+import App from './App';
 import './index.css';
-import { frontendNotification } from './state/actions/frontend.actions';
+import { configureFrontend } from './state/actions/frontend.actions';
+// import { frontendNotification } from './state/actions/frontend.actions';
 import AppReducer from './state/reducers/App.reducer';
+import { StateType } from './state/state.types';
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -25,19 +27,18 @@ const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
 
 const store = createStore(AppReducer(history), composeEnhancers(applyMiddleware(...middleware)));
 
-setTimeout(() => {
-    store.dispatch(frontendNotification('test notifications'));
-}, 3000);
+// setTimeout(() => {
+//     store.dispatch(frontendNotification('test notifications'));
+// }, 3000);
+
+// Dispatch a call to configure the frontend
+const dispatch = store.dispatch as ThunkDispatch<StateType, null, AnyAction>;
+dispatch(configureFrontend());
 
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-            {/* <ExampleComponent />
-            <App /> */}
-            <Switch>
-                <Route exact path="/one" render={() => <div>One</div>} />
-                <Route exact path="/two" render={() => <div>Two</div>} />
-            </Switch>
+            <App />
         </ConnectedRouter>
     </Provider>,
     document.getElementById('root'),

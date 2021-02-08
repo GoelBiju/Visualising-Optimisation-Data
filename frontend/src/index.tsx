@@ -9,12 +9,14 @@ import { createLogger } from 'redux-logger';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import App from './App';
 import { configureFrontend } from './state/actions/frontend.actions';
+import FrontendMiddleware, { listenToPlugins } from './state/middleware/frontend.middleware';
 import AppReducer from './state/reducers/App.reducer';
 import { StateType } from './state/state.types';
 import './stylesheets/index.css';
 
+// Create the middleware
 const history = createBrowserHistory();
-const middleware = [thunk, routerMiddleware(history)];
+const middleware = [thunk, routerMiddleware(history), FrontendMiddleware];
 if (process.env.NODE_ENV === 'development') {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const logger = (createLogger as any)();
@@ -28,7 +30,11 @@ if (process.env.NODE_ENV === 'development') {
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 /* eslint-enable */
 
+// Create the store
 const store = createStore(AppReducer(history), composeEnhancers(applyMiddleware(...middleware)));
+
+// Listen to plugins
+listenToPlugins(store.dispatch);
 
 // Dispatch a call to configure the frontend
 const dispatch = store.dispatch as ThunkDispatch<StateType, null, AnyAction>;

@@ -3,13 +3,21 @@ import { createBrowserHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Route, Switch } from 'react-router';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
+import App from './App';
 import './index.css';
 import { frontendNotification } from './state/actions/frontend.actions';
 import AppReducer from './state/reducers/App.reducer';
+
+// import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+
+// const theme = createMuiTheme({
+//     palette: {
+//         primary: 'blue'
+//     }
+// })
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -32,12 +40,7 @@ setTimeout(() => {
 ReactDOM.render(
     <Provider store={store}>
         <ConnectedRouter history={history}>
-            {/* <ExampleComponent />
-            <App /> */}
-            <Switch>
-                <Route exact path="/one" render={() => <div>One</div>} />
-                <Route exact path="/two" render={() => <div>Two</div>} />
-            </Switch>
+            <App />
         </ConnectedRouter>
     </Provider>,
     document.getElementById('root'),

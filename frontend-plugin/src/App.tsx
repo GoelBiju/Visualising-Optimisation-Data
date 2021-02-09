@@ -40,10 +40,13 @@ document.dispatchEvent(
   })
 );
 
-class App extends React.Component<unknown, { hasError: boolean }> {
-  public constructor(props: unknown) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+class App extends React.Component<any, { hasError: boolean }> {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  public constructor(props: any) {
     super(props);
     this.state = { hasError: false };
+    console.log("Props: ", props);
   }
 
   public componentDidCatch(error: Error | null): void {
@@ -57,7 +60,7 @@ class App extends React.Component<unknown, { hasError: boolean }> {
     //     <div className="error">An error occurred when loading the plugin.</div>
     //   );
     // } else {
-    return <div className="App">This is the plugin.</div>;
+    return <div className="App">This is the plugin</div>;
     // }
   }
 }

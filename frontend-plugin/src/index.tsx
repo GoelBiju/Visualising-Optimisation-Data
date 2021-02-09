@@ -59,7 +59,7 @@ const reactLifecycles = singleSpaReact({
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Single-SPA bootstrap methods have no idea what type of inputs may be
 // pushed down from the parent app
-export function bootstrap(props: unknown): Promise<void> {
+export function bootstrap(props: any): Promise<void> {
   return reactLifecycles
     .bootstrap(props)
     .then(() => {
@@ -70,7 +70,7 @@ export function bootstrap(props: unknown): Promise<void> {
     });
 }
 
-export function mount(props: unknown): Promise<void> {
+export function mount(props: any): Promise<void> {
   return reactLifecycles
     .mount(props)
     .then(() => {
@@ -81,7 +81,7 @@ export function mount(props: unknown): Promise<void> {
     });
 }
 
-export function unmount(props: unknown): Promise<void> {
+export function unmount(props: any): Promise<void> {
   return reactLifecycles
     .unmount(props)
     .then(() => {

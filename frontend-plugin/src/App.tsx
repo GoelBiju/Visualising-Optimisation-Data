@@ -1,33 +1,42 @@
+import { ConnectedRouter, routerMiddleware } from "connected-react-router";
+import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
+import { Provider } from "react-redux";
+import { Route, RouteComponentProps, Switch } from "react-router";
+import { applyMiddleware, compose, createStore } from "redux";
+import { createLogger } from "redux-logger";
+import thunk from "redux-thunk";
 import "./App.css";
+import AppReducer from "./state/reducers/App.reducer";
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.tsx</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+const history = createBrowserHistory();
+const middleware = [thunk, routerMiddleware(history)];
+if (process.env.NODE_ENV === "development") {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  const logger = (createLogger as any)();
+  middleware.push(logger);
+  log.setDefaultLevel(log.levels.DEBUG);
+} else {
+  log.setDefaultLevel(log.levels.ERROR);
+}
+
+/* eslint-disable no-underscore-dangle, @typescript-eslint/no-explicit-any */
+const composeEnhancers =
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+/* eslint-enable */
+
+// Create the store
+const store = createStore(
+  AppReducer(history),
+  composeEnhancers(applyMiddleware(...middleware))
+);
 
 const registerRouteAction = {
   type: "frontend:api:register_route",
   payload: {
     section: "Test",
-    link: "/test",
+    link: "/",
     plugin: "frontend-plugin",
     displayName: "Frontend Plugin",
   },
@@ -55,13 +64,30 @@ class App extends React.Component<any, { hasError: boolean }> {
   }
 
   public render(): React.ReactNode {
-    // if (this.state.hasError) {
-    //   return (
-    //     <div className="error">An error occurred when loading the plugin.</div>
-    //   );
-    // } else {
-    return <div className="App">This is the plugin</div>;
-    // }
+    if (this.state.hasError) {
+      return (
+        <div className="error">An error occurred when loading the plugin.</div>
+      );
+    } else {
+      return (
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <Switch>
+              <Route
+                exact
+                path={"/runs/:runId/visualisations/:visualisationName"}
+                render={({
+                  match,
+                }: RouteComponentProps<{
+                  runId: string;
+                  visualisationName: string;
+                }>) => <div className="App">This is the plugin</div>}
+              />
+            </Switch>
+          </ConnectedRouter>
+        </Provider>
+      );
+    }
   }
 }
 

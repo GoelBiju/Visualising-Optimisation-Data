@@ -1,7 +1,11 @@
+import { routerMiddleware } from "connected-react-router";
+import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import "./App.css";
 
+const history = createBrowserHistory();
+const middleware = [routerMiddleware(history)];
 // function App() {
 //   return (
 //     <div className="App">

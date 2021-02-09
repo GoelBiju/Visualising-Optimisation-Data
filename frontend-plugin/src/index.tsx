@@ -8,6 +8,7 @@ import "./index.css";
 const pluginName = "frontend-plugin";
 
 const render = (): void => {
+  console.log("Calling render");
   let el = document.getElementById(pluginName);
   // Attempt to re-render the plugin if the corresponding div is present.
   if (el) {
@@ -53,35 +54,40 @@ const reactLifecycles = singleSpaReact({
   domElementGetter,
 });
 
-document.dispatchEvent(
-  new CustomEvent("frontend", {
-    detail: {
-      type: "frontend:api:register_route",
-      payload: {
-        section: "Test",
-        link: "/test",
-        plugin: "frontend-plugin",
-        displayName: "Frontend Plugin",
-        // order: 0,
-        // helpText: 'A BRIEF DESCRIPTION THAT APPEARS IN THE USER TOUR WHEN YOUR PLUGIN IS HIGHLIGHTED IN THE SIDEBAR',
-      },
-    },
-  })
-);
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Single-SPA bootstrap methods have no idea what type of inputs may be
 // pushed down from the parent app
-export function bootstrap(props: any): Promise<void> {
-  return reactLifecycles.bootstrap(props);
+export function bootstrap(props: unknown): Promise<void> {
+  return reactLifecycles
+    .bootstrap(props)
+    .then(() => {
+      log.info(`${pluginName} has been successfully bootstrapped`);
+    })
+    .catch((error) => {
+      log.error(`${pluginName} failed whilst bootstrapping: ${error}`);
+    });
 }
 
-export function mount(props: any): Promise<void> {
-  return reactLifecycles.mount(props);
+export function mount(props: unknown): Promise<void> {
+  return reactLifecycles
+    .mount(props)
+    .then(() => {
+      log.info(`${pluginName} has been successfully mounted`);
+    })
+    .catch((error) => {
+      log.error(`${pluginName} failed whilst mounting: ${error}`);
+    });
 }
 
-export function unmount(props: any): Promise<void> {
-  return reactLifecycles.unmount(props);
+export function unmount(props: unknown): Promise<void> {
+  return reactLifecycles
+    .unmount(props)
+    .then(() => {
+      log.info(`${pluginName} has been successfully unmounted`);
+    })
+    .catch((error) => {
+      log.error(`${pluginName} failed whilst unmounting: ${error}`);
+    });
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 

@@ -21,8 +21,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "craco start",
+    "build": "craco build",
     "serve:build": "yarn build & serve -l 5001 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

@@ -23,6 +23,23 @@ import "./App.css";
 //   );
 // }
 
+const registerRouteAction = {
+  type: "frontend:api:register_route",
+  payload: {
+    section: "Test",
+    link: "/test",
+    plugin: "frontend-plugin",
+    displayName: "Frontend Plugin",
+  },
+};
+
+// Dispatch the register route event.
+document.dispatchEvent(
+  new CustomEvent("frontend", {
+    detail: registerRouteAction,
+  })
+);
+
 class App extends React.Component<unknown, { hasError: boolean }> {
   public constructor(props: unknown) {
     super(props);

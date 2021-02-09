@@ -1,7 +1,10 @@
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
+import 'custom-event-polyfill';
 import { createBrowserHistory } from 'history';
 import * as log from 'loglevel';
 import React from 'react';
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { AnyAction, applyMiddleware, compose, createStore } from 'redux';

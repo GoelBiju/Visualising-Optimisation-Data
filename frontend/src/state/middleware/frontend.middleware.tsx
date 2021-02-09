@@ -11,7 +11,9 @@ type microFrontendMessageType = CustomEvent<AnyAction>;
 
 export const listenToPlugins = (dispatch: Dispatch): void => {
     document.addEventListener(microFrontendMessageId, (event) => {
+        console.log('Got: ', event);
         const pluginMessage = event as microFrontendMessageType;
+        console.log(pluginMessage);
 
         if (
             pluginMessage.detail &&
@@ -24,6 +26,7 @@ export const listenToPlugins = (dispatch: Dispatch): void => {
                     // This is a message sent from parent app
                     break;
                 case RegisterRouteType:
+                    console.log('Dispatching');
                     dispatch(pluginMessage.detail);
                     break;
                 default:

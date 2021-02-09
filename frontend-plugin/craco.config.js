@@ -7,7 +7,7 @@ module.exports = {
       };
 
       if (env === "production" && !process.env.REACT_APP_E2E_TESTING) {
-        webpackConfig.output.library = "frontend_plugin";
+        webpackConfig.output.library = "frontend-plugin";
         webpackConfig.output.libraryTarget = "window";
 
         webpackConfig.output.filename = "[name].js";

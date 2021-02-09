@@ -25,6 +25,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 function domElementGetter(): HTMLElement {
+  console.log("Element getter");
   // Make sure there is a div for us to render into.
   let el = document.getElementById(pluginName);
   if (!el) {
@@ -40,6 +41,7 @@ window.addEventListener("single-spa:routing-event", () => {
 });
 
 document.addEventListener("frontend", (e) => {
+  console.log("frontend message");
   // Attempt to re-render the plugin if the frontend tell us to.
   const action = (e as CustomEvent).detail;
   if (action.type === "frontend:api:plugin_rerender") {

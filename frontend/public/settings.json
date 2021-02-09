@@ -1,7 +1,7 @@
 {
     "plugins":[
         {
-            "name": "frontend_plugin",
+            "name": "frontend-plugin",
             "src": "http://localhost:5001/main.js",
             "enable": true,
             "location": "main"

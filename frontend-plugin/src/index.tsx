@@ -53,6 +53,22 @@ const reactLifecycles = singleSpaReact({
   domElementGetter,
 });
 
+document.dispatchEvent(
+  new CustomEvent("frontend", {
+    detail: {
+      type: "frontend:api:register_route",
+      payload: {
+        section: "Test",
+        link: "/test",
+        plugin: "frontend-plugin",
+        displayName: "Frontend Plugin",
+        // order: 0,
+        // helpText: 'A BRIEF DESCRIPTION THAT APPEARS IN THE USER TOUR WHEN YOUR PLUGIN IS HIGHLIGHTED IN THE SIDEBAR',
+      },
+    },
+  })
+);
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Single-SPA bootstrap methods have no idea what type of inputs may be
 // pushed down from the parent app

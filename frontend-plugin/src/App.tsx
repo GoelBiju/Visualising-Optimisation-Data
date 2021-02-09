@@ -81,7 +81,12 @@ class App extends React.Component<any, { hasError: boolean }> {
                 }: RouteComponentProps<{
                   runId: string;
                   visualisationName: string;
-                }>) => <div className="App">This is the plugin</div>}
+                }>) => (
+                  <div className="App">
+                    The run ID is {match.params.runId} and visualisation name is{" "}
+                    {match.params.visualisationName}.
+                  </div>
+                )}
               />
             </Switch>
           </ConnectedRouter>

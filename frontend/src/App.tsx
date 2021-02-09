@@ -1,7 +1,7 @@
 import React from 'react';
-import Routing from './components/routing.component';
 // import ExampleComponent from './components/example.component';
-import MainAppBar from './pages/mainAppBar.component';
+import MainAppBar from './components/mainAppBar.component';
+import Routing from './components/routing.component';
 import './stylesheets/App.css';
 
 function App() {

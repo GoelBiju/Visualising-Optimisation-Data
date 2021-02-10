@@ -2,7 +2,7 @@
     "plugins":[
         {
             "name": "frontend-plugin",
-            "src": "http://localhost:5001/main.js",
+            "src": "https://opt-vis-frontend-plugin.herokuapp.com/main.js",
             "enable": true,
             "location": "main"
         }

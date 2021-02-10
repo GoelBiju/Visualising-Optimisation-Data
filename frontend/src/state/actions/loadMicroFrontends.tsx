@@ -13,7 +13,6 @@ const runScript = async (url: string) => {
         script.onerror = reject;
 
         const body = document.getElementsByTagName('body')[0];
-        console.log(script);
         body.appendChild(script);
     });
 };

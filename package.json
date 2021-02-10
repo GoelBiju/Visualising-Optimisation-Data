@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "workspaces": [
     "frontend", 
-    "backend"
+    "backend",
+    "frontend-plugin"
   ],
   "description": "This is the COMP3000 Computing Project on the topic of creating \"A Web Platform for Visualising Optimisation Data\".",
   "scripts": {

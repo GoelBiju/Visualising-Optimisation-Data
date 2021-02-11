@@ -8,6 +8,7 @@ import { AnyAction, Store } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import "./App.css";
+import ExampleComponent from "./example.component";
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -59,7 +60,7 @@ class App extends React.Component<
     console.log("Props received from parent: ", props);
     super(props);
     // console.log("Store: ", this.props.getStore());
-    this.state = { store: this.props.store, hasError: false };
+    this.state = { store: this.props.getStore(), hasError: false };
   }
 
   public componentDidCatch(error: Error | null): void {
@@ -77,6 +78,7 @@ class App extends React.Component<
         // Need to get the run id from the state
         <Provider store={this.state.store}>
           <div>The run ID is "" and visualisation name is "".</div>
+          <ExampleComponent />
         </Provider>
       ) : (
         <div className="error">Did not receive a store from the parent.</div>

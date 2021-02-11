@@ -12,7 +12,13 @@ const render = (): void => {
   let el = document.getElementById(pluginName);
   // Attempt to re-render the plugin if the corresponding div is present.
   if (el) {
-    ReactDOM.render(<App />, document.getElementById(pluginName));
+    // ReactDOM.render(<App />, document.getElementById(pluginName));
+    reactLifecycles = singleSpaReact({
+      React,
+      ReactDOM,
+      rootComponent: App,
+      domElementGetter,
+    });
   }
 };
 
@@ -40,7 +46,7 @@ function domElementGetter(): HTMLElement {
 window.addEventListener("single-spa:routing-event", () => {
   // Attempt to re-render the plugin if the route has changed.
   console.log("rendering due to routing");
-  // render();
+  render();
 });
 
 // TODO: Do we need this?
@@ -54,7 +60,7 @@ document.addEventListener("frontend", (e) => {
   }
 });
 
-const reactLifecycles = singleSpaReact({
+let reactLifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,

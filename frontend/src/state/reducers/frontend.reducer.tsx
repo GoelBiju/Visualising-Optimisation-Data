@@ -6,6 +6,7 @@ import createReducer from './createReducer';
 const initialState: FrontendState = {
     notifications: [],
     plugins: [],
+    runId: -1,
 };
 
 const updatePlugins = (

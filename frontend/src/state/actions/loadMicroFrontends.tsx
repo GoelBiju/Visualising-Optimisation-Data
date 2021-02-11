@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // single-spa doesn't come with any types - all single-spa code should be limited to this file.
 import * as log from 'loglevel';
+import { AnyAction, Store } from 'redux';
 import * as singleSpa from 'single-spa';
 import { microFrontendMessageId, NotificationType } from '../frontend.types';
 import { Plugin } from '../state.types';
@@ -23,7 +24,8 @@ const loadReactApp = async (name: string) => {
     return (window as any)[name];
 };
 
-async function loadApp(name: string, appURL: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadApp(name: string, appURL: string, customProps: any) {
     await runScript(appURL);
 
     // register the app with singleSPA and pass a reference to the store of the app as well as a reference to the globalEventDistributor
@@ -31,18 +33,22 @@ async function loadApp(name: string, appURL: string) {
         name,
         () => loadReactApp(name),
         () => true,
+        customProps,
     );
 }
 
-async function init(plugins: Plugin[]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function init(plugins: Plugin[], store: () => Store<any, AnyAction>) {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const loadingPromises: Promise<any>[] = [];
+
+    const customProps = { getStore: store };
 
     plugins
         .filter((p) => p.enable)
         .forEach((p) => {
             /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            const loadingPromise: Promise<any> = loadApp(p.name, p.src)
+            const loadingPromise: Promise<any> = loadApp(p.name, p.src, customProps)
                 .then(() => {
                     log.debug(`Successfully loaded plugin ${p.name} from ${p.src}`);
                 })

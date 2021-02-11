@@ -2,11 +2,12 @@ import { routerMiddleware } from "connected-react-router";
 import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
+import { Provider } from "react-redux";
+import { AnyAction, Store } from "redux";
 // import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import "./App.css";
-// import AppReducer from "./state/reducers/App.reducer";
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -49,12 +50,16 @@ document.dispatchEvent(
 );
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-class App extends React.Component<any, { hasError: boolean }> {
+class App extends React.Component<
+  any,
+  { store: Store<any, AnyAction>; hasError: boolean }
+> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public constructor(props: any) {
+    console.log("Props received from parent: ", props);
     super(props);
-    this.state = { hasError: false };
-    console.log("Props: ", props);
+    // console.log("Store: ", this.props.getStore());
+    this.state = { store: this.props.store, hasError: false };
   }
 
   public componentDidCatch(error: Error | null): void {
@@ -68,11 +73,13 @@ class App extends React.Component<any, { hasError: boolean }> {
         <div className="error">An error occurred when loading the plugin.</div>
       );
     } else {
-      return (
+      return this.state.store ? (
         // Need to get the run id from the state
-        <div className="App">
-          The run ID is "" and visualisation name is "".
-        </div>
+        <Provider store={this.state.store}>
+          <div>The run ID is "" and visualisation name is "".</div>
+        </Provider>
+      ) : (
+        <div className="error">Did not receive a store from the parent.</div>
       );
     }
   }

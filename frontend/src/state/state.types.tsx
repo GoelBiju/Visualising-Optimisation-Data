@@ -7,12 +7,13 @@ export interface Plugin {
     name: string;
     src: string;
     enable: boolean;
-    location: 'main' | 'left' | 'right';
+    // location: 'main' | 'left' | 'right';
 }
 
 export interface FrontendState {
     notifications: string[];
     plugins: RegisterRoutePayload[];
+    runId: number;
 }
 
 export interface StateType {

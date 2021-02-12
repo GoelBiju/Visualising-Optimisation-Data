@@ -7,6 +7,7 @@ import "./index.css";
 
 const pluginName = "frontend-plugin";
 
+// TODO: Does this render function work?
 const render = (): void => {
   console.log("Calling render");
   let el = document.getElementById(pluginName);

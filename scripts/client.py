@@ -8,14 +8,13 @@ import socketio
 
 # http://opt-vis-backend.herokuapp.com/
 # http://localhost:9000
-BACKEND_URL = "http://opt-vis-backend.herokuapp.com"
-# 40185
-PORT = "33585"
-WEBSOCKET_URL = BACKEND_URL + ":" + PORT
+BACKEND_URL = "http://localhost:9000"
+PORT = "9000"
 API_URL = BACKEND_URL + "/api"
 
 headers = {"content-type": "application/json"}
 
+# How does it work?
 # Run the process queue function in a separate thread/process
 # Add data as batches and then send to the backend
 # Block any further data being sent from the queue at this time until the server has finished adding it
@@ -23,6 +22,7 @@ headers = {"content-type": "application/json"}
 
 
 class DataNamespace(socketio.ClientNamespace):
+    run_id = None
     data_id = None
     # current_generation = 0
 
@@ -44,9 +44,7 @@ class DataNamespace(socketio.ClientNamespace):
         else:
             print("Unable to save data: ", data['message'])
 
-    def initialise_queue(self, data_id):
-        self.data_id = data_id
-
+    def initialise_queue(self):
         # Start a thread to send queue data
         threading.Thread(target=self.process_queue).start()
         print("Started process_queue thread")
@@ -61,6 +59,7 @@ class DataNamespace(socketio.ClientNamespace):
 
                 # Send the data
                 data = {
+                    "run_id": self.run_id,
                     "dataId": self.data_id,
                     # "generation": self.current_generation,
                     "batch": batch
@@ -91,14 +90,15 @@ class OptimiserClient():
         self.sio.register_namespace(self.data_namespace)
         self.sio.connect(BACKEND_URL)
 
-    def createRun(self, title, problem, algorithm, populationSize, generations, algorithmParameters={}, graphs=[]):
+    # generations
+    def createRun(self, title, problem, algorithm, populationSize, algorithmParameters={}, graphs=[]):
         # Create a new optimisation run given the parameters
         data = {
             "title": title,
             "problem": problem,
             "algorithm": algorithm,
             "populationSize": populationSize,
-            "generations": generations,
+            # "generations": generations,
             "algorithmParameters": algorithmParameters,
             "graphs": graphs
         }
@@ -109,11 +109,13 @@ class OptimiserClient():
             API_URL + "/runs", json.dumps(data), headers=headers).json()
         print(response)
 
-        if (response["created"]):
+        if (response["created"] and "run_id" in response and "data_id" in response):
             # Initialise the queue and provide data id to the data namespace
-            self.data_namespace.initialise_queue(response["dataId"])
-            print("Created optmisation run, data ID received: ",
-                  self.data_namespace.data_id)
+            self.data_namespace.run_id = response["run_id"]
+            self.data_namespace.data_id = response["dataId"]
+            self.data_namespace.initialise_queue()
+            print("Created optmisation run, run ID and data ID received: ",
+                  self.data_namespace.data_id, self.data_namespace.run_id)
             print("Sending data: ", self.data_namespace.sending_data)
         else:
             print("Unable to create optimisation run: ", response["message"])

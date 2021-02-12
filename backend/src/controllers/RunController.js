@@ -11,7 +11,7 @@ const createRun = async (req, res, next) => {
       algorithm,
       algorithmParameters,
       populationSize,
-      generations,
+      // generations,
       graphs,
     } = req.body;
 
@@ -25,7 +25,7 @@ const createRun = async (req, res, next) => {
         algorithm,
         algorithmParameters,
         populationSize,
-        generations,
+        // generations,
         graphs,
         dataId,
         completed: false,
@@ -37,8 +37,10 @@ const createRun = async (req, res, next) => {
         .then((run) => {
           console.log("Created a run for: ", run.title);
 
+          // Send back the run and  data IDs.
           res.json({
             created: true,
+            runId,
             dataId,
           });
         })
@@ -61,6 +63,11 @@ const createRun = async (req, res, next) => {
   }
 };
 
+const getRunByDataId = async (dataId) => {
+  const run = await Run.find({ dataId }).exec();
+  return run;
+};
+
 const getRuns = async (req, res, next) => {
   await Run.find()
     .exec()
@@ -78,6 +85,7 @@ const getRuns = async (req, res, next) => {
 };
 
 module.exports = {
-  getRuns,
   createRun,
+  getRuns,
+  getRunByDataId,
 };

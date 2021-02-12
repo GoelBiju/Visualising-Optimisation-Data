@@ -36,8 +36,7 @@ const getData = async (id) => {
 };
 
 // Add optimisation data to the document
-const addBatchData = async (id, batch) => {
-  // generation
+const addBatchData = async (runId, dataId, batch) => {
   let added = false;
 
   await getData(id).then(async (optimiserData) => {
@@ -57,6 +56,9 @@ const addBatchData = async (id, batch) => {
       added = true;
     }
   });
+
+  // TODO: Update the data with the next generation data
+  // const res = Data.updateOne({ id: dataId }, { $set: { }})
 
   return added;
 };

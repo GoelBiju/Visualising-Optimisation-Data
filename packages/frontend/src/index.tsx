@@ -1,5 +1,16 @@
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import 'custom-event-polyfill';
+// import { configureFrontend } from './state/actions/frontend.actions';
+// import FrontendMiddleware, { listenToPlugins } from './state/middleware/frontend.middleware';
+// import AppReducer from './state/reducers/App.reducer';
+// import { StateType } from './state/state.types';
+import {
+    configureFrontend,
+    FrontendCommonReducer,
+    FrontendMiddleware,
+    listenToPlugins,
+    StateType,
+} from 'frontend-common';
 import { createBrowserHistory } from 'history';
 import * as log from 'loglevel';
 import React from 'react';
@@ -11,10 +22,6 @@ import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import App from './App';
-import { configureFrontend } from './state/actions/frontend.actions';
-import FrontendMiddleware, { listenToPlugins } from './state/middleware/frontend.middleware';
-import AppReducer from './state/reducers/App.reducer';
-import { StateType } from './state/state.types';
 import './stylesheets/index.css';
 
 // Create the middleware
@@ -34,7 +41,7 @@ const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
 /* eslint-enable */
 
 // Create the store
-const store = createStore(AppReducer(history), composeEnhancers(applyMiddleware(...middleware)));
+const store = createStore(FrontendCommonReducer(history), composeEnhancers(applyMiddleware(...middleware)));
 
 // Listen to plugins
 listenToPlugins(store.dispatch);

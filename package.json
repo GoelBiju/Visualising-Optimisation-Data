@@ -4,12 +4,14 @@
   "version": "1.0.0",
   "workspaces": [
     "backend",
-    "frontend",
-    "frontend-plugin"
+    "packages/*"
   ],
   "description": "This is the COMP3000 Computing Project on the topic of creating \"A Web Platform for Visualising Optimisation Data\".",
   "scripts": {
+    "prepare": "lerna run prepare",
+    "tsc": "lerna run tsc",
     "frontend": "yarn workspace frontend start",
+    "frontend-plugin": "yarn workspace frontend-plugin serve:build",
     "backend": "yarn workspace backend dev",
     "lint:frontend": "yarn workspace frontend lint",
     "test:frontend": "yarn workspace frontend test"
@@ -23,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/GoelBiju/Visualising-Optimisation-Data/issues"
   },
-  "homepage": "https://github.com/GoelBiju/Visualising-Optimisation-Data#readme"
+  "homepage": "https://github.com/GoelBiju/Visualising-Optimisation-Data#readme",
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
 }

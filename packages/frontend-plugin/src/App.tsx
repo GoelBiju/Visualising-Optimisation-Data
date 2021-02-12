@@ -59,7 +59,7 @@ class App extends React.Component<
   public constructor(props: any) {
     console.log("Props received from parent: ", props);
     super(props);
-    // console.log("Store: ", this.props.getStore());
+    console.log("Store: ", this.props.getStore());
     this.state = { store: this.props.getStore(), hasError: false };
   }
 

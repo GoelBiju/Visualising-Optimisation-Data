@@ -1,9 +1,0 @@
-{
-    "plugins":[
-        {
-            "name": "frontend-plugin",
-            "src": "http://localhost:5000/main.js",
-            "enable": true
-        }
-    ]
-}

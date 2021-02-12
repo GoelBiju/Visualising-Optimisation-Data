@@ -1,12 +1,12 @@
 import { connectRouter } from "connected-react-router";
 import { History } from "history";
 import { combineReducers, Reducer } from "redux";
-import pluginReducer from "./plugin.reducer";
+import frontendReducer from "./frontend.reducer";
 
-const AppReducer = (history: History): Reducer =>
+const FrontendCommonReducer = (history: History): Reducer =>
   combineReducers({
     router: connectRouter(history),
-    plugin: pluginReducer,
+    frontend: frontendReducer,
   });
 
-export default AppReducer;
+export default FrontendCommonReducer;

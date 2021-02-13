@@ -6,6 +6,7 @@ import { RegisterRoutePayload, Run } from "./frontend.types";
 export interface SettingsUrls {
   backendUrl: string;
 }
+
 export interface Plugin {
   name: string;
   src: string;
@@ -16,6 +17,7 @@ export interface FrontendState {
   configuration: {
     plugins: RegisterRoutePayload[];
     urls: SettingsUrls;
+    settingsLoaded: boolean;
   };
   notifications: string[];
   runId: number;

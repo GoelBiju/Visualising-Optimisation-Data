@@ -1,6 +1,7 @@
 import * as log from "loglevel";
 import {
   FetchRunsResultType,
+  LoadedSettingsType,
   LoadUrlsPayload,
   LoadUrlsType,
   NotificationPayload,
@@ -18,6 +19,7 @@ export const initialState: FrontendState = {
     urls: {
       backendUrl: "",
     },
+    settingsLoaded: false,
   },
   notifications: [],
   runId: -1,
@@ -75,6 +77,16 @@ export function handleLoadUrls(
   };
 }
 
+export function handleLoadedSettings(state: FrontendState): FrontendState {
+  return {
+    ...state,
+    configuration: {
+      ...state.configuration,
+      settingsLoaded: true,
+    },
+  };
+}
+
 export function handleFetchRuns(
   state: FrontendState,
   payload: RunsPayload
@@ -89,6 +101,7 @@ const FrontendReducer = createReducer(initialState, {
   [NotificationType]: handleNotification,
   [RegisterRouteType]: handleRegisterPlugin,
   [LoadUrlsType]: handleLoadUrls,
+  [LoadedSettingsType]: handleLoadedSettings,
   [FetchRunsResultType]: handleFetchRuns,
 });
 

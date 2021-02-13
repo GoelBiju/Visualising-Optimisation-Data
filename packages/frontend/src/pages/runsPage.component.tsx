@@ -28,7 +28,7 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
     return (
         <div>
             {runs.map((r, i) => (
-                <div key={i}>Test</div>
+                <div key={i}>{r.title}</div>
             ))}
         </div>
     );

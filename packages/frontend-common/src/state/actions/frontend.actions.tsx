@@ -1,7 +1,8 @@
 import axios from "axios";
-import { AnyAction, Store } from "redux";
+import { Action, AnyAction, Store } from "redux";
 import loadMicroFrontends from "../../loadMicroFrontends";
 import {
+  LoadedSettingsType,
   LoadUrlsPayload,
   LoadUrlsType,
   NotificationPayload,
@@ -23,6 +24,10 @@ const loadUrls = (urls: SettingsUrls): ActionType<LoadUrlsPayload> => ({
   payload: {
     urls,
   },
+});
+
+const loadedSettings = (): Action => ({
+  type: LoadedSettingsType,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,6 +61,8 @@ export const configureFrontend = (
 
         // Load microfrontends
         loadMicroFrontends.init(settings.plugins, store);
+
+        dispatch(loadedSettings());
       })
       .catch((error) => {
         console.log(`Frontend Error: loading settings.json: ${error.message}`);

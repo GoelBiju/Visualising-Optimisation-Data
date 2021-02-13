@@ -1,8 +1,9 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { StateType } from 'frontend-common';
+import { RegisterRoutePayload, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
+import RunsPage from '../pages/runsPage.component';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -13,7 +14,7 @@ const useStyles = makeStyles(() =>
 );
 
 interface RoutingProps {
-    plugins: [];
+    plugins: RegisterRoutePayload[];
     location: string;
 }
 
@@ -29,7 +30,7 @@ const Routing = (props: RoutingProps): React.ReactElement => {
     const { plugins } = props;
     return (
         <Switch>
-            {/* <Route exact path="/runs" component={RunsPage} /> */}
+            <Route exact path="/runs" component={RunsPage} />
             {/* <Route exact path="/runs/:runId/visualisations" component={VisualisationsPage} /> */}
             {plugins.map((p) => (
                 <Route

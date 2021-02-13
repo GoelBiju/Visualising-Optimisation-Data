@@ -12,10 +12,10 @@ export const fetchRunsResult = (runs: Run[]): ActionType<RunsPayload> => ({
 // Retrieve all the runs from the API
 export const fetchRuns = (): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
-    const { backendUrl } = getState().frontend.configuration.urls;
-
+    // const { backendUrl } = getState().frontend.configuration.urls;
+    console.log("Config: ", getState().frontend.configuration);
     await axios
-      .get(`${backendUrl}/api/runs`)
+      .get(`http://localhost:9000/api/runs`)
       .then((response) => {
         dispatch(fetchRunsResult(response.data));
       })

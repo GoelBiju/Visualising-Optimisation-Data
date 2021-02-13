@@ -6,9 +6,8 @@ import {
   LoadUrlsType,
   NotificationPayload,
   NotificationType,
-  SettingsUrls,
 } from "../frontend.types";
-import { ActionType, ThunkResult } from "../state.types";
+import { ActionType, SettingsUrls, ThunkResult } from "../state.types";
 
 const frontendNotification = (
   message: string

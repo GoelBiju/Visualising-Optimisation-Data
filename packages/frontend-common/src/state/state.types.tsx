@@ -1,8 +1,11 @@
 import { RouterState } from "connected-react-router";
 import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
-import { RegisterRoutePayload, SettingsUrls } from "./frontend.types";
+import { RegisterRoutePayload, Run } from "./frontend.types";
 
+export interface SettingsUrls {
+  backendUrl: string;
+}
 export interface Plugin {
   name: string;
   src: string;
@@ -17,6 +20,7 @@ export interface FrontendState {
   notifications: string[];
   runId: number;
   visualisationName: string;
+  runs: Run[];
 }
 
 export interface StateType {

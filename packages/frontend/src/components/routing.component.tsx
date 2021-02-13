@@ -29,22 +29,20 @@ const Routing = (props: RoutingProps): React.ReactElement => {
     const classes = useStyles();
     const { plugins } = props;
     return (
-        <Switch>
-            <Route exact path="/runs" component={RunsPage} />
-            {/* <Route exact path="/runs/:runId/visualisations" component={VisualisationsPage} /> */}
-            {plugins.map((p) => (
-                <Route
-                    key={`${p.section}_${p.link}`}
-                    exact
-                    path={`/runs/:runId/visualisations/${p.plugin}`}
-                    render={() => (
-                        <div className={classes.root}>
-                            <PluginPlaceHolder id={p.plugin} />
-                        </div>
-                    )}
-                />
-            ))}
-        </Switch>
+        <div className={classes.root}>
+            <Switch>
+                <Route exact path="/runs" component={RunsPage} />
+                {/* <Route exact path="/runs/:runId/visualisations" component={VisualisationsPage} /> */}
+                {plugins.map((p) => (
+                    <Route
+                        key={`${p.section}_${p.link}`}
+                        exact
+                        path={`/runs/:runId/visualisations/${p.plugin}`}
+                        render={() => <PluginPlaceHolder id={p.plugin} />}
+                    />
+                ))}
+            </Switch>
+        </div>
     );
 };
 

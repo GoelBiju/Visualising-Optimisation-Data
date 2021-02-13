@@ -17,7 +17,7 @@ export const fetchRuns = (): ThunkResult<Promise<void>> => {
     await axios
       .get(`http://localhost:9000/api/runs`)
       .then((response) => {
-        dispatch(fetchRunsResult(response.data));
+        dispatch(fetchRunsResult(response.data.runs));
       })
       .catch((error) => {
         console.error(`fetchRuns: ${error.message}`);

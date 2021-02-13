@@ -25,7 +25,13 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
             setRunsFetched(true);
         }
     }, [runsFetched]);
-    return <div>{runs}</div>;
+    return (
+        <div>
+            {runs.map((r, i) => (
+                <div key={i}>Test</div>
+            ))}
+        </div>
+    );
 };
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>): RunsPageDispatchProps => ({

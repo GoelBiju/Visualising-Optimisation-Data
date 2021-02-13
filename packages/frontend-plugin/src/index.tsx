@@ -8,29 +8,29 @@ import "./index.css";
 const pluginName = "frontend-plugin";
 
 // TODO: Does this render function work?
-const render = (): void => {
-  console.log("Calling render");
-  let el = document.getElementById(pluginName);
-  // Attempt to re-render the plugin if the corresponding div is present.
-  if (el) {
-    // ReactDOM.render(<App />, document.getElementById(pluginName));
-    reactLifecycles = singleSpaReact({
-      React,
-      ReactDOM,
-      rootComponent: App,
-      domElementGetter,
-    });
-  }
-};
+// const render = (): void => {
+//   console.log("Calling render");
+//   let el = document.getElementById(pluginName);
+//   // Attempt to re-render the plugin if the corresponding div is present.
+//   if (el) {
+//     // ReactDOM.render(<App />, document.getElementById(pluginName));
+//     reactLifecycles = singleSpaReact({
+//       React,
+//       ReactDOM,
+//       rootComponent: App,
+//       domElementGetter,
+//     });
+//   }
+// };
 
 // This for local development.
-if (process.env.NODE_ENV === "development") {
-  console.log("rendering due to development");
-  render();
-  log.setDefaultLevel(log.levels.DEBUG);
-} else {
-  log.setDefaultLevel(log.levels.ERROR);
-}
+// if (process.env.NODE_ENV === "development") {
+//   console.log("rendering due to development");
+//   render();
+//   log.setDefaultLevel(log.levels.DEBUG);
+// } else {
+//   log.setDefaultLevel(log.levels.ERROR);
+// }
 
 function domElementGetter(): HTMLElement {
   console.log("Element getter");
@@ -44,22 +44,22 @@ function domElementGetter(): HTMLElement {
 }
 
 // Check to see if we need to re-render on routing?
-window.addEventListener("single-spa:routing-event", () => {
-  // Attempt to re-render the plugin if the route has changed.
-  console.log("rendering due to routing");
-  render();
-});
+// window.addEventListener("single-spa:routing-event", () => {
+//   // Attempt to re-render the plugin if the route has changed.
+//   console.log("rendering due to routing");
+//   render();
+// });
 
 // TODO: Do we need this?
-document.addEventListener("frontend", (e) => {
-  console.log("frontend message: ", e);
-  // Attempt to re-render the plugin if the frontend tell us to.
-  const action = (e as CustomEvent).detail;
-  if (action.type === "frontend:api:plugin_rerender") {
-    console.log("rendering due to re render from parent");
-    render();
-  }
-});
+// document.addEventListener("frontend", (e) => {
+//   console.log("frontend message: ", e);
+//   // Attempt to re-render the plugin if the frontend tell us to.
+//   const action = (e as CustomEvent).detail;
+//   if (action.type === "frontend:api:plugin_rerender") {
+//     console.log("rendering due to re render from parent");
+//     render();
+//   }
+// });
 
 let reactLifecycles = singleSpaReact({
   React,

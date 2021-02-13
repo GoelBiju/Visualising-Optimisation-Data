@@ -48,7 +48,7 @@ const Routing = (props: RoutingProps): React.ReactElement => {
 };
 
 const mapStateToProps = (state: StateType): RoutingProps => ({
-    plugins: state.frontend.plugins,
+    plugins: state.frontend.configuration.plugins,
     location: state.router.location.pathname,
 });
 

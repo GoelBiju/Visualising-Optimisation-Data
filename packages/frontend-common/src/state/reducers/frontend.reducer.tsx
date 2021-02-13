@@ -1,5 +1,7 @@
 import * as log from "loglevel";
 import {
+  LoadUrlsPayload,
+  LoadUrlsType,
   NotificationPayload,
   NotificationType,
   RegisterRoutePayload,
@@ -9,9 +11,15 @@ import { FrontendState } from "../state.types";
 import createReducer from "./createReducer";
 
 export const initialState: FrontendState = {
+  configuration: {
+    plugins: [],
+    urls: {
+      backendUrl: "",
+    },
+  },
   notifications: [],
-  plugins: [],
   runId: -1,
+  visualisationName: "",
 };
 
 const updatePlugins = (
@@ -44,13 +52,30 @@ export function handleRegisterPlugin(
 ): FrontendState {
   return {
     ...state,
-    plugins: updatePlugins(state.plugins, payload),
+    configuration: {
+      ...state.configuration,
+      plugins: updatePlugins(state.configuration.plugins, payload),
+    },
+  };
+}
+
+export function handleLoadUrls(
+  state: FrontendState,
+  payload: LoadUrlsPayload
+): FrontendState {
+  return {
+    ...state,
+    configuration: {
+      ...state.configuration,
+      urls: payload.urls,
+    },
   };
 }
 
 const FrontendReducer = createReducer(initialState, {
   [NotificationType]: handleNotification,
   [RegisterRouteType]: handleRegisterPlugin,
+  [LoadUrlsType]: handleLoadUrls,
 });
 
 export default FrontendReducer;

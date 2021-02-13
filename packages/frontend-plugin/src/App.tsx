@@ -1,4 +1,5 @@
 import { routerMiddleware } from "connected-react-router";
+import { RegisterRouteType } from "frontend-common";
 import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
@@ -33,7 +34,7 @@ if (process.env.NODE_ENV === "development") {
 // );
 
 const registerRouteAction = {
-  type: "frontend:api:register_route",
+  type: RegisterRouteType,
   payload: {
     section: "Test",
     // TODO: Do we still need the link?

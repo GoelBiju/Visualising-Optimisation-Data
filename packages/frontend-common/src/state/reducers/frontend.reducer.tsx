@@ -22,7 +22,7 @@ export const initialState: FrontendState = {
     settingsLoaded: false,
   },
   notifications: [],
-  runId: -1,
+  runId: "",
   visualisationName: "",
   runs: [],
 };

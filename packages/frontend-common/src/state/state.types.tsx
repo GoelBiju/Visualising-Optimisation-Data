@@ -14,15 +14,16 @@ export interface Plugin {
 }
 
 export interface FrontendState {
+  notifications: string[];
   configuration: {
     plugins: RegisterRoutePayload[];
     urls: SettingsUrls;
     settingsLoaded: boolean;
   };
-  notifications: string[];
-  runId: number;
-  visualisationName: string;
   runs: Run[];
+  selectedRun: Run;
+  selectedVisualisation: string;
+  // data: Data[];
 }
 
 export interface StateType {

@@ -1,8 +1,10 @@
+import { List, ListItem } from '@material-ui/core';
 import { fetchRuns, Run, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import RunCard from '../components/runCard.component';
 
 interface RunsPageDispatchProps {
     fetchRuns: () => Promise<void>;
@@ -15,7 +17,9 @@ interface RunsPageStateProps {
 type RunsPageCombinedProps = RunsPageDispatchProps & RunsPageStateProps;
 
 const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
-    const { fetchRuns, runs } = props;
+    const { runs, fetchRuns } = props;
+    console.log('Got runs: ', runs);
+
     const [runsFetched, setRunsFetched] = React.useState(false);
 
     React.useEffect(() => {
@@ -25,11 +29,23 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
             setRunsFetched(true);
         }
     }, [runsFetched]);
+
     return (
         <div>
-            {runs.map((r, i) => (
-                <div key={i}>{r.title}</div>
-            ))}
+            <List>
+                {runs.map((run, index) => (
+                    <ListItem key={index}>
+                        <RunCard
+                            id={run._id}
+                            title={run.title}
+                            problem={run.problem}
+                            created={run.createdAt}
+                            generations={run.generations}
+                            graphs={run.graphs}
+                        />
+                    </ListItem>
+                ))}
+            </List>
         </div>
     );
 };

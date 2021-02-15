@@ -77,6 +77,10 @@ const getRuns = async (req, res, next) => {
     });
 };
 
+// const getRun = async (req, res, next) => {
+//   await Run.find().exec
+// }
+
 module.exports = {
   getRuns,
   createRun,

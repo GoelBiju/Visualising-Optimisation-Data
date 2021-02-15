@@ -29,7 +29,7 @@ export interface RegisterRoutePayload {
 }
 
 export interface Run {
-  id: string;
+  _id: string;
   dataId: string;
   title: string;
   problem: string;

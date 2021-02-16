@@ -1,5 +1,3 @@
-import { SettingsUrls } from "./state.types";
-
 export const microFrontendMessageId = "frontend";
 
 // Plugin communication
@@ -13,14 +11,6 @@ export const LoadedSettingsType = `${microFrontendMessageId}:loaded_settings`;
 export const FetchRunsType = `${microFrontendMessageId}:fetch_runs`;
 export const FetchRunsResultType = `${microFrontendMessageId}:fetch_runs_result`;
 export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
-
-export interface NotificationPayload {
-  message: string;
-}
-
-export interface LoadUrlsPayload {
-  urls: SettingsUrls;
-}
 
 export interface RegisterRoutePayload {
   section: string;

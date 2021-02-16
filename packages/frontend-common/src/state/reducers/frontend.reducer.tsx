@@ -1,11 +1,13 @@
 import * as log from "loglevel";
 import {
+  LoadUrlsPayload,
+  NotificationPayload,
+} from "../actions/frontend.actions";
+import {
   FetchRunResultType,
   FetchRunsResultType,
   LoadedSettingsType,
-  LoadUrlsPayload,
   LoadUrlsType,
-  NotificationPayload,
   NotificationType,
   RegisterRoutePayload,
   RegisterRouteType,

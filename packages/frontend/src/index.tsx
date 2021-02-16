@@ -1,9 +1,5 @@
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import 'custom-event-polyfill';
-// import { configureFrontend } from './state/actions/frontend.actions';
-// import FrontendMiddleware, { listenToPlugins } from './state/middleware/frontend.middleware';
-// import AppReducer from './state/reducers/App.reducer';
-// import { StateType } from './state/state.types';
 import {
     configureFrontend,
     FrontendCommonReducer,

@@ -1,31 +1,37 @@
-import { List } from '@material-ui/core';
-import { fetchRuns, RegisterRoutePayload, StateType } from 'frontend-common';
+import { List, ListItem } from '@material-ui/core';
+import { fetchRun, RegisterRoutePayload, Run, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import VisualisationCard from '../components/visualisationCard.component';
 
 interface VisualisationsPageProps {
     runId: string;
 }
 
-// interface VisualisationPageDispatchProps {
-//     fetchRuns: () => Promise<void>;
-// }
+interface VisualisationsPageDispatchProps {
+    fetchRun: (runId: string) => Promise<void>;
+}
 
 interface VisualisationsPageStateProps {
+    selectedRun: Run | null;
     plugins: RegisterRoutePayload[];
 }
 
-type VisualisationsPageCombinedProps = VisualisationsPageProps & VisualisationsPageStateProps;
+type VisualisationsPageCombinedProps = VisualisationsPageProps &
+    VisualisationsPageDispatchProps &
+    VisualisationsPageStateProps;
 
 const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.ReactElement => {
-    const { runId, plugins } = props;
+    const { runId, fetchRun, plugins, selectedRun } = props;
 
     const [runsFetched, setRunsFetched] = React.useState(false);
 
     React.useEffect(() => {
         if (!runsFetched) {
             // Call to fetch runs.
-            fetchRuns();
+            fetchRun(runId);
             setRunsFetched(true);
         }
     }, [runsFetched]);
@@ -33,27 +39,33 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
     return (
         <div>
             <List>
-                {/* {plugins.map(
-                    (p, i) =>
-                        graphs.includes(p.plugin) && (
-                            <ListItem key={i}>
-                                <VisualisationCard />
-                            </ListItem>
-                        ),
-                )} */}
+                {selectedRun &&
+                    plugins.map(
+                        (p, i) =>
+                            selectedRun.graphs.includes(p.plugin) && (
+                                <ListItem key={i}>
+                                    <VisualisationCard
+                                        runId={runId}
+                                        visualisationName={p.plugin}
+                                        displayName={p.displayName}
+                                    />
+                                </ListItem>
+                            ),
+                    )}
             </List>
         </div>
     );
 };
 
-// const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>): RunsPageDispatchProps => ({
-//     fetchRuns: () => dispatch(fetchRuns()),
-// });
+const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>): VisualisationsPageDispatchProps => ({
+    fetchRun: (runId: string) => dispatch(fetchRun(runId)),
+});
 
 const mapStateToProps = (state: StateType): VisualisationsPageStateProps => {
     return {
-        plugins: state.frontend.configuration.plugins,
+        selectedRun: state.frontend.selectedRun, // get supported plugins for run
+        plugins: state.frontend.configuration.plugins, // get loaded plugins
     };
 };
 
-export default connect(mapStateToProps)(VisualisationsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(VisualisationsPage);

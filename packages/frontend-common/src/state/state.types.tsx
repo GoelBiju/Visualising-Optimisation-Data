@@ -21,9 +21,8 @@ export interface FrontendState {
     settingsLoaded: boolean;
   };
   runs: Run[];
-  selectedRun: Run;
+  selectedRun: Run | null;
   selectedVisualisation: string;
-  // data: Data[];
 }
 
 export interface StateType {

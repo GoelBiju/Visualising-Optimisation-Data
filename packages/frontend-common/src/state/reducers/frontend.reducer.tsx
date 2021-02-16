@@ -1,5 +1,6 @@
 import * as log from "loglevel";
 import {
+  FetchRunResultType,
   FetchRunsResultType,
   LoadedSettingsType,
   LoadUrlsPayload,
@@ -8,12 +9,14 @@ import {
   NotificationType,
   RegisterRoutePayload,
   RegisterRouteType,
+  RunPayload,
   RunsPayload,
 } from "../frontend.types";
 import { FrontendState } from "../state.types";
 import createReducer from "./createReducer";
 
 export const initialState: FrontendState = {
+  notifications: [],
   configuration: {
     plugins: [],
     urls: {
@@ -21,10 +24,9 @@ export const initialState: FrontendState = {
     },
     settingsLoaded: false,
   },
-  notifications: [],
-  runId: "",
-  visualisationName: "",
   runs: [],
+  selectedRun: null,
+  selectedVisualisation: "",
 };
 
 const updatePlugins = (
@@ -97,12 +99,24 @@ export function handleFetchRuns(
   };
 }
 
+export function handleFetchRun(
+  state: FrontendState,
+  payload: RunPayload
+): FrontendState {
+  return {
+    ...state,
+    selectedRun: payload.run,
+    runs: [],
+  };
+}
+
 const FrontendReducer = createReducer(initialState, {
   [NotificationType]: handleNotification,
   [RegisterRouteType]: handleRegisterPlugin,
   [LoadUrlsType]: handleLoadUrls,
   [LoadedSettingsType]: handleLoadedSettings,
   [FetchRunsResultType]: handleFetchRuns,
+  [FetchRunResultType]: handleFetchRun,
 });
 
 export default FrontendReducer;

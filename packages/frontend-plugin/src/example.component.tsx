@@ -7,7 +7,7 @@ interface ExampleComponentProps {
 }
 
 const ExampleComponent = (props: ExampleComponentProps): React.ReactElement => (
-  <div>{props.notifications}</div>
+  <div>Notifications: {props.notifications}</div>
 );
 
 const mapStateToProps = (state: StateType): ExampleComponentProps => {

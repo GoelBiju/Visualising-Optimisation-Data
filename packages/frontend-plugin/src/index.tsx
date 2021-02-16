@@ -1,3 +1,4 @@
+import { RegisterRouteType } from "frontend-common";
 import * as log from "loglevel";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -116,3 +117,23 @@ export function unmount(props: any): Promise<void> {
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
+
+const registerRouteAction = {
+  type: RegisterRouteType,
+  payload: {
+    section: "Test",
+    // TODO: Do we still need the link?
+    link: "/runs/:runId/visualisations/frontend-plugin/data",
+    plugin: "frontend-plugin",
+    displayName: "Frontend Plugin",
+  },
+};
+
+// Dispatch the register route event.
+document.dispatchEvent(
+  new CustomEvent("frontend", {
+    detail: registerRouteAction,
+  })
+);
+
+console.log("Done plugin dispatch");

@@ -1,5 +1,4 @@
 import { routerMiddleware } from "connected-react-router";
-import { RegisterRouteType } from "frontend-common";
 import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
@@ -33,24 +32,6 @@ if (process.env.NODE_ENV === "development") {
 //   composeEnhancers(applyMiddleware(...middleware))
 // );
 
-const registerRouteAction = {
-  type: RegisterRouteType,
-  payload: {
-    section: "Test",
-    // TODO: Do we still need the link?
-    link: "/runs/:runId/visualisations/frontend-plugin",
-    plugin: "frontend-plugin",
-    displayName: "Frontend Plugin",
-  },
-};
-
-// Dispatch the register route event.
-document.dispatchEvent(
-  new CustomEvent("frontend", {
-    detail: registerRouteAction,
-  })
-);
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class App extends React.Component<
   any,
@@ -78,7 +59,6 @@ class App extends React.Component<
       return this.state.store ? (
         // Need to get the run id from the state
         <Provider store={this.state.store}>
-          <div>The run ID is "" and visualisation name is "".</div>
           <ExampleComponent />
         </Provider>
       ) : (

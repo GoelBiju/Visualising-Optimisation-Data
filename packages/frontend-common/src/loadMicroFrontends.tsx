@@ -31,13 +31,15 @@ const loadReactApp = async (name: string) => {
 async function loadApp(name: string, appURL: string, customProps: any) {
   await runScript(appURL);
 
-  // register the app with singleSPA and pass a reference to the store of the app as well as a reference to the globalEventDistributor
+  // register the app with singleSPA and pass a reference to the store of the app
   singleSpa.registerApplication(
     name,
     () => loadReactApp(name),
     () => true,
     customProps
   );
+
+  console.log("loaded single-spa");
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +48,7 @@ async function init(plugins: Plugin[], store: () => Store<any, AnyAction>) {
   const loadingPromises: Promise<any>[] = [];
 
   const customProps = { getStore: store };
-
+  console.log("loading plugins");
   plugins
     .filter((p) => p.enable)
     .forEach((p) => {

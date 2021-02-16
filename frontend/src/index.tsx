@@ -41,7 +41,7 @@ listenToPlugins(store.dispatch);
 
 // Dispatch a call to configure the frontend
 const dispatch = store.dispatch as ThunkDispatch<StateType, null, AnyAction>;
-dispatch(configureFrontend());
+dispatch(configureFrontend(store));
 
 ReactDOM.render(
     <Provider store={store}>

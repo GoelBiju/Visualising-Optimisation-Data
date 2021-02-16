@@ -32,12 +32,22 @@ const Routing = (props: RoutingProps): React.ReactElement => {
     return (
         <div className={classes.root}>
             <Switch>
+                <Route
+                    exact
+                    path="/"
+                    render={() => (
+                        <a style={{ margin: '64px' }} href="/runs/1/visualisations/test/data">
+                            Test
+                        </a>
+                    )}
+                />
                 {/* <Route exact path="/" component={RunsPage} /> */}
                 {/* <Route exact path="/:runId/visualisations" component={VisualisationsPage} /> */}
 
                 {plugins.map((p) => (
                     <Route
                         key={`${p.section}_${p.link}`}
+                        exact
                         path={p.link}
                         render={() => <div id={p.plugin}>{p.displayName}</div>}
                     />

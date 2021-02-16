@@ -7,22 +7,30 @@ import "./index.css";
 
 const pluginName = "frontend-plugin";
 
-const render = (): void => {
-  console.log("Calling render");
-  let el = document.getElementById(pluginName);
-  // Attempt to re-render the plugin if the corresponding div is present.
-  if (el) {
-    ReactDOM.render(<App />, document.getElementById(pluginName));
-  }
-};
+// let reactLifecycles: singleSpaReact.Lifecycles;
+
+// const render = (): void => {
+//   console.log("Calling render");
+//   let el = document.getElementById(pluginName);
+//   // Attempt to re-render the plugin if the corresponding div is present.
+//   if (el) {
+//     // ReactDOM.render(<App />, document.getElementById(pluginName));
+//     reactLifecycles = singleSpaReact({
+//       React,
+//       ReactDOM,
+//       rootComponent: App,
+//       domElementGetter,
+//     });
+//   }
+// };
 
 // This for local development.
-if (process.env.NODE_ENV === "development") {
-  render();
-  log.setDefaultLevel(log.levels.DEBUG);
-} else {
-  log.setDefaultLevel(log.levels.ERROR);
-}
+// if (process.env.NODE_ENV === "development") {
+//   render();
+//   log.setDefaultLevel(log.levels.DEBUG);
+// } else {
+//   log.setDefaultLevel(log.levels.ERROR);
+// }
 
 function domElementGetter(): HTMLElement {
   console.log("Element getter");
@@ -35,21 +43,21 @@ function domElementGetter(): HTMLElement {
   return el;
 }
 
-window.addEventListener("single-spa:routing-event", () => {
-  // Attempt to re-render the plugin if the route has changed.
-  render();
-});
+// window.addEventListener("single-spa:routing-event", () => {
+//   // Attempt to re-render the plugin if the route has changed.
+//   render();
+// });
 
-document.addEventListener("frontend", (e) => {
-  console.log("frontend message");
-  // Attempt to re-render the plugin if the frontend tell us to.
-  const action = (e as CustomEvent).detail;
-  if (action.type === "frontend:api:plugin_rerender") {
-    render();
-  }
-});
+// document.addEventListener("frontend", (e) => {
+//   console.log("frontend message");
+//   // Attempt to re-render the plugin if the frontend tell us to.
+//   const action = (e as CustomEvent).detail;
+//   if (action.type === "frontend:api:plugin_rerender") {
+//     render();
+//   }
+// });
 
-const reactLifecycles = singleSpaReact({
+let reactLifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,

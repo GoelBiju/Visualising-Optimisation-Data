@@ -4,11 +4,13 @@ import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router";
-import { applyMiddleware, compose, createStore } from "redux";
+import { AnyAction, Store } from "redux";
+// import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import "./App.css";
-import AppReducer from "./state/reducers/App.reducer";
+import ExampleComponent from "./example.component";
+// import AppReducer from "./state/reducers/App.reducer";
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -21,22 +23,22 @@ if (process.env.NODE_ENV === "development") {
   log.setDefaultLevel(log.levels.ERROR);
 }
 
-/* eslint-disable no-underscore-dangle, @typescript-eslint/no-explicit-any */
-const composeEnhancers =
-  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-/* eslint-enable */
+// /* eslint-disable no-underscore-dangle, @typescript-eslint/no-explicit-any */
+// const composeEnhancers =
+//   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// /* eslint-enable */
 
 // Create the store
-const store = createStore(
-  AppReducer(history),
-  composeEnhancers(applyMiddleware(...middleware))
-);
+// const store = createStore(
+//   AppReducer(history),
+//   composeEnhancers(applyMiddleware(...middleware))
+// );
 
 const registerRouteAction = {
   type: "frontend:api:register_route",
   payload: {
     section: "Test",
-    link: "/",
+    link: "/runs/:runId/visualisations/:visualisationName/data",
     plugin: "frontend-plugin",
     displayName: "Frontend Plugin",
   },
@@ -50,16 +52,19 @@ document.dispatchEvent(
 );
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-class App extends React.Component<any, { hasError: boolean }> {
+class App extends React.Component<
+  any,
+  { hasError: boolean; store: Store<any, AnyAction> }
+> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   public constructor(props: any) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, store: props.store };
     console.log("Props: ", props);
   }
 
   public componentDidCatch(error: Error | null): void {
-    this.setState({ hasError: true });
+    this.setState({ ...this.state, hasError: true });
     log.error(`frontend-plugin failed with error: ${error}`);
   }
 
@@ -68,14 +73,16 @@ class App extends React.Component<any, { hasError: boolean }> {
       return (
         <div className="error">An error occurred when loading the plugin.</div>
       );
+    } else if (!this.state.store) {
+      return <div className="error">No store received.</div>;
     } else {
       return (
-        <Provider store={store}>
+        <Provider store={this.state.store}>
           <ConnectedRouter history={history}>
             <Switch>
               <Route
                 exact
-                path={"/runs/:runId/visualisations/:visualisationName"}
+                path={"/runs/:runId/visualisations/:visualisationName/data"}
                 render={({
                   match,
                 }: RouteComponentProps<{
@@ -85,6 +92,7 @@ class App extends React.Component<any, { hasError: boolean }> {
                   <div className="App">
                     The run ID is {match.params.runId} and visualisation name is{" "}
                     {match.params.visualisationName}.
+                    <ExampleComponent />
                   </div>
                 )}
               />

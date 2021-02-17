@@ -1,9 +1,8 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { RegisterRoutePayload, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
-import { RegisterRoutePayload } from '../state/frontend.types';
-import { StateType } from '../state/state.types';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -61,7 +60,7 @@ const Routing = (props: RoutingProps): React.ReactElement => {
 };
 
 const mapStateToProps = (state: StateType): RoutingProps => ({
-    plugins: state.frontend.plugins,
+    plugins: state.frontend.configuration.plugins,
     location: state.router.location.pathname,
 });
 

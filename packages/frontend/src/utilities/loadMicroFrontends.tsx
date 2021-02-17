@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // single-spa doesn't come with any types - all single-spa code should be limited to this file.
+import { microFrontendMessageId, NotificationType } from 'frontend-common';
 import * as log from 'loglevel';
 import { AnyAction, Store } from 'redux';
 import * as singleSpa from 'single-spa';
-import { microFrontendMessageId, NotificationType } from '../frontend.types';
-import { Plugin } from '../state.types';
+
+export interface Plugin {
+    name: string;
+    src: string;
+    enable: boolean;
+    location: 'main' | 'left' | 'right';
+}
 
 const runScript = async (url: string) => {
     return new Promise((resolve, reject) => {

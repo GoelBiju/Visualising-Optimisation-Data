@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const runApiRoute = require("./src/routes/run");
 
@@ -29,6 +30,7 @@ let server = http.createServer(app);
 
 // Configure app.
 app.use(morgan("dev"));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "resources")));
 

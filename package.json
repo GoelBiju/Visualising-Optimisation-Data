@@ -3,14 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "workspaces": [
-    "frontend", 
     "backend",
-    "frontend-plugin"
+    "packages/*"
   ],
   "description": "This is the COMP3000 Computing Project on the topic of creating \"A Web Platform for Visualising Optimisation Data\".",
   "scripts": {
-    "frontend": "yarn workspace frontend start",
     "backend": "yarn workspace backend dev",
+    "frontend": "yarn workspace frontend start",
+    "frontend-plugin": "yarn workspace frontend-plugin serve:build",
     "lint:frontend": "yarn workspace frontend lint",
     "test:frontend": "yarn workspace frontend test"
   },

@@ -6,6 +6,8 @@ import {
     FrontendMiddleware,
     frontendNotification,
     listenToPlugins,
+    loadedSettings,
+    loadUrls,
     StateType,
     ThunkResult,
 } from 'frontend-common';
@@ -54,8 +56,26 @@ const configureFrontend = (store: Store<unknown, AnyAction>): ThunkResult<Promis
                 const settings = res.data;
                 dispatch(frontendNotification(JSON.stringify(settings)));
 
+                if (typeof settings !== 'object') {
+                    throw Error("Configuring frontend: 'settings.json' Invalid format");
+                }
+
+                // Load URLs
+                if ('backendUrl' in settings) {
+                    dispatch(
+                        loadUrls({
+                            backendUrl: settings['backendUrl'],
+                        }),
+                    );
+                } else {
+                    throw new Error('The backendUrl is missing in setttings.json');
+                }
+
                 // Load microfrontends
                 loadMicroFrontends.init(settings.plugins, store);
+
+                // Loaded all settings
+                dispatch(loadedSettings());
             })
             .catch((error) => {
                 console.log(`Frontend Error: loading settings.json: ${error.message}`);

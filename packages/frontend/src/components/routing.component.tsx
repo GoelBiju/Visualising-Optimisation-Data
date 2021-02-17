@@ -3,6 +3,7 @@ import { RegisterRoutePayload, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router';
+import RunsPage from '../pages/runsPage.component';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -31,7 +32,7 @@ const Routing = (props: RoutingProps): React.ReactElement => {
     return (
         <div className={classes.root}>
             <Switch>
-                <Route
+                {/* <Route
                     exact
                     path="/"
                     render={() => (
@@ -39,7 +40,8 @@ const Routing = (props: RoutingProps): React.ReactElement => {
                             Test
                         </a>
                     )}
-                />
+                /> */}
+                <Route exact path="/" component={RunsPage} />
                 {/* <Route exact path="/" component={RunsPage} /> */}
                 {/* <Route exact path="/:runId/visualisations" component={VisualisationsPage} /> */}
 

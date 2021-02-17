@@ -1,4 +1,4 @@
-import { ConnectedRouter, routerMiddleware } from "connected-react-router";
+import { routerMiddleware } from "connected-react-router";
 // import AppReducer from "./state/reducers/App.reducer";
 import { microFrontendMessageId } from "frontend-common";
 import { createBrowserHistory } from "history";
@@ -78,9 +78,7 @@ class App extends React.Component<
     } else {
       return (
         <Provider store={this.state.store}>
-          <ConnectedRouter history={history}>
-            <ExampleComponent />
-          </ConnectedRouter>
+          <ExampleComponent />
         </Provider>
       );
     }

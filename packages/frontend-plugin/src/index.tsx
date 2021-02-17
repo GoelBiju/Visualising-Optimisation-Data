@@ -43,11 +43,11 @@ function domElementGetter(): HTMLElement {
   return el;
 }
 
-window.addEventListener("single-spa:routing-event", () => {
-  // Attempt to re-render the plugin if the route has changed.
-  // render();
-  console.log("singleSpa - routing");
-});
+// window.addEventListener("single-spa:routing-event", () => {
+//   // Attempt to re-render the plugin if the route has changed.
+//   render();
+//   console.log("singleSpa - routing");
+// });
 
 // document.addEventListener("frontend", (e) => {
 //   console.log("frontend message");

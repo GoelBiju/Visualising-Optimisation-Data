@@ -1,10 +1,11 @@
-import { routerMiddleware } from "connected-react-router";
+import { ConnectedRouter, routerMiddleware } from "connected-react-router";
 // import AppReducer from "./state/reducers/App.reducer";
 import { microFrontendMessageId } from "frontend-common";
-import { createBrowserHistory, Location } from "history";
+import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
+import { Route, RouteComponentProps, Switch } from "react-router";
 import { AnyAction, Store } from "redux";
 // import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
@@ -51,29 +52,18 @@ document.dispatchEvent(
   })
 );
 
-interface AppProps {
-  location: Location;
-}
-
 interface AppState {
   hasError: boolean;
   store: Store<any, AnyAction>;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-class App extends React.Component<AppProps, AppState> {
+class App extends React.Component<unknown, AppState> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  public constructor(props: AppProps & AppState) {
+  public constructor(props: AppState) {
     super(props);
     this.state = { hasError: false, store: props.store };
     console.log("Props: ", props);
-  }
-
-  public componentDidUpdate(prevProps: AppProps) {
-    if (this.props.location.pathname !== prevProps.location.pathname) {
-      console.log("Changed");
-      this.render();
-    }
   }
 
   public componentDidCatch(error: Error | null): void {
@@ -91,7 +81,25 @@ class App extends React.Component<AppProps, AppState> {
     } else {
       return (
         <Provider store={this.state.store}>
-          <ExampleComponent />
+          <ConnectedRouter history={history}>
+            <Switch>
+              <Route
+                exact
+                path={`/runs/:runId/visualisations/:visualisationName/data`}
+                render={({
+                  match,
+                }: RouteComponentProps<{
+                  runId: string;
+                  visualisationName: string;
+                }>) => (
+                  <ExampleComponent
+                    runId={match.params.runId}
+                    visualisationName={match.params.visualisationName}
+                  />
+                )}
+              />
+            </Switch>
+          </ConnectedRouter>
         </Provider>
       );
     }

@@ -1,24 +1,12 @@
-import { StateType } from 'frontend-common';
 import React from 'react';
-import { connect } from 'react-redux';
 import MainAppBar from './components/mainAppBar.component';
 import Preloader from './components/preloader.component';
 import Routing from './components/routing.component';
 import './stylesheets/App.css';
 
-interface AppProps {
-    location: string;
-}
-
-class App extends React.Component<AppProps, unknown> {
-    public constructor(props: AppProps) {
+class App extends React.Component<unknown, unknown> {
+    public constructor(props: unknown) {
         super(props);
-    }
-
-    public componentDidUpdate(prevProps: AppProps) {
-        if (this.props.location !== prevProps.location) {
-            this.render();
-        }
     }
 
     public render(): React.ReactNode {
@@ -35,10 +23,4 @@ class App extends React.Component<AppProps, unknown> {
     }
 }
 
-const mapStateToProps = (state: StateType): AppProps => {
-    return {
-        location: state.router.location.pathname,
-    };
-};
-
-export default connect(mapStateToProps)(App);
+export default App;

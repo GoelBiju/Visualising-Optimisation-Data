@@ -41,7 +41,7 @@
     "single-spa": "^5.5.4",
     "socket.io-client": "^2.3.1",
     "typescript": "^4.0.3",
-    "web-vitals": "^0.2.4"
+    "frontend-common": "0.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

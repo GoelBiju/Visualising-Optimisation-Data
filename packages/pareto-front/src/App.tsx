@@ -39,9 +39,9 @@ const registerRouteAction = {
   type: "frontend:api:register_route",
   payload: {
     section: "Test",
-    link: "/runs/:runId/visualisations/frontend-plugin/data",
-    plugin: "frontend-plugin",
-    displayName: "Frontend Plugin",
+    link: "/runs/:runId/visualisations/pareto-front/data",
+    plugin: "pareto-front",
+    displayName: "Pareto Front",
   },
 };
 
@@ -68,7 +68,7 @@ class App extends React.Component<unknown, AppState> {
 
   public componentDidCatch(error: Error | null): void {
     this.setState({ ...this.state, hasError: true });
-    log.error(`frontend-plugin failed with error: ${error}`);
+    log.error(`pareto-front failed with error: ${error}`);
   }
 
   public render(): React.ReactNode {

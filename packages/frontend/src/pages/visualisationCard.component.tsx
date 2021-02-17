@@ -35,6 +35,7 @@ const VisualisationCard = (props: VisualisationCardProps): React.ReactElement =>
         <Card className={classes.root}>
             <CardContent>
                 <Typography variant="h5" component="h2">
+                    {/* <Link component={RouterLink} to={`/runs/${runId}/visualisations/${visualisationName}/data`}> */}
                     <Link href={`/runs/${runId}/visualisations/${visualisationName}/data`}>{displayName}</Link>
                 </Typography>
             </CardContent>

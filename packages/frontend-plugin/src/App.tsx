@@ -1,16 +1,16 @@
 import { ConnectedRouter, routerMiddleware } from "connected-react-router";
+// import AppReducer from "./state/reducers/App.reducer";
+import { microFrontendMessageId } from "frontend-common";
 import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
-import { Route, RouteComponentProps, Switch } from "react-router";
 import { AnyAction, Store } from "redux";
 // import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import "./App.css";
 import ExampleComponent from "./example.component";
-// import AppReducer from "./state/reducers/App.reducer";
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -46,7 +46,7 @@ const registerRouteAction = {
 
 // Dispatch the register route event.
 document.dispatchEvent(
-  new CustomEvent("frontend", {
+  new CustomEvent(microFrontendMessageId, {
     detail: registerRouteAction,
   })
 );
@@ -79,24 +79,7 @@ class App extends React.Component<
       return (
         <Provider store={this.state.store}>
           <ConnectedRouter history={history}>
-            <Switch>
-              <Route
-                exact
-                path={"/runs/:runId/visualisations/:visualisationName/data"}
-                render={({
-                  match,
-                }: RouteComponentProps<{
-                  runId: string;
-                  visualisationName: string;
-                }>) => (
-                  <div className="App">
-                    The run ID is {match.params.runId} and visualisation name is{" "}
-                    {match.params.visualisationName}.
-                    <ExampleComponent />
-                  </div>
-                )}
-              />
-            </Switch>
+            <ExampleComponent />
           </ConnectedRouter>
         </Provider>
       );

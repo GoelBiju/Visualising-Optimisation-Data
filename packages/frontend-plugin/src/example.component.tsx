@@ -1,23 +1,6 @@
-import { RouterState } from "connected-react-router";
+import { StateType } from "frontend-common";
 import React from "react";
 import { connect } from "react-redux";
-
-export interface RegisterRoutePayload {
-  section: string;
-  link: string;
-  plugin: string;
-  displayName: string;
-}
-
-export interface FrontendState {
-  notifications: string[];
-  plugins: RegisterRoutePayload[];
-}
-
-export interface StateType {
-  frontend: FrontendState;
-  router: RouterState;
-}
 
 interface ExampleComponentProps {
   notifications: string[];

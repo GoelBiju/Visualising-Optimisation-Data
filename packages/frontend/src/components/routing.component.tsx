@@ -12,11 +12,6 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-interface RoutingProps {
-    plugins: RegisterRoutePayload[];
-    location: string;
-}
-
 // TODO: Use this
 // class PluginPlaceHolder extends React.PureComponent<{ id: string }> {
 //     public render(): React.ReactNode {
@@ -24,6 +19,11 @@ interface RoutingProps {
 //         return <div id={id}>{id} failed to load correctly</div>;
 //     }
 // }
+
+interface RoutingProps {
+    plugins: RegisterRoutePayload[];
+    location: string;
+}
 
 const Routing = (props: RoutingProps): React.ReactElement => {
     const classes = useStyles();
@@ -51,9 +51,6 @@ const Routing = (props: RoutingProps): React.ReactElement => {
                         render={() => <div id={p.plugin}>{p.displayName}</div>}
                     />
                 ))}
-
-                {/* <Route exact path="/one" render={() => <div>Exact</div>} />
-            <Route render={() => <div>Test</div>} /> */}
             </Switch>
         </div>
     );

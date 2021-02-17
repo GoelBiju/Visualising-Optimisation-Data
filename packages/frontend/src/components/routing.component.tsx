@@ -1,5 +1,6 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { RegisterRoutePayload, StateType } from 'frontend-common';
+import { Location } from 'history';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Route, RouteComponentProps, Switch } from 'react-router';
@@ -14,7 +15,7 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-class PluginPlaceHolder extends React.PureComponent<{ id: string }> {
+class PluginPlaceHolder extends React.Component<{ id: string }> {
     public render(): React.ReactNode {
         const { id } = this.props;
         return <div id={id}>{id} failed to load correctly</div>;
@@ -23,15 +24,20 @@ class PluginPlaceHolder extends React.PureComponent<{ id: string }> {
 
 interface RoutingProps {
     plugins: RegisterRoutePayload[];
-    location: string;
+    location: Location;
 }
 
 const Routing = (props: RoutingProps): React.ReactElement => {
     const classes = useStyles();
-    const { plugins } = props;
+    const { plugins, location } = props;
+
+    React.useEffect(() => {
+        console.log('Changed location: ', location);
+    }, [location]);
+
     return (
         <div className={classes.root}>
-            <Switch>
+            <Switch location={location}>
                 {/* <Route
                     exact
                     path="/"
@@ -64,7 +70,7 @@ const Routing = (props: RoutingProps): React.ReactElement => {
 
 const mapStateToProps = (state: StateType): RoutingProps => ({
     plugins: state.frontend.configuration.plugins,
-    location: state.router.location.pathname,
+    location: state.router.location,
 });
 
 export default connect(mapStateToProps)(Routing);

@@ -1,7 +1,6 @@
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 
 const useStyles = makeStyles({
     root: {
@@ -31,14 +30,13 @@ const VisualisationCard = (props: VisualisationCardProps): React.ReactElement =>
 
     const { runId, visualisationName, displayName } = props;
 
+    // TODO: Use a standard link instead of a react-router link: https://material-ui.com/components/links/
     return (
         <Card className={classes.root}>
             <CardContent>
-                <Link component={RouterLink} to={`/runs/${runId}/visualisations/${visualisationName}/data`}>
-                    <Typography variant="h5" component="h2">
-                        {displayName}
-                    </Typography>
-                </Link>
+                <Typography variant="h5" component="h2">
+                    <Link href={`/runs/${runId}/visualisations/${visualisationName}/data`}>{displayName}</Link>
+                </Typography>
             </CardContent>
         </Card>
     );

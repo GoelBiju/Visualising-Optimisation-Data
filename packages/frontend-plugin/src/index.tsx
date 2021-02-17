@@ -7,7 +7,7 @@ import "./index.css";
 
 const pluginName = "frontend-plugin";
 
-// let reactLifecycles: singleSpaReact.Lifecycles;
+let reactLifecycles: singleSpaReact.Lifecycles;
 
 // const render = (): void => {
 //   console.log("Calling render");
@@ -43,10 +43,11 @@ function domElementGetter(): HTMLElement {
   return el;
 }
 
-// window.addEventListener("single-spa:routing-event", () => {
-//   // Attempt to re-render the plugin if the route has changed.
-//   render();
-// });
+window.addEventListener("single-spa:routing-event", () => {
+  // Attempt to re-render the plugin if the route has changed.
+  // render();
+  console.log("singleSpa - routing");
+});
 
 // document.addEventListener("frontend", (e) => {
 //   console.log("frontend message");
@@ -57,7 +58,7 @@ function domElementGetter(): HTMLElement {
 //   }
 // });
 
-let reactLifecycles = singleSpaReact({
+reactLifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent: App,

@@ -1,7 +1,7 @@
 import { routerMiddleware } from "connected-react-router";
 // import AppReducer from "./state/reducers/App.reducer";
 import { microFrontendMessageId } from "frontend-common";
-import { createBrowserHistory } from "history";
+import { createBrowserHistory, Location } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
@@ -51,16 +51,29 @@ document.dispatchEvent(
   })
 );
 
+interface AppProps {
+  location: Location;
+}
+
+interface AppState {
+  hasError: boolean;
+  store: Store<any, AnyAction>;
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-class App extends React.Component<
-  any,
-  { hasError: boolean; store: Store<any, AnyAction> }
-> {
+class App extends React.Component<AppProps, AppState> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  public constructor(props: any) {
+  public constructor(props: AppProps & AppState) {
     super(props);
     this.state = { hasError: false, store: props.store };
     console.log("Props: ", props);
+  }
+
+  public componentDidUpdate(prevProps: AppProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname) {
+      console.log("Changed");
+      this.render();
+    }
   }
 
   public componentDidCatch(error: Error | null): void {

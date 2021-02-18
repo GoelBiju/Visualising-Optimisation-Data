@@ -1,24 +1,17 @@
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-});
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            minWidth: 275,
+            padding: theme.spacing(2),
+            textAlign: 'left',
+        },
+    }),
+);
 
 interface InfoCardProps {
     id: string;
@@ -43,10 +36,20 @@ const RunCard = (props: InfoCardProps): React.ReactElement => {
                     </Typography>
                 </Link>
 
-                <div>Problem: {problem}</div>
-                <div>Generations: {generations}</div>
-                <div>Created: {new Date(created).toLocaleString()}</div>
-                <div>Graphs: {graphs.join(',')}</div>
+                <div>
+                    <p>
+                        <strong>Problem:</strong> {problem}
+                    </p>
+                    <p>
+                        <strong>Generations:</strong> {generations}
+                    </p>
+                    <p>
+                        <strong>Created:</strong> {new Date(created).toLocaleString()}
+                    </p>
+                    <p>
+                        <strong>Graphs:</strong> {graphs.join(', ')}
+                    </p>
+                </div>
             </CardContent>
         </Card>
     );

@@ -1,4 +1,4 @@
-import { List, ListItem } from '@material-ui/core';
+import { List, ListItem, Typography } from '@material-ui/core';
 import { fetchRun, RegisterRoutePayload, Run, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -39,19 +39,26 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
     return (
         <div>
             <List>
-                {selectedRun &&
-                    plugins.map(
-                        (p, i) =>
-                            selectedRun.graphs.includes(p.plugin) && (
-                                <ListItem key={i}>
-                                    <VisualisationCard
-                                        runId={runId}
-                                        visualisationName={p.plugin}
-                                        displayName={p.displayName}
-                                    />
-                                </ListItem>
-                            ),
-                    )}
+                {selectedRun ? (
+                    plugins.length > 0 ? (
+                        plugins.map(
+                            (p, i) =>
+                                selectedRun.graphs.includes(p.plugin) && (
+                                    <ListItem key={i}>
+                                        <VisualisationCard
+                                            runId={runId}
+                                            visualisationName={p.plugin}
+                                            displayName={p.displayName}
+                                        />
+                                    </ListItem>
+                                ),
+                        )
+                    ) : (
+                        <Typography>No plugins have been loaded for visualisation</Typography>
+                    )
+                ) : (
+                    <Typography>Unable to fetch the selected run.</Typography>
+                )}
             </List>
         </div>
     );

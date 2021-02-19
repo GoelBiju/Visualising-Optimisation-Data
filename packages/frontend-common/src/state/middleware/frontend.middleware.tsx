@@ -1,7 +1,7 @@
 import { AnyAction, Dispatch, Middleware } from "redux";
 import {
   microFrontendMessageId,
-  RegisterRouteType
+  RegisterRouteType,
 } from "../actions/action.types";
 
 type microFrontendMessageType = CustomEvent<AnyAction>;

@@ -1,29 +1,50 @@
-import { RouterState } from 'connected-react-router';
-import { AnyAction } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-import { RegisterRoutePayload } from './frontend.types';
+import { RouterState } from "connected-react-router";
+import { AnyAction } from "redux";
+import { ThunkAction } from "redux-thunk";
+import { RegisterRoutePayload } from "./actions/action.types";
 
-export interface Plugin {
-    name: string;
-    src: string;
-    enable: boolean;
-    // location: 'main' | 'left' | 'right';
+export interface SettingsUrls {
+  backendUrl: string;
+}
+
+export interface Run {
+  _id: string;
+  dataId: string;
+  title: string;
+  problem: string;
+  algorithm: string;
+  algorithmParameters: {
+    [key: string]: string;
+  };
+  populationSize: number;
+  totalPopulationSize: number;
+  generations: number;
+  graphs: string[];
+  completed: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FrontendState {
-    notifications: string[];
+  notifications: string[];
+  configuration: {
     plugins: RegisterRoutePayload[];
-    runId: number;
+    urls: SettingsUrls;
+    settingsLoaded: boolean;
+  };
+  runs: Run[];
+  selectedRun: Run | null;
+  selectedVisualisation: string;
 }
 
 export interface StateType {
-    frontend: FrontendState;
-    router: RouterState;
+  frontend: FrontendState;
+  router: RouterState;
 }
 
 export interface ActionType<T> {
-    type: string;
-    payload: T;
+  type: string;
+  payload: T;
 }
 
 export type ThunkResult<R> = ThunkAction<R, StateType, null, AnyAction>;

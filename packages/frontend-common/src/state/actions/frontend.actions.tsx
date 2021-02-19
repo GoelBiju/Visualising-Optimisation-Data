@@ -1,31 +1,29 @@
-import axios from 'axios';
-import { AnyAction, Store } from 'redux';
-import { NotificationPayload, NotificationType } from '../frontend.types';
-import { ActionType, ThunkResult } from '../state.types';
-import loadMicroFrontends from './loadMicroFrontends';
+import { Action } from "redux";
+import { ActionType, SettingsUrls } from "../state.types";
+import {
+  LoadedSettingsType,
+  LoadUrlsPayload,
+  LoadUrlsType,
+  NotificationPayload,
+  NotificationType,
+} from "./action.types";
 
-export const frontendNotification = (message: string): ActionType<NotificationPayload> => ({
-    type: NotificationType,
-    payload: {
-        message,
-    },
+export const frontendNotification = (
+  message: string
+): ActionType<NotificationPayload> => ({
+  type: NotificationType,
+  payload: {
+    message,
+  },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const configureFrontend = (store: () => Store<any, AnyAction>): ThunkResult<Promise<void>> => {
-    return async (dispatch) => {
-        // Request the settings file
-        await axios
-            .get('/settings.json')
-            .then((res) => {
-                const settings = res.data;
-                dispatch(frontendNotification(JSON.stringify(settings)));
+export const loadUrls = (urls: SettingsUrls): ActionType<LoadUrlsPayload> => ({
+  type: LoadUrlsType,
+  payload: {
+    urls,
+  },
+});
 
-                // Load microfrontends
-                loadMicroFrontends.init(settings.plugins, store);
-            })
-            .catch((error) => {
-                console.log(`Frontend Error: loading settings.json: ${error.message}`);
-            });
-    };
-};
+export const loadedSettings = (): Action => ({
+  type: LoadedSettingsType,
+});

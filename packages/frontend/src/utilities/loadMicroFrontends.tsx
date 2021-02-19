@@ -30,12 +30,7 @@ const loadReactApp = async (name: string) => {
     return (window as any)[name];
 };
 
-<<<<<<< HEAD:packages/frontend-common/src/state/actions/loadMicroFrontends.tsx
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function loadApp(name: string, appURL: string, customProps: any) {
-=======
 async function loadApp(name: string, appURL: string, store: Store<unknown, AnyAction>) {
->>>>>>> main:packages/frontend/src/utilities/loadMicroFrontends.tsx
     await runScript(appURL);
 
     const customProps = { store };
@@ -48,26 +43,15 @@ async function loadApp(name: string, appURL: string, store: Store<unknown, AnyAc
     );
 }
 
-<<<<<<< HEAD:packages/frontend-common/src/state/actions/loadMicroFrontends.tsx
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function init(plugins: Plugin[], store: () => Store<any, AnyAction>) {
-=======
 async function init(plugins: Plugin[], store: Store<unknown, AnyAction>) {
->>>>>>> main:packages/frontend/src/utilities/loadMicroFrontends.tsx
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const loadingPromises: Promise<any>[] = [];
-
-    const customProps = { getStore: store };
 
     plugins
         .filter((p) => p.enable)
         .forEach((p) => {
             /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-<<<<<<< HEAD:packages/frontend-common/src/state/actions/loadMicroFrontends.tsx
-            const loadingPromise: Promise<any> = loadApp(p.name, p.src, customProps)
-=======
             const loadingPromise: Promise<any> = loadApp(p.name, p.src, store)
->>>>>>> main:packages/frontend/src/utilities/loadMicroFrontends.tsx
                 .then(() => {
                     log.debug(`Successfully loaded plugin ${p.name} from ${p.src}`);
                 })

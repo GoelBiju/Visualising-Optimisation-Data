@@ -1,15 +1,15 @@
+import axios from 'axios';
 import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import 'custom-event-polyfill';
-// import { configureFrontend } from './state/actions/frontend.actions';
-// import FrontendMiddleware, { listenToPlugins } from './state/middleware/frontend.middleware';
-// import AppReducer from './state/reducers/App.reducer';
-// import { StateType } from './state/state.types';
 import {
-    configureFrontend,
     FrontendCommonReducer,
     FrontendMiddleware,
+    frontendNotification,
     listenToPlugins,
+    loadedSettings,
+    loadUrls,
     StateType,
+    ThunkResult,
 } from 'frontend-common';
 import { createBrowserHistory } from 'history';
 import * as log from 'loglevel';
@@ -18,11 +18,12 @@ import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
+import { AnyAction, applyMiddleware, compose, createStore, Store } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import App from './App';
 import './stylesheets/index.css';
+import loadMicroFrontends from './utilities/loadMicroFrontends';
 
 // Create the middleware
 const history = createBrowserHistory();
@@ -46,9 +47,45 @@ const store = createStore(FrontendCommonReducer(history), composeEnhancers(apply
 // Listen to plugins
 listenToPlugins(store.dispatch);
 
+const configureFrontend = (store: Store<unknown, AnyAction>): ThunkResult<Promise<void>> => {
+    return async (dispatch) => {
+        // Request the settings file
+        await axios
+            .get('/settings.json')
+            .then((res) => {
+                const settings = res.data;
+                dispatch(frontendNotification(JSON.stringify(settings)));
+
+                if (typeof settings !== 'object') {
+                    throw Error("Configuring frontend: 'settings.json' Invalid format");
+                }
+
+                // Load URLs
+                if ('backendUrl' in settings) {
+                    dispatch(
+                        loadUrls({
+                            backendUrl: settings['backendUrl'],
+                        }),
+                    );
+                } else {
+                    throw new Error('The backendUrl is missing in setttings.json');
+                }
+
+                // Load microfrontends
+                loadMicroFrontends.init(settings.plugins, store);
+
+                // Loaded all settings
+                dispatch(loadedSettings());
+            })
+            .catch((error) => {
+                console.log(`Frontend Error: loading settings.json: ${error.message}`);
+            });
+    };
+};
+
 // Dispatch a call to configure the frontend
 const dispatch = store.dispatch as ThunkDispatch<StateType, null, AnyAction>;
-dispatch(configureFrontend(() => store));
+dispatch(configureFrontend(store));
 
 ReactDOM.render(
     <Provider store={store}>

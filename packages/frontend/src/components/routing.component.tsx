@@ -1,8 +1,13 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { RegisterRoutePayload, StateType } from 'frontend-common';
+import { frontendNotification, RegisterRoutePayload, StateType } from 'frontend-common';
+import { Location } from 'history';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router';
+import { Route, RouteComponentProps, Switch } from 'react-router';
+import { Action, AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import RunsPage from '../pages/runsPage.component';
+import VisualisationsPage from '../pages/visualisationsPage.component';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -12,44 +17,79 @@ const useStyles = makeStyles(() =>
     }),
 );
 
-interface RoutingProps {
-    plugins: RegisterRoutePayload[];
-    location: string;
-}
-
-class PluginPlaceHolder extends React.PureComponent<{ id: string }> {
+class PluginPlaceHolder extends React.Component<{ id: string; buttonClick: () => void }> {
     public render(): React.ReactNode {
-        const { id } = this.props;
-        return <div id={id}>{id} failed to load correctly</div>;
+        const { id, buttonClick } = this.props;
+        return (
+            <div>
+                <div id={id}>{id} failed to load correctly</div>
+                <button onClick={buttonClick}>Click me!</button>
+            </div>
+        );
     }
 }
 
-const Routing = (props: RoutingProps): React.ReactElement => {
+interface RoutingProps {
+    plugins: RegisterRoutePayload[];
+    location: Location;
+}
+
+interface RoutingDispatchProps {
+    sendNotification: (message: string) => Action;
+}
+
+const Routing = (props: RoutingProps & RoutingDispatchProps): React.ReactElement => {
     const classes = useStyles();
-    const { plugins } = props;
+    const { plugins, location, sendNotification } = props;
+
+    React.useEffect(() => {
+        console.log('Changed location: ', location);
+    }, [location]);
+
+    const clickedButton = () => {
+        sendNotification(`I clicked the button at ${new Date().toLocaleString()}`);
+    };
+
     return (
-        <Switch>
-            {/* <Route exact path="/runs" component={RunsPage} /> */}
-            {/* <Route exact path="/runs/:runId/visualisations" component={VisualisationsPage} /> */}
-            {plugins.map((p) => (
-                <Route
-                    key={`${p.section}_${p.link}`}
+        <div className={classes.root}>
+            <Switch location={location}>
+                {/* <Route
                     exact
-                    path={`/runs/:runId/visualisations/${p.plugin}`}
+                    path="/"
                     render={() => (
-                        <div className={classes.root}>
-                            <PluginPlaceHolder id={p.plugin} />
-                        </div>
+                        <a style={{ margin: '64px' }} href="/runs/1/visualisations/test/data">
+                            Test
+                        </a>
+                    )}
+                /> */}
+                <Route exact path="/" component={RunsPage} />
+                <Route
+                    exact
+                    path="/runs/:runId/visualisations"
+                    render={({ match }: RouteComponentProps<{ runId: string }>) => (
+                        <VisualisationsPage runId={match.params.runId} />
                     )}
                 />
-            ))}
-        </Switch>
+                {plugins.map((p) => (
+                    <Route
+                        key={`${p.section}_${p.link}`}
+                        exact
+                        path={p.link}
+                        render={() => <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />}
+                    />
+                ))}
+            </Switch>
+        </div>
     );
 };
 
-const mapStateToProps = (state: StateType): RoutingProps => ({
-    plugins: state.frontend.plugins,
-    location: state.router.location.pathname,
+const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>): RoutingDispatchProps => ({
+    sendNotification: (message: string) => dispatch(frontendNotification(message)),
 });
 
-export default connect(mapStateToProps)(Routing);
+const mapStateToProps = (state: StateType): RoutingProps => ({
+    plugins: state.frontend.configuration.plugins,
+    location: state.router.location,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Routing);

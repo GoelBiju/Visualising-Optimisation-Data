@@ -84,8 +84,33 @@ const getRuns = async (req, res, next) => {
     });
 };
 
+const getRun = async (req, res, next) => {
+  try {
+    const runId = req.params.runId;
+
+    await Run.findOne({ _id: runId })
+      .exec()
+      .then((run) => {
+        console.log("Found optimisation runs: ", run);
+        res.json({
+          run,
+        });
+      })
+      .catch((err) => {
+        res.json({
+          message: `An error occurred: ${err}`,
+        });
+      });
+  } catch (err) {
+    res.json({
+      message: `An error occurred: ${err}`,
+    });
+  }
+};
+
 module.exports = {
-  createRun,
   getRuns,
+  getRun,
   getRunByDataId,
+  createRun,
 };

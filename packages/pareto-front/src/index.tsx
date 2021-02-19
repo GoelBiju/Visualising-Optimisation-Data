@@ -5,7 +5,7 @@ import singleSpaReact from "single-spa-react";
 import App from "./App";
 import "./index.css";
 
-const pluginName = "frontend-plugin";
+const pluginName = "pareto-front";
 
 let reactLifecycles: singleSpaReact.Lifecycles;
 

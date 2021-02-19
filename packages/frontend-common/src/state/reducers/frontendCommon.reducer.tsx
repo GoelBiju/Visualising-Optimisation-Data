@@ -1,12 +1,13 @@
 import { connectRouter } from "connected-react-router";
 import { History } from "history";
 import { combineReducers, Reducer } from "redux";
-import frontendReducer from "./frontend.reducer";
+import commonReducer from "./common.reducer";
 
+// Create the reducer
 const FrontendCommonReducer = (history: History): Reducer =>
   combineReducers({
     router: connectRouter(history),
-    frontend: frontendReducer,
+    frontend: commonReducer,
   });
 
 export default FrontendCommonReducer;

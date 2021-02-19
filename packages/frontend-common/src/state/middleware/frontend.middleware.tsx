@@ -1,18 +1,19 @@
 import { AnyAction, Dispatch, Middleware } from "redux";
 import {
   microFrontendMessageId,
-  RegisterRouteType,
-  RequestPluginRerenderType,
-} from "../frontend.types";
+  RegisterRouteType
+} from "../actions/action.types";
 
+type microFrontendMessageType = CustomEvent<AnyAction>;
+
+// Broadcast a message to plugins
 const broadcastToPlugins = (action: AnyAction): void => {
   document.dispatchEvent(
     new CustomEvent(microFrontendMessageId, { detail: action })
   );
 };
 
-type microFrontendMessageType = CustomEvent<AnyAction>;
-
+// Listen to messages from plugins
 export const listenToPlugins = (dispatch: Dispatch): void => {
   document.addEventListener(microFrontendMessageId, (event) => {
     console.log("Got: ", event);
@@ -26,9 +27,9 @@ export const listenToPlugins = (dispatch: Dispatch): void => {
     ) {
       // Send message to Redux in parent app
       switch (pluginMessage.detail.type) {
-        case RequestPluginRerenderType:
-          // This is a message sent from parent app
-          break;
+        // case RequestPluginRerenderType:
+        // This is a message sent from parent app
+        // break;
         case RegisterRouteType:
           console.log("Dispatching");
           dispatch(pluginMessage.detail);

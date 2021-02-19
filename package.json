@@ -10,9 +10,9 @@
   "scripts": {
     "prepare": "lerna run prepare",
     "tsc": "lerna run tsc",
+    "backend": "yarn workspace backend dev",
     "frontend": "yarn workspace frontend start",
     "frontend-plugin": "yarn workspace frontend-plugin serve:build",
-    "backend": "yarn workspace backend dev",
     "lint:frontend": "yarn workspace frontend lint",
     "test:frontend": "yarn workspace frontend test"
   },

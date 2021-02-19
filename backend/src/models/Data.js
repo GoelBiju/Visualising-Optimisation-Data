@@ -22,6 +22,7 @@ const DataSchema = mongoose.Schema({
   data: {
     type: mongoose.SchemaTypes.Map,
     of: [[Number, Number]],
+    default: {},
   },
 });
 

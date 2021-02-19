@@ -40,7 +40,7 @@ const createRun = async (req, res, next) => {
           // Send back the run and  data IDs.
           res.json({
             created: true,
-            runId,
+            runId: run._id,
             dataId,
           });
         })
@@ -63,11 +63,6 @@ const createRun = async (req, res, next) => {
   }
 };
 
-const getRunByDataId = async (dataId) => {
-  const run = await Run.find({ dataId }).exec();
-  return run;
-};
-
 const getRuns = async (req, res, next) => {
   await Run.find()
     .exec()
@@ -88,13 +83,16 @@ const getRun = async (req, res, next) => {
   try {
     const runId = req.params.runId;
 
-    await Run.findOne({ _id: runId })
+    // Get the run by id.
+    Run.findOne({ _id: runId })
       .exec()
       .then((run) => {
-        console.log("Found optimisation runs: ", run);
-        res.json({
-          run,
-        });
+        if (run) {
+          console.log("Found optimisation runs: ", run);
+          res.json({
+            run,
+          });
+        }
       })
       .catch((err) => {
         res.json({
@@ -111,6 +109,5 @@ const getRun = async (req, res, next) => {
 module.exports = {
   getRuns,
   getRun,
-  getRunByDataId,
   createRun,
 };

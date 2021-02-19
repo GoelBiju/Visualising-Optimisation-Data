@@ -31,7 +31,7 @@ function dataConnection(socket) {
         saved: false,
         message: "Failed to add the data",
       });
-      console.log("Unable to add data for ", optmiser.runId);
+      console.log("Unable to add data for ", optimiser.runId);
     }
 
     // TODO: only emit if there is a connected frontend

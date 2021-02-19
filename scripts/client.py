@@ -61,7 +61,7 @@ class DataNamespace(socketio.ClientNamespace):
 
                 # Send the data
                 data = {
-                    "run_id": self.run_id,
+                    "runId": self.run_id,
                     "dataId": self.data_id,
                     # "generation": self.current_generation,
                     "batch": batch
@@ -111,9 +111,9 @@ class OptimiserClient():
             API_URL + "/runs", json.dumps(data), headers=headers).json()
         print(response)
 
-        if (response["created"] and "run_id" in response and "data_id" in response):
+        if (response["created"] and "runId" in response and "dataId" in response):
             # Initialise the queue and provide data id to the data namespace
-            self.data_namespace.run_id = response["run_id"]
+            self.data_namespace.run_id = response["runId"]
             self.data_namespace.data_id = response["dataId"]
             self.data_namespace.initialise_queue()
             print("Created optmisation run, run ID and data ID received: ",
@@ -125,4 +125,5 @@ class OptimiserClient():
     def addBatch(self, batch_data):  # generation
         # Set the new generation and add the data to the queue
         # self.data_namespace.current_generation = generation
+
         self.data_namespace.batch_queue.put(batch_data)

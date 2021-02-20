@@ -56,3 +56,8 @@ app.get("/", (req, res) => {
 server.listen(PORT, () => {
   console.log(`Backend listening on ${PORT} (WebSocket)`);
 });
+
+module.exports = {
+  DataNamespace: dataNamespace,
+  FrontendNamespace: frontendNamespace,
+};

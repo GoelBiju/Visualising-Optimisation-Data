@@ -33,7 +33,7 @@ const createData = async () => {
 // Add optimisation data to the document
 // We need the runId to update the generation number afterwards
 const addBatchData = async (runId, dataId, batch) => {
-  let added = false;
+  let added = null;
 
   // await getData(id).then(async (optimiserData) => {
   //   if (optimiserData) {
@@ -88,7 +88,7 @@ const addBatchData = async (runId, dataId, batch) => {
         await run.save();
       });
 
-      added = true;
+      added = run._id;
     } else {
       console.log("addBatchData: Unable to get data by id: ", dataId);
     }

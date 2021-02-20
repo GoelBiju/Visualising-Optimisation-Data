@@ -1,3 +1,5 @@
+const Run = require("../models/Run");
+
 const { addBatchData } = require("../controllers/DataController");
 
 function dataConnection(socket) {
@@ -8,24 +10,31 @@ function dataConnection(socket) {
     // console.log("Received data length:", optimiser.batch.length);
 
     // Store the data received
-    const added = await addBatchData(
+    const runId = await addBatchData(
       optimiser.runId,
       optimiser.dataId,
-      // optimiser.generation,
       optimiser.batch
     );
 
-    if (added) {
+    if (runId !== null) {
+      // Emit save back to the client to show
+      // we have added the data
       socket.emit("save", {
         saved: true,
-        // generation: optimiser.generation,
       });
       // console.log(
       //   "Added data for ",
       //   optimiser.dataId,
       //   optimiser.generation
       // );
-      // Check if the optimisation run is complete
+
+      // Emit the updated generation to the frontend
+      // room for the optimisation run
+      const run = await Run.findOne({ _id: runId }).exec();
+      if (run) {
+        // Send to the frontend room for this run
+        FrontendNamespace.to(runId).emit("nextGeneration", run.generation);
+      }
     } else {
       socket.emit("save", {
         saved: false,
@@ -33,10 +42,6 @@ function dataConnection(socket) {
       });
       console.log("Unable to add data for ", optimiser.runId);
     }
-
-    // TODO: only emit if there is a connected frontend
-    // Emit the datapoint to the frontend.
-    // frontendNamespace.emit("data", msg);
   });
 }
 

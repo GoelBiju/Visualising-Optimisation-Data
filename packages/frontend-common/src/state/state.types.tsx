@@ -25,16 +25,22 @@ export interface Run {
   updatedAt: string;
 }
 
+// TODO: temporarily we have the data defined as a 2D array
+export type Data = number[][];
+
 export interface FrontendState {
   notifications: string[];
   configuration: {
     plugins: RegisterRoutePayload[];
     urls: SettingsUrls;
     settingsLoaded: boolean;
+    socket: SocketIOClient.Socket | null;
+    socketConnected: boolean;
   };
   runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
+  data: Data;
 }
 
 export interface StateType {

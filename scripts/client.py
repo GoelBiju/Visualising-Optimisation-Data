@@ -26,7 +26,6 @@ headers = {"content-type": "application/json"}
 class DataNamespace(socketio.ClientNamespace):
     run_id = None
     data_id = None
-    # current_generation = 0
 
     sending_data = False
     batch_queue = None
@@ -54,8 +53,6 @@ class DataNamespace(socketio.ClientNamespace):
     def process_queue(self):
         while True:
             if (self.sending_data != True):
-                # print("Processing next item, remaining: ",
-                #       self.batch_queue.qsize())
                 # Get the next batch item
                 batch = self.batch_queue.get()
 
@@ -88,7 +85,6 @@ class OptimiserClient():
 
         # Connect to node server
         self.sio = socketio.Client(logger=False, engineio_logger=False)
-        # self.sio.connect(BACKEND_URL, namespaces=['/data'])
         self.sio.register_namespace(self.data_namespace)
         self.sio.connect(BACKEND_URL)
 
@@ -122,8 +118,6 @@ class OptimiserClient():
         else:
             print("Unable to create optimisation run: ", response["message"])
 
-    def addBatch(self, batch_data):  # generation
+    def addBatch(self, batch_data):
         # Set the new generation and add the data to the queue
-        # self.data_namespace.current_generation = generation
-
         self.data_namespace.batch_queue.put(batch_data)

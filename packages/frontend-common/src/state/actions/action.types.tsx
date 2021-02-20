@@ -16,6 +16,9 @@ export const FetchRunsType = `${microFrontendMessageId}:fetch_runs`;
 export const FetchRunsResultType = `${microFrontendMessageId}:fetch_runs_result`;
 export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
 
+// Socket related actions
+export const InitiateSocketSuccessType = `${microFrontendMessageId}:initiate_socket_success`;
+
 export interface RegisterRoutePayload {
   section: string;
   link: string;
@@ -37,4 +40,8 @@ export interface RunsPayload {
 
 export interface RunPayload {
   run: Run;
+}
+
+export interface SocketPayload {
+  socket: SocketIOClient.Socket;
 }

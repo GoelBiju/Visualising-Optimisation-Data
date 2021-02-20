@@ -20,7 +20,6 @@ const runScript = async (url: string) => {
         script.onerror = reject;
 
         const body = document.getElementsByTagName('body')[0];
-        console.log(script);
         body.appendChild(script);
     });
 };
@@ -57,7 +56,6 @@ async function init(plugins: Plugin[], store: Store<unknown, AnyAction>) {
                     log.debug(`Successfully loaded plugin ${p.name} from ${p.src}`);
                 })
                 .catch(() => {
-                    // TODO: record error back on server somewhere
                     log.error(`Failed to load plugin ${p.name} from ${p.src}`);
                     document.dispatchEvent(
                         new CustomEvent(microFrontendMessageId, {
@@ -81,6 +79,5 @@ async function init(plugins: Plugin[], store: Store<unknown, AnyAction>) {
     singleSpa.start();
 }
 
-export default {
-    init,
-};
+const exports = { init };
+export default exports;

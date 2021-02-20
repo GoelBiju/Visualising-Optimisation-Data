@@ -11,7 +11,7 @@ const createRun = async (req, res, next) => {
       algorithm,
       algorithmParameters,
       populationSize,
-      generations,
+      // generations,
       graphs,
     } = req.body;
 
@@ -25,7 +25,7 @@ const createRun = async (req, res, next) => {
         algorithm,
         algorithmParameters,
         populationSize,
-        generations,
+        // generations,
         graphs,
         dataId,
         completed: false,
@@ -37,8 +37,10 @@ const createRun = async (req, res, next) => {
         .then((run) => {
           console.log("Created a run for: ", run.title);
 
+          // Send back the run and  data IDs.
           res.json({
             created: true,
+            runId: run._id,
             dataId,
           });
         })
@@ -81,13 +83,16 @@ const getRun = async (req, res, next) => {
   try {
     const runId = req.params.runId;
 
-    await Run.findOne({ _id: runId })
+    // Get the run by id.
+    Run.findOne({ _id: runId })
       .exec()
       .then((run) => {
-        console.log("Found optimisation runs: ", run);
-        res.json({
-          run,
-        });
+        if (run) {
+          console.log("Found optimisation runs: ", run);
+          res.json({
+            run,
+          });
+        }
       })
       .catch((err) => {
         res.json({

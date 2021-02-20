@@ -3,26 +3,27 @@ const { addBatchData } = require("../controllers/DataController");
 function dataConnection(socket) {
   console.log("Received data connection");
 
-  socket.on("data", async function (optimiserMessage) {
-    // console.log("Received data (ID)", optimiserMessage.dataId);
-    // console.log("Received data length:", optimiserMessage.batch.length);
+  socket.on("data", async function (optimiser) {
+    // console.log("Received data (ID)", optimiser.dataId);
+    // console.log("Received data length:", optimiser.batch.length);
 
     // Store the data received
     const added = await addBatchData(
-      optimiserMessage.dataId,
-      // optimiserMessage.generation,
-      optimiserMessage.batch
+      optimiser.runId,
+      optimiser.dataId,
+      // optimiser.generation,
+      optimiser.batch
     );
 
     if (added) {
       socket.emit("save", {
         saved: true,
-        // generation: optimiserMessage.generation,
+        // generation: optimiser.generation,
       });
       // console.log(
       //   "Added data for ",
-      //   optimiserMessage.dataId,
-      //   optimiserMessage.generation
+      //   optimiser.dataId,
+      //   optimiser.generation
       // );
       // Check if the optimisation run is complete
     } else {
@@ -30,7 +31,7 @@ function dataConnection(socket) {
         saved: false,
         message: "Failed to add the data",
       });
-      console.log("Unable to add data for ", optmiserMessage.runId);
+      console.log("Unable to add data for ", optimiser.runId);
     }
 
     // TODO: only emit if there is a connected frontend

@@ -101,6 +101,8 @@ class App extends React.Component<unknown, AppState> {
             </Switch>
           </ConnectedRouter>
         </Provider>
+      ) : (
+        <div className="error">Did not receive a store from the parent.</div>
       );
     }
   }

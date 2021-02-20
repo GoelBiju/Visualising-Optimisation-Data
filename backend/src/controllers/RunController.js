@@ -88,7 +88,7 @@ const getRun = async (req, res, next) => {
       .exec()
       .then((run) => {
         if (run) {
-          console.log("Found optimisation runs: ", run);
+          console.log("Found optimisation run: ", run);
           res.json({
             run,
           });
@@ -106,8 +106,43 @@ const getRun = async (req, res, next) => {
   }
 };
 
+const getProperty = async (req, res, next) => {
+  try {
+    // Get the property name
+    const runId = req.params.runId;
+    const property = req.params.property;
+    console.log("Got runId: ", runId, property);
+
+    // Get the run by id
+    Run.findOne({ _id: runId })
+      .exec()
+      .then((run) => {
+        if (run && run[property]) {
+          console.log("Found optimisation run: ", run);
+          res.json({
+            [property]: run[property],
+          });
+        } else {
+          res.json({
+            message: `Cannot get run or find property in run ${runId} with property ${property}`,
+          });
+        }
+      })
+      .catch((err) => {
+        res.json({
+          message: `An error occurred: ${err}`,
+        });
+      });
+  } catch (err) {
+    res.json({
+      message: `An error occurred: ${err}`,
+    });
+  }
+};
+
 module.exports = {
+  createRun,
   getRuns,
   getRun,
-  createRun,
+  getProperty,
 };

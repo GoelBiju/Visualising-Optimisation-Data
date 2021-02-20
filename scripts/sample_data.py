@@ -57,4 +57,4 @@ for values in dtlz1_data:
         count = 1
         # print("Next Generation: ", generation)
 
-print("Completed sending, wait until queue has been processed")
+print("Completed adding items to queue, wait until queue has been processed")

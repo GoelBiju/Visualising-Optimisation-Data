@@ -18,7 +18,7 @@ print("Total population size: ", len(dtlz1_data))
 # print("Total population size: ", len(dtlz2_data))
 
 populationSize = 100
-totalGenerations = 282
+totalGenerations = 1
 
 # Create an optimiser client
 optimiserClient = client.OptimiserClient(populationSize)
@@ -39,7 +39,7 @@ optimiserClient.createRun("Pareto front estimation of DTLZ1", "DTLZ1",
 count = 1
 # test_data = [[1, 2], [3, 4], [5, 6], [7, 8]]
 data_batch = []
-for values in dtlz1_data:
+for values in dtlz1_data[0:100]:
     # print(values, count)
     # optimiserClient.sendData(generation, values.tolist())
     # Add the data to the batch to send

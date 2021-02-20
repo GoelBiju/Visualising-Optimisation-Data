@@ -11,7 +11,7 @@ const createRun = async (req, res, next) => {
       algorithm,
       algorithmParameters,
       populationSize,
-      // generations,
+      totalGenerations,
       graphs,
     } = req.body;
 
@@ -37,7 +37,7 @@ const createRun = async (req, res, next) => {
         .then((run) => {
           console.log("Created a run for: ", run.title);
 
-          // Send back the run and  data IDs.
+          // Send back the run and data IDs.
           res.json({
             created: true,
             runId: run._id,

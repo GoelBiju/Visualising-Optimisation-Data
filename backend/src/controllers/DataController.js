@@ -56,7 +56,7 @@ const addBatchData = async (runId, dataId, batch) => {
   // Find the run given the id
   console.log("querying for run: ", runId);
   const run = await Run.findById(runId).exec();
-  if (run) {
+  if (run && !run.completed) {
     // Get the generation number
     const generations = run.generations;
     console.log("Current generation: ", generations);
@@ -78,6 +78,13 @@ const addBatchData = async (runId, dataId, batch) => {
         // Once updated increment the generation number
         run.generations++;
         run.markModified("generations");
+
+        // Check to see if the run is complete.
+        if (run.generations === run.totalGenerations) {
+          run.completed = true;
+          console.log("Completed run: ", run._id);
+        }
+
         await run.save();
       });
 

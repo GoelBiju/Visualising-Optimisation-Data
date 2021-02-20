@@ -25,7 +25,7 @@ const createRun = async (req, res, next) => {
         algorithm,
         algorithmParameters,
         populationSize,
-        // generations,
+        totalGenerations,
         graphs,
         dataId,
         completed: false,

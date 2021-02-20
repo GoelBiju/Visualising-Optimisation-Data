@@ -93,14 +93,14 @@ class OptimiserClient():
         self.sio.connect(BACKEND_URL)
 
     # generations
-    def createRun(self, title, problem, algorithm, populationSize, algorithmParameters={}, graphs=[]):
+    def createRun(self, title, problem, algorithm, populationSize, totalGenerations, algorithmParameters={}, graphs=[]):
         # Create a new optimisation run given the parameters
         data = {
             "title": title,
             "problem": problem,
             "algorithm": algorithm,
             "populationSize": populationSize,
-            # "generations": generations,
+            "totalGenerations": totalGenerations,
             "algorithmParameters": algorithmParameters,
             "graphs": graphs
         }

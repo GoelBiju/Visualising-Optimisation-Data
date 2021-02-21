@@ -42,7 +42,7 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
 
     return (
         <div>
-            <Typography className={classes.label} variant="h3">
+            <Typography className={classes.label} variant="h4">
                 Active
             </Typography>
 
@@ -65,7 +65,7 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
                 </Grid>
             </div>
 
-            <Typography className={classes.label} variant="h3">
+            <Typography className={classes.label} variant="h4">
                 Completed
             </Typography>
 

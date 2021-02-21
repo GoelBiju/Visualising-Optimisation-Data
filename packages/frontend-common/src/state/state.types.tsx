@@ -3,6 +3,8 @@ import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { RegisterRoutePayload } from "./actions/action.types";
 
+export type SocketClient = SocketIOClient.Socket;
+
 export interface SettingsUrls {
   backendUrl: string;
 }
@@ -34,7 +36,7 @@ export interface FrontendState {
     plugins: RegisterRoutePayload[];
     urls: SettingsUrls;
     settingsLoaded: boolean;
-    socket: SocketIOClient.Socket | null;
+    socket: SocketClient | null;
     socketConnected: boolean;
   };
   runs: Run[];

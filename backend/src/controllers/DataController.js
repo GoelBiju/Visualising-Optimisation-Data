@@ -56,44 +56,51 @@ const addBatchData = async (runId, dataId, batch) => {
   // Find the run given the id
   console.log("querying for run: ", runId);
   const run = await Run.findById(runId).exec();
-  if (run && !run.completed) {
-    // Get the generation number
-    const generations = run.generations;
-    console.log("Current generation: ", generations);
+  if (run) {
+    if (!run.completed) {
+      // Get the generation number
+      const generations = run.generations;
+      console.log("Current generation: ", generations);
 
-    // Find the data given the ID
-    const data = await Data.findById(dataId).exec();
-    if (data) {
-      // Add the new data as a new generation property.
-      // console.log("retrieved data: ", data);
-      const optimiserData = data.data;
-      optimiserData.set(`${generations + 1}`, {
-        values: batch,
-      });
+      // Find the data given the ID
+      const data = await Data.findById(dataId).exec();
+      if (data) {
+        // Add the new data as a new generation property.
+        // console.log("retrieved data: ", data);
+        const optimiserData = data.data;
+        optimiserData.set(`${generations + 1}`, {
+          values: batch,
+        });
 
-      data.markModified("data");
-      console.log("optimiser data: ", optimiserData);
+        data.markModified("data");
+        console.log("optimiser data: ", optimiserData);
 
-      await data.save().then(async () => {
-        // Once updated increment the generation number
-        run.generations++;
-        run.markModified("generations");
+        await data.save().then(async () => {
+          // Once updated increment the generation number
+          run.generations++;
+          run.markModified("generations");
 
-        // Check to see if the run is complete.
-        if (run.generations === run.totalGenerations) {
-          run.completed = true;
-          console.log("Completed run: ", run._id);
-        }
+          // Check to see if the run is complete.
+          if (run.generations === run.totalGenerations) {
+            run.completed = true;
+            console.log("Completed run: ", run._id);
+          }
 
-        await run.save();
-      });
+          await run.save();
+        });
 
-      added = run._id;
+        added = run._id;
+      } else {
+        console.log("addBatchData: Unable to get data by id: ", dataId);
+      }
     } else {
-      console.log("addBatchData: Unable to get data by id: ", dataId);
+      console.log("addBatchData: The run is already complete: ", runId);
     }
   } else {
-    console.log("addBatchData: Unable to find run by ID: ", runId);
+    console.log(
+      "addBatchData: Unable to find run by id or the run is complete: ",
+      runId
+    );
   }
 
   return added;

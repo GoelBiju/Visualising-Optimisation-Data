@@ -1,4 +1,4 @@
-import { Run, SettingsUrls } from "../state.types";
+import { Run, SettingsUrls, SocketClient } from "../state.types";
 
 // Define the microfrontend name
 export const microFrontendMessageId = "frontend";
@@ -43,5 +43,5 @@ export interface RunPayload {
 }
 
 export interface SocketPayload {
-  socket: SocketIOClient.Socket;
+  socket: SocketClient;
 }

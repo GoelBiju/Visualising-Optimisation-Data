@@ -100,7 +100,7 @@ class OptimiserClient():
             "algorithmParameters": algorithmParameters,
             "graphs": graphs
         }
-        print("Creating optmisation run: ", data)
+        print("Creating optimisation run: ", data)
 
         # Send the request to create the run
         response = requests.post(
@@ -112,7 +112,7 @@ class OptimiserClient():
             self.data_namespace.run_id = response["runId"]
             self.data_namespace.data_id = response["dataId"]
             self.data_namespace.initialise_queue()
-            print("Created optmisation run, run ID and data ID received: ",
+            print("Created optimisation run, run ID and data ID received: ",
                   self.data_namespace.data_id, self.data_namespace.run_id)
             print("Sending data: ", self.data_namespace.sending_data)
         else:

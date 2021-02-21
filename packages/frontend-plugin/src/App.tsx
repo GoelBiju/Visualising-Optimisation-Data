@@ -1,11 +1,10 @@
-import { ConnectedRouter, routerMiddleware } from "connected-react-router";
+import { routerMiddleware } from "connected-react-router";
 // import AppReducer from "./state/reducers/App.reducer";
 import { microFrontendMessageId } from "frontend-common";
 import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
-import { Route, RouteComponentProps, Switch } from "react-router";
 import { AnyAction, Store } from "redux";
 // import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
@@ -39,6 +38,7 @@ const registerRouteAction = {
   type: "frontend:api:register_route",
   payload: {
     section: "Test",
+    // TODO: Remove this, this should be declared from parent
     link: "/runs/:runId/visualisations/frontend-plugin/data",
     plugin: "frontend-plugin",
     displayName: "Frontend Plugin",
@@ -77,11 +77,13 @@ class App extends React.Component<unknown, AppState> {
         <div className="error">An error occurred when loading the plugin.</div>
       );
     } else if (!this.state.store) {
-      return <div className="error">No store received.</div>;
+      return (
+        <div className="error">Did not receive a store from the parent.</div>
+      );
     } else {
       return (
         <Provider store={this.state.store}>
-          <ConnectedRouter history={history}>
+          {/* <ConnectedRouter history={history}>
             <Switch>
               <Route
                 exact
@@ -91,18 +93,12 @@ class App extends React.Component<unknown, AppState> {
                 }: RouteComponentProps<{
                   runId: string;
                   visualisationName: string;
-                }>) => (
-                  <ExampleComponent
-                    runId={match.params.runId}
-                    visualisationName={match.params.visualisationName}
-                  />
-                )}
+                }>) => <ExampleComponent />}
               />
             </Switch>
-          </ConnectedRouter>
+          </ConnectedRouter> */}
+          <ExampleComponent />
         </Provider>
-      ) : (
-        <div className="error">Did not receive a store from the parent.</div>
       );
     }
   }

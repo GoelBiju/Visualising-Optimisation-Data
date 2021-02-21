@@ -1,8 +1,8 @@
-import { ActionType, ThunkResult } from "../state.types";
+import { ActionType, SocketClient, ThunkResult } from "../state.types";
 import { InitiateSocketSuccessType, SocketPayload } from "./action.types";
 
 export const initiateSocketSuccess = (
-  socket: SocketIOClient.Socket
+  socket: SocketClient
 ): ActionType<SocketPayload> => ({
   type: InitiateSocketSuccessType,
   payload: {

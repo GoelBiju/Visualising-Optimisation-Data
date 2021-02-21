@@ -57,7 +57,8 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
                                     title={run.title}
                                     problem={run.problem}
                                     created={run.createdAt}
-                                    generations={run.generations}
+                                    currentGeneration={run.currentGeneration}
+                                    totalGenerations={run.totalGenerations}
                                     graphs={run.graphs}
                                 />
                             </Grid>
@@ -80,7 +81,8 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
                                     title={run.title}
                                     problem={run.problem}
                                     created={run.createdAt}
-                                    generations={run.generations}
+                                    currentGeneration={run.currentGeneration}
+                                    totalGenerations={run.totalGenerations}
                                     graphs={run.graphs}
                                 />
                             </Grid>

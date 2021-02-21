@@ -20,7 +20,7 @@ const RunSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    generations: {
+    currentGeneration: {
       type: Number,
       default: 0,
     },

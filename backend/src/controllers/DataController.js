@@ -1,5 +1,5 @@
-const Data = require("../models/Data");
 const Run = require("../models/Run");
+const Data = require("../models/Data");
 
 // Create a new data document for an optimisation run
 const createData = async () => {
@@ -59,8 +59,8 @@ const addBatchData = async (runId, dataId, batch) => {
   if (run) {
     if (!run.completed) {
       // Get the generation number
-      const generations = run.generations;
-      console.log("Current generation: ", generations);
+      const generation = run.currentGeneration;
+      console.log("Current generation: ", generation);
 
       // Find the data given the ID
       const data = await Data.findById(dataId).exec();
@@ -68,7 +68,7 @@ const addBatchData = async (runId, dataId, batch) => {
         // Add the new data as a new generation property.
         // console.log("retrieved data: ", data);
         const optimiserData = data.data;
-        optimiserData.set(`${generations + 1}`, {
+        optimiserData.set(`${generation + 1}`, {
           values: batch,
         });
 
@@ -77,11 +77,11 @@ const addBatchData = async (runId, dataId, batch) => {
 
         await data.save().then(async () => {
           // Once updated increment the generation number
-          run.generations++;
-          run.markModified("generations");
+          run.currentGeneration++;
+          run.markModified("currentGeneration");
 
           // Check to see if the run is complete.
-          if (run.generations === run.totalGenerations) {
+          if (run.currentGeneration === run.totalGenerations) {
             run.completed = true;
             console.log("Completed run: ", run._id);
           }

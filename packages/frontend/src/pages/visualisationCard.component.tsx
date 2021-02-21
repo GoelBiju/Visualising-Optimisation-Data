@@ -27,7 +27,7 @@ const VisualisationCard = (props: VisualisationCardProps): React.ReactElement =>
     return (
         <Card className={classes.root}>
             <CardContent>
-                <Typography variant="h5" component="h2">
+                <Typography variant="h5">
                     {/* <Link component={RouterLink} to={`/runs/${runId}/visualisations/${visualisationName}/data`}> */}
                     <Link href={`/runs/${runId}/visualisations/${visualisationName}/data`}>{displayName}</Link>
                 </Typography>

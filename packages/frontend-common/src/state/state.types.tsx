@@ -17,8 +17,8 @@ export interface Run {
     [key: string]: string;
   };
   populationSize: number;
-  totalPopulationSize: number;
-  generations: number;
+  currentGeneration: number;
+  totalGenerations: number;
   graphs: string[];
   completed: boolean;
   createdAt: string;

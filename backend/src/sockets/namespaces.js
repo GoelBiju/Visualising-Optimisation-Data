@@ -37,7 +37,7 @@ function setupNamespaces(io) {
         socket.emit("save", {
           saved: true,
         });
-        console.log("Added data for ", optimiser.dataId, optimiser.generation);
+        console.log("Added data for ", optimiser.dataId);
 
         // Emit the updated generation to the frontend
         // room for the optimisation run
@@ -45,8 +45,8 @@ function setupNamespaces(io) {
         console.log("Got run for emitting to frontend: ", run._id);
         if (run) {
           // Send to the frontend room for this run
-          frontendNamespace.to(runId).emit("nextGeneration", run.generation);
-          console.log("Emitted nextGeneration: ", run.generation);
+          frontendNamespace.to(runId).emit("generation", run.currentGeneration);
+          console.log("Emitted next generation: ", run.currentGeneration);
         }
       } else {
         socket.emit("save", {

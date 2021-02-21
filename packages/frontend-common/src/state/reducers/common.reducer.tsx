@@ -1,5 +1,6 @@
 import * as log from "loglevel";
 import {
+  DisconnectSocketSuccessType,
   FetchRunResultType,
   FetchRunsResultType,
   InitiateSocketSuccessType,
@@ -10,6 +11,8 @@ import {
   NotificationType,
   RegisterRoutePayload,
   RegisterRouteType,
+  RunGenerationPayload,
+  RunGenerationSuccessType,
   RunPayload,
   RunsPayload,
   SocketPayload,
@@ -32,6 +35,7 @@ export const initialState: FrontendState = {
   selectedRun: null,
   selectedVisualisation: "",
   data: [],
+  currentGeneration: 0,
 };
 
 const updatePlugins = (
@@ -129,6 +133,27 @@ export function handleInitiateSocket(
   };
 }
 
+export function handleDisconnectSocket(state: FrontendState): FrontendState {
+  return {
+    ...state,
+    configuration: {
+      ...state.configuration,
+      socket: null,
+      socketConnected: false,
+    },
+  };
+}
+
+export function handleRunGeneration(
+  state: FrontendState,
+  payload: RunGenerationPayload
+): FrontendState {
+  return {
+    ...state,
+    currentGeneration: payload.generation,
+  };
+}
+
 const CommonReducer = createReducer(initialState, {
   [NotificationType]: handleNotification,
   [RegisterRouteType]: handleRegisterPlugin,
@@ -137,6 +162,8 @@ const CommonReducer = createReducer(initialState, {
   [FetchRunsResultType]: handleFetchRuns,
   [FetchRunResultType]: handleFetchRun,
   [InitiateSocketSuccessType]: handleInitiateSocket,
+  [DisconnectSocketSuccessType]: handleDisconnectSocket,
+  [RunGenerationSuccessType]: handleRunGeneration,
 });
 
 export default CommonReducer;

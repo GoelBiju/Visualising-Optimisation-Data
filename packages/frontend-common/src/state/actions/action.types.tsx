@@ -1,4 +1,4 @@
-import { Run, SettingsUrls, SocketClient } from "../state.types";
+import { Run, SettingsUrls } from "../state.types";
 
 // Define the microfrontend name
 export const microFrontendMessageId = "frontend";
@@ -18,6 +18,8 @@ export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
 
 // Socket related actions
 export const InitiateSocketSuccessType = `${microFrontendMessageId}:initiate_socket_success`;
+export const DisconnectSocketSuccessType = `${microFrontendMessageId}:disconnect_socket_success`;
+export const RunGenerationSuccessType = `${microFrontendMessageId}:run_generation_success`;
 
 export interface RegisterRoutePayload {
   section: string;
@@ -43,5 +45,9 @@ export interface RunPayload {
 }
 
 export interface SocketPayload {
-  socket: SocketClient;
+  socket: SocketIOClient.Socket;
+}
+
+export interface RunGenerationPayload {
+  generation: number;
 }

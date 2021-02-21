@@ -1,8 +1,16 @@
-import { ActionType, SocketClient, ThunkResult } from "../state.types";
-import { InitiateSocketSuccessType, SocketPayload } from "./action.types";
+import { Action } from "redux";
+import ioclient from "socket.io-client";
+import { ActionType, ThunkResult } from "../state.types";
+import {
+  DisconnectSocketSuccessType,
+  InitiateSocketSuccessType,
+  RunGenerationPayload,
+  RunGenerationSuccessType,
+  SocketPayload,
+} from "./action.types";
 
 export const initiateSocketSuccess = (
-  socket: SocketClient
+  socket: SocketIOClient.Socket
 ): ActionType<SocketPayload> => ({
   type: InitiateSocketSuccessType,
   payload: {
@@ -10,20 +18,71 @@ export const initiateSocketSuccess = (
   },
 });
 
-export const initiateSocket = (): ThunkResult<Promise<void>> => {
+export const disconnectSocketSuccess = (): Action => ({
+  type: DisconnectSocketSuccessType,
+});
+
+export const runGenerationSuccess = (
+  generation: number
+): ActionType<RunGenerationPayload> => ({
+  type: RunGenerationSuccessType,
+  payload: {
+    generation,
+  },
+});
+
+export const initiateSocket = (runId: string): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
     const { backendUrl } = getState().frontend.configuration.urls;
 
     // Set up the socket
-    const socket = io(`${backendUrl}/frontend`);
+    const socketClient = ioclient(`${backendUrl}/frontend`);
+    // console.log("io: ", socketClient);
 
-    if (socket.connected) {
+    // Handle connection event
+    socketClient.on("connect", () => {
       // Dispatch a new socket connection to the backend
-      dispatch(initiateSocketSuccess(socket));
-    } else {
-      console.error(
-        `Unable to initialise a socket connection with backend at ${backendUrl}/frontend`
-      );
+      dispatch(initiateSocketSuccess(socketClient));
+    });
+  };
+};
+
+// TODO: Disconnect socket
+export const disconnectSocket = (): ThunkResult<Promise<void>> => {
+  return async (dispatch, getState) => {
+    // Get the socket connection
+    const { socket } = getState().frontend.configuration;
+
+    if (socket && socket.connected) {
+      socket.disconnect();
+      console.log("Disconnected socket");
+
+      dispatch(disconnectSocketSuccess());
+    }
+  };
+};
+
+export const subscribeToGenerations = (
+  runId: string
+  // callback: (generation: number) => void
+): ThunkResult<Promise<void>> => {
+  return async (dispatch, getState) => {
+    // Get the socket connection
+    const { socket } = getState().frontend.configuration;
+
+    // Join the optimisation run room
+    if (socket) {
+      // Emit a subscribe message to the backend with the run ID
+      socket.emit("subscribe", runId);
+
+      // When we receive "subscribed" from
+      // server attach the callback function
+      socket.on("generation", (generation: number) => {
+        console.log("Generation received: ", generation);
+
+        dispatch(runGenerationSuccess(generation));
+        //return callback(generation);
+      });
     }
   };
 };

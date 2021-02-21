@@ -67,13 +67,10 @@ const Routing = (props: RoutingProps & RoutingDispatchProps): React.ReactElement
                         key={`${p.section}_${p.link}`}
                         exact
                         // TODO: Put the expected location here instead of the plugin
-                        path={p.link}
+                        path={`/runs/:runId/visualisations/${p.plugin}/data`}
                         // render={() => <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />}
                         render={({ match }: RouteComponentProps<{ runId: string; visualisationName: string }>) => (
-                            <VisualisationContainer
-                                runId={match.params.runId}
-                                visualisationName={match.params.visualisationName}
-                            />
+                            <VisualisationContainer runId={match.params.runId} visualisationName={p.plugin} />
                         )}
                     />
                 ))}

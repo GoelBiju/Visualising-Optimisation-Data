@@ -45,31 +45,29 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
     }, [runsFetched]);
 
     return (
-        <div>
-            <div className={classes.root}>
-                <Grid container spacing={3}>
-                    {selectedRun ? (
-                        plugins.length > 0 ? (
-                            plugins.map(
-                                (p, i) =>
-                                    selectedRun.graphs.includes(p.plugin) && (
-                                        <Grid key={i} item xs>
-                                            <VisualisationCard
-                                                runId={runId}
-                                                visualisationName={p.plugin}
-                                                displayName={p.displayName}
-                                            />
-                                        </Grid>
-                                    ),
-                            )
-                        ) : (
-                            <Typography>No plugins have been loaded for visualisation</Typography>
+        <div className={classes.root}>
+            <Grid container spacing={3}>
+                {selectedRun ? (
+                    plugins.length > 0 ? (
+                        plugins.map(
+                            (p, i) =>
+                                selectedRun.graphs.includes(p.plugin) && (
+                                    <Grid key={i} item xs={3}>
+                                        <VisualisationCard
+                                            runId={runId}
+                                            visualisationName={p.plugin}
+                                            displayName={p.displayName}
+                                        />
+                                    </Grid>
+                                ),
                         )
                     ) : (
-                        <Typography>Unable to fetch the selected run.</Typography>
-                    )}
-                </Grid>
-            </div>
+                        <Typography>No plugins have been loaded for visualisation</Typography>
+                    )
+                ) : (
+                    <Typography>Unable to fetch the selected run.</Typography>
+                )}
+            </Grid>
         </div>
     );
 };

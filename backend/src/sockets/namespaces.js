@@ -10,9 +10,11 @@ function setupNamespaces(io) {
   frontendNamespace.on("connection", (socket) => {
     console.log("Front-end connection established");
 
-    // TODO: Connect frontend into rooms to allow different data connections
-    socket.on("frontend", function (msg) {
-      console.log("Frontend message: ", msg);
+    // When receiving a subscription message, join the room
+    // based on the optimisation run ID
+    socket.on("subscribe", function (runId) {
+      socket.join(runId);
+      console.log("Subscription to: ", runId);
     });
   });
 

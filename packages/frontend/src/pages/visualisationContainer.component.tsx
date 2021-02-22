@@ -1,7 +1,14 @@
-import { fetchRun, initiateSocket, Run, StateType } from 'frontend-common';
+import {
+    fetchRun,
+    initiateSocket,
+    Run,
+    setVisualisationName,
+    StateType,
+    subscribeToGenerations,
+} from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
+import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 interface VCViewProps {
     runId: string;
@@ -10,7 +17,9 @@ interface VCViewProps {
 
 interface VCDispatchProps {
     fetchRun: (runId: string) => Promise<void>;
+    setVisualisationName: (visualisationName: string) => Action;
     initiateSocket: (runId: string) => Promise<void>;
+    subscribeToGenerations: (runId: string) => Promise<void>;
 }
 
 interface VCStateProps {
@@ -23,12 +32,22 @@ interface VCStateProps {
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
-    const { socketConnected, initiateSocket, fetchRun, runId, pluginName, selectedRun, selectedVisualisation } = props;
+    const {
+        socketConnected,
+        initiateSocket,
+        fetchRun,
+        setVisualisationName,
+        runId,
+        pluginName,
+        selectedRun,
+        selectedVisualisation,
+        subscribeToGenerations,
+    } = props;
 
     const [loadedRun, setLoadedRun] = React.useState(false);
+    const [subscribed, setSubscribed] = React.useState(false);
 
-    const [visualisationName, setVisualisationName] = React.useState('');
-
+    // Load run information
     React.useEffect(() => {
         // Fetch the run information
         if (!loadedRun) {
@@ -41,22 +60,30 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
             setLoadedRun(true);
         }
+    }, [loadedRun, selectedRun, selectedVisualisation]);
 
+    // Socket connection
+    React.useEffect(() => {
         // Set up the connection to the backend
         if (!socketConnected) {
             // Start socket connection
             initiateSocket(props.runId);
-
-            // Subscribe to the data from the optimisation run room
         }
-    }, [loadedRun, selectedRun, selectedVisualisation, socketConnected]);
+
+        if (socketConnected && !subscribed) {
+            // Subscribe to the data from the optimisation run room
+            subscribeToGenerations(runId);
+
+            setSubscribed(true);
+        }
+    }, [socketConnected, subscribed]);
 
     return (
         <div>
             {selectedRun && (
                 <div>
                     <p>Run ID: {selectedRun._id}</p>
-                    <p>Visualisation Name: {visualisationName}</p>
+                    <p>Visualisation Name: {selectedVisualisation}</p>
                 </div>
             )}
         </div>
@@ -65,7 +92,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>): VCDispatchProps => ({
     fetchRun: (runId: string) => dispatch(fetchRun(runId)),
+    setVisualisationName: (visualisationName: string) => dispatch(setVisualisationName(visualisationName)),
     initiateSocket: (runId: string) => dispatch(initiateSocket(runId)),
+    subscribeToGenerations: (runId: string) => dispatch(subscribeToGenerations(runId)),
 });
 
 const mapStateToProps = (state: StateType): VCStateProps => {

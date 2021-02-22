@@ -16,6 +16,8 @@ import {
   RunPayload,
   RunsPayload,
   SocketPayload,
+  VisualisationNamePayload,
+  VisualisationNameType,
 } from "../actions/action.types";
 import { FrontendState } from "../state.types";
 import createReducer from "./createReducer";
@@ -119,6 +121,16 @@ export function handleFetchRun(
   };
 }
 
+export function handleVisualisationName(
+  state: FrontendState,
+  payload: VisualisationNamePayload
+): FrontendState {
+  return {
+    ...state,
+    selectedVisualisation: payload.visualisationName,
+  };
+}
+
 export function handleInitiateSocket(
   state: FrontendState,
   payload: SocketPayload
@@ -164,6 +176,7 @@ const CommonReducer = createReducer(initialState, {
   [InitiateSocketSuccessType]: handleInitiateSocket,
   [DisconnectSocketSuccessType]: handleDisconnectSocket,
   [RunGenerationSuccessType]: handleRunGeneration,
+  [VisualisationNameType]: handleVisualisationName,
 });
 
 export default CommonReducer;

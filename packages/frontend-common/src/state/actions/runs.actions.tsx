@@ -5,6 +5,8 @@ import {
   FetchRunsResultType,
   RunPayload,
   RunsPayload,
+  VisualisationNamePayload,
+  VisualisationNameType,
 } from "./action.types";
 
 export const fetchRunsResult = (runs: Run[]): ActionType<RunsPayload> => ({
@@ -18,6 +20,15 @@ export const fetchRunResult = (run: Run): ActionType<RunPayload> => ({
   type: FetchRunResultType,
   payload: {
     run,
+  },
+});
+
+export const setVisualisationName = (
+  visualisationName: string
+): ActionType<VisualisationNamePayload> => ({
+  type: VisualisationNameType,
+  payload: {
+    visualisationName,
   },
 });
 

@@ -15,6 +15,7 @@ export const LoadedSettingsType = `${microFrontendMessageId}:loaded_settings`;
 export const FetchRunsType = `${microFrontendMessageId}:fetch_runs`;
 export const FetchRunsResultType = `${microFrontendMessageId}:fetch_runs_result`;
 export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
+export const VisualisationNameType = `${microFrontendMessageId}:visualisation_name`;
 
 // Socket related actions
 export const InitiateSocketSuccessType = `${microFrontendMessageId}:initiate_socket_success`;
@@ -50,4 +51,8 @@ export interface SocketPayload {
 
 export interface RunGenerationPayload {
   generation: number;
+}
+
+export interface VisualisationNamePayload {
+  visualisationName: string;
 }

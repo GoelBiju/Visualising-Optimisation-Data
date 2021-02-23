@@ -1,4 +1,5 @@
 const Run = require("../models/Run");
+const Data = require("../models/Data");
 const { addBatchData } = require("../controllers/DataController");
 
 function setupNamespaces(io) {
@@ -12,9 +13,33 @@ function setupNamespaces(io) {
 
     // When receiving a subscription message, join the room
     // based on the optimisation run ID
-    socket.on("subscribe", function (runId) {
+    socket.on("subscribe", (runId) => {
       socket.join(runId);
       console.log("Subscription to: ", runId);
+    });
+
+    // Fetch generation data given the data ID
+    // and generation number
+    socket.on("data", async (dataRequest) => {
+      // Get the dataId and generation from the request object
+      const { dataId, generation } = dataRequest;
+
+      // Get the data based on the run ID
+      const data = await Data.findById(dataId).lean();
+      if (data) {
+        const optimiserData = data.data;
+        if (optimiserData[generation]) {
+          // Send the generation data to the client
+          // console.log("Got data: ", optimiserData[generation]);
+          socket.emit("data", optimiserData[generation]);
+        } else {
+          console.log("Generation not present: ", generation);
+        }
+      } else {
+        console.log(
+          `Unable to find data for ${datId} for generation ${generation}`
+        );
+      }
     });
   });
 

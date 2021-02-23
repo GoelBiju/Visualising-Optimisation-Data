@@ -73,7 +73,7 @@ const addBatchData = async (runId, dataId, batch) => {
         });
 
         data.markModified("data");
-        console.log("optimiser data: ", optimiserData);
+        // console.log("optimiser data: ", optimiserData);
 
         await data.save().then(async () => {
           // Once updated increment the generation number

@@ -75,14 +75,23 @@ export const subscribeToGenerations = (
       // Emit a subscribe message to the backend with the run ID
       socket.emit("subscribe", runId);
       console.log("Emitted subscribe for: ", runId);
+    }
+  };
+};
 
-      // When we receive "subscribed" from
-      // server attach the callback function
-      socket.on("generation", (generation: number) => {
-        console.log("Generation received: ", generation);
+// Retrieve the data from a run given the ID and generation number
+export const fetchData = (
+  dataId: string,
+  generation: number
+): ThunkResult<Promise<void>> => {
+  return async (dispatch, getState) => {
+    const { socket, socketConnected } = getState().frontend.configuration;
 
-        dispatch(runGenerationSuccess(generation));
-        //return callback(generation);
+    if (socket && socketConnected) {
+      // Emit the socket event
+      socket.emit("data", {
+        dataId,
+        generation,
       });
     }
   };

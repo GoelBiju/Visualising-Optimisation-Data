@@ -31,13 +31,17 @@ function setupNamespaces(io) {
         if (optimiserData[generation]) {
           // Send the generation data to the client
           // console.log("Got data: ", optimiserData[generation]);
-          socket.emit("data", optimiserData[generation]);
+          socket.emit("data", {
+            generation,
+            data: optimiserData[generation].values,
+            time: optimiserData[generation].time,
+          });
         } else {
           console.log("Generation not present: ", generation);
         }
       } else {
         console.log(
-          `Unable to find data for ${datId} for generation ${generation}`
+          `Unable to find data for ${dataId} for generation ${generation}`
         );
       }
     });

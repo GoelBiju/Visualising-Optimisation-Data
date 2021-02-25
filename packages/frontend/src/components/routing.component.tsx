@@ -70,7 +70,9 @@ const Routing = (props: RoutingProps & RoutingDispatchProps): React.ReactElement
                         path={`/runs/:runId/visualisations/${p.plugin}/data`}
                         // render={() => <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />}
                         render={({ match }: RouteComponentProps<{ runId: string; visualisationName: string }>) => (
-                            <VisualisationContainer runId={match.params.runId} pluginName={p.plugin} />
+                            <VisualisationContainer runId={match.params.runId} pluginName={p.plugin}>
+                                <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />
+                            </VisualisationContainer>
                         )}
                     />
                 ))}

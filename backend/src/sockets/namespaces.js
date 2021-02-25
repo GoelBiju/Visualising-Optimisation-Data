@@ -15,7 +15,10 @@ function setupNamespaces(io) {
     // based on the optimisation run ID
     socket.on("subscribe", (runId) => {
       socket.join(runId);
-      console.log("Subscription to: ", runId);
+      console.log("Subscribed to: ", runId);
+
+      // TODO: Handle subscribed
+      socket.emit("subscribed", runId);
     });
 
     // Fetch generation data given the data ID

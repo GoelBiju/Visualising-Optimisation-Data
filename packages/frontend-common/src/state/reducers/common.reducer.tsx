@@ -11,11 +11,11 @@ import {
   NotificationType,
   RegisterRoutePayload,
   RegisterRouteType,
-  RunGenerationPayload,
-  RunGenerationSuccessType,
   RunPayload,
   RunsPayload,
   SocketPayload,
+  SubscribedPayload,
+  SubscribedType,
   VisualisationNamePayload,
   VisualisationNameType,
 } from "../actions/action.types";
@@ -31,13 +31,14 @@ export const initialState: FrontendState = {
     },
     settingsLoaded: false,
     socket: null,
-    socketConnected: false,
+    // socketConnected: false,
+    subscribed: false,
   },
   runs: [],
   selectedRun: null,
   selectedVisualisation: "",
   data: [],
-  currentGeneration: 0,
+  // currentGeneration: 0,
 };
 
 const updatePlugins = (
@@ -140,7 +141,7 @@ export function handleInitiateSocket(
     configuration: {
       ...state.configuration,
       socket: payload.socket,
-      socketConnected: true,
+      // socketConnected: true,
     },
   };
 }
@@ -151,18 +152,31 @@ export function handleDisconnectSocket(state: FrontendState): FrontendState {
     configuration: {
       ...state.configuration,
       socket: null,
-      socketConnected: false,
+      // socketConnected: false,
     },
   };
 }
 
-export function handleRunGeneration(
+// export function handleRunGeneration(
+//   state: FrontendState,
+//   payload: RunGenerationPayload
+// ): FrontendState {
+//   return {
+//     ...state,
+//     currentGeneration: payload.generation,
+//   };
+// }
+
+export function handleSubscribed(
   state: FrontendState,
-  payload: RunGenerationPayload
+  payload: SubscribedPayload
 ): FrontendState {
   return {
     ...state,
-    currentGeneration: payload.generation,
+    configuration: {
+      ...state.configuration,
+      subscribed: payload.subscribed,
+    },
   };
 }
 
@@ -175,8 +189,9 @@ const CommonReducer = createReducer(initialState, {
   [FetchRunResultType]: handleFetchRun,
   [InitiateSocketSuccessType]: handleInitiateSocket,
   [DisconnectSocketSuccessType]: handleDisconnectSocket,
-  [RunGenerationSuccessType]: handleRunGeneration,
+  // [RunGenerationSuccessType]: handleRunGeneration,
   [VisualisationNameType]: handleVisualisationName,
+  [SubscribedType]: handleSubscribed,
 });
 
 export default CommonReducer;

@@ -4,9 +4,11 @@ import { ActionType, ThunkResult } from "../state.types";
 import {
   DisconnectSocketSuccessType,
   InitiateSocketSuccessType,
-  RunGenerationPayload,
-  RunGenerationSuccessType,
+
+  // RunGenerationSuccessType,
   SocketPayload,
+  SubscribedPayload,
+  SubscribedType,
 } from "./action.types";
 
 export const initiateSocketSuccess = (
@@ -22,12 +24,21 @@ export const disconnectSocketSuccess = (): Action => ({
   type: DisconnectSocketSuccessType,
 });
 
-export const runGenerationSuccess = (
-  generation: number
-): ActionType<RunGenerationPayload> => ({
-  type: RunGenerationSuccessType,
+// export const runGenerationSuccess = (
+//   generation: number
+// ): ActionType<RunGenerationPayload> => ({
+//   type: RunGenerationSuccessType,
+//   payload: {
+//     generation,
+//   },
+// });
+
+export const setSubscribed = (
+  subscribed: boolean
+): ActionType<SubscribedPayload> => ({
+  type: SubscribedType,
   payload: {
-    generation,
+    subscribed,
   },
 });
 
@@ -71,7 +82,7 @@ export const subscribeToGenerations = (
     const { socket } = getState().frontend.configuration;
 
     // Join the optimisation run room
-    if (socket) {
+    if (socket && socket.connected) {
       // Emit a subscribe message to the backend with the run ID
       socket.emit("subscribe", runId);
       console.log("Emitted subscribe for: ", runId);
@@ -85,9 +96,10 @@ export const fetchData = (
   generation: number
 ): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
-    const { socket, socketConnected } = getState().frontend.configuration;
+    const { socket } = getState().frontend.configuration;
 
-    if (socket && socketConnected) {
+    // socketConnected
+    if (socket && socket.connected) {
       // Emit the socket event
       socket.emit("data", {
         dataId,

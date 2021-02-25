@@ -20,7 +20,8 @@ export const VisualisationNameType = `${microFrontendMessageId}:visualisation_na
 // Socket related actions
 export const InitiateSocketSuccessType = `${microFrontendMessageId}:initiate_socket_success`;
 export const DisconnectSocketSuccessType = `${microFrontendMessageId}:disconnect_socket_success`;
-export const RunGenerationSuccessType = `${microFrontendMessageId}:run_generation_success`;
+// export const RunGenerationSuccessType = `${microFrontendMessageId}:run_generation_success`;
+export const SubscribedType = `${microFrontendMessageId}:set_subscribed`;
 
 export interface RegisterRoutePayload {
   section: string;
@@ -45,14 +46,18 @@ export interface RunPayload {
   run: Run;
 }
 
+export interface VisualisationNamePayload {
+  visualisationName: string;
+}
+
 export interface SocketPayload {
   socket: SocketIOClient.Socket;
 }
 
-export interface RunGenerationPayload {
-  generation: number;
-}
+// export interface RunGenerationPayload {
+//   generation: number;
+// }
 
-export interface VisualisationNamePayload {
-  visualisationName: string;
+export interface SubscribedPayload {
+  subscribed: boolean;
 }

@@ -25,9 +25,6 @@ export interface Run {
   updatedAt: string;
 }
 
-// TODO: temporarily we have the data defined as a 2D array
-export type Data = number[][];
-
 export interface FrontendState {
   notifications: string[];
   configuration: {
@@ -35,13 +32,20 @@ export interface FrontendState {
     urls: SettingsUrls;
     settingsLoaded: boolean;
     socket: SocketIOClient.Socket | null;
-    socketConnected: boolean;
+    // TODO: Add subscribed to state?
+    // TODO: Remove socketConnected
+    // socketConnected: boolean;
+    subscribed: boolean;
   };
   runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
-  data: Data;
-  currentGeneration: number;
+  data: {
+    generation: number;
+    data: number[][];
+    time: Date;
+  }[];
+  // currentGeneration: number;
 }
 
 export interface StateType {

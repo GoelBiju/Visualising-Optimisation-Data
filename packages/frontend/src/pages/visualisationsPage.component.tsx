@@ -1,10 +1,17 @@
-import { List, ListItem, Typography } from '@material-ui/core';
+import { Grid, makeStyles, Typography } from '@material-ui/core';
 import { fetchRun, RegisterRoutePayload, Run, StateType } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import VisualisationCard from './visualisationCard.component';
+
+const useStyles = makeStyles({
+    root: {
+        flexGrow: 1,
+        padding: '15px',
+    },
+});
 
 interface VisualisationsPageProps {
     runId: string;
@@ -24,6 +31,7 @@ type VisualisationsPageCombinedProps = VisualisationsPageProps &
     VisualisationsPageStateProps;
 
 const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.ReactElement => {
+    const classes = useStyles();
     const { runId, fetchRun, plugins, selectedRun } = props;
 
     const [runsFetched, setRunsFetched] = React.useState(false);
@@ -37,20 +45,20 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
     }, [runsFetched]);
 
     return (
-        <div>
-            <List>
+        <div className={classes.root}>
+            <Grid container spacing={3}>
                 {selectedRun ? (
                     plugins.length > 0 ? (
                         plugins.map(
                             (p, i) =>
                                 selectedRun.graphs.includes(p.plugin) && (
-                                    <ListItem key={i}>
+                                    <Grid key={i} item xs={3}>
                                         <VisualisationCard
                                             runId={runId}
                                             visualisationName={p.plugin}
                                             displayName={p.displayName}
                                         />
-                                    </ListItem>
+                                    </Grid>
                                 ),
                         )
                     ) : (
@@ -59,7 +67,7 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
                 ) : (
                     <Typography>Unable to fetch the selected run.</Typography>
                 )}
-            </List>
+            </Grid>
         </div>
     );
 };

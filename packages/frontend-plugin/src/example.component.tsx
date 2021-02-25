@@ -6,18 +6,11 @@ interface ExampleComponentStateProps {
   notifications: string[];
 }
 
-interface ExampleComponentProps {
-  runId: string;
-  visualisationName: string;
-}
-
 const ExampleComponent = (
-  props: ExampleComponentProps & ExampleComponentStateProps
+  props: ExampleComponentStateProps
 ): React.ReactElement => (
   <div>
     <p>{props.notifications}</p>
-    <p>{props.runId}</p>
-    <p>{props.visualisationName}</p>
   </div>
 );
 

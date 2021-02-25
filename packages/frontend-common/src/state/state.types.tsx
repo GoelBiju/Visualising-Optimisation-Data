@@ -17,12 +17,18 @@ export interface Run {
     [key: string]: string;
   };
   populationSize: number;
-  totalPopulationSize: number;
-  generations: number;
+  currentGeneration: number;
+  totalGenerations: number;
   graphs: string[];
   completed: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Data {
+  generation: number;
+  data: number[][];
+  time: Date;
 }
 
 export interface FrontendState {
@@ -31,10 +37,17 @@ export interface FrontendState {
     plugins: RegisterRoutePayload[];
     urls: SettingsUrls;
     settingsLoaded: boolean;
+    socket: SocketIOClient.Socket | null;
+    // TODO: Add subscribed to state?
+    // TODO: Remove socketConnected
+    // socketConnected: boolean;
+    subscribed: boolean;
   };
   runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
+  data: Data | null;
+  // currentGeneration: number;
 }
 
 export interface StateType {

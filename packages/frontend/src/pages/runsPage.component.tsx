@@ -1,4 +1,4 @@
-import { Grid, List, ListItem, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchRuns, Run, StateType } from 'frontend-common';
 import React from 'react';
@@ -12,6 +12,7 @@ const useStyles = makeStyles({
         flexGrow: 1,
         padding: '15px',
     },
+    label: { padding: '15px', textAlign: 'left' },
 });
 
 interface RunsPageDispatchProps {
@@ -41,9 +42,10 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
 
     return (
         <div>
-            <Typography style={{ padding: '15px', textAlign: 'left' }} variant="h3">
+            <Typography className={classes.label} variant="h4">
                 Active
             </Typography>
+
             <div className={classes.root}>
                 <Grid container spacing={3}>
                     {runs
@@ -55,7 +57,8 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
                                     title={run.title}
                                     problem={run.problem}
                                     created={run.createdAt}
-                                    generations={run.generations}
+                                    currentGeneration={run.currentGeneration}
+                                    totalGenerations={run.totalGenerations}
                                     graphs={run.graphs}
                                 />
                             </Grid>
@@ -63,26 +66,28 @@ const RunsPage = (props: RunsPageCombinedProps): React.ReactElement => {
                 </Grid>
             </div>
 
-            <Typography style={{ padding: '15px', textAlign: 'left' }} variant="h3">
+            <Typography className={classes.label} variant="h4">
                 Completed
             </Typography>
+
             <div className={classes.root}>
-                <List>
+                <Grid container spacing={3}>
                     {runs
                         .filter((r) => r.completed)
                         .map((run, index) => (
-                            <ListItem key={index}>
+                            <Grid key={index} item xs={3}>
                                 <RunCard
                                     id={run._id}
                                     title={run.title}
                                     problem={run.problem}
                                     created={run.createdAt}
-                                    generations={run.generations}
+                                    currentGeneration={run.currentGeneration}
+                                    totalGenerations={run.totalGenerations}
                                     graphs={run.graphs}
                                 />
-                            </ListItem>
+                            </Grid>
                         ))}
-                </List>
+                </Grid>
             </div>
         </div>
     );

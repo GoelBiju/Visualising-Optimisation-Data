@@ -18,14 +18,15 @@ interface InfoCardProps {
     title: string;
     problem: string;
     created: string;
-    generations: number;
+    currentGeneration: number;
+    totalGenerations: number;
     graphs: string[];
 }
 
 const RunCard = (props: InfoCardProps): React.ReactElement => {
     const classes = useStyles();
 
-    const { id, title, problem, created, generations, graphs } = props;
+    const { id, title, problem, created, currentGeneration, totalGenerations, graphs } = props;
 
     return (
         <Card className={classes.root}>
@@ -41,7 +42,10 @@ const RunCard = (props: InfoCardProps): React.ReactElement => {
                         <strong>Problem:</strong> {problem}
                     </p>
                     <p>
-                        <strong>Generations:</strong> {generations}
+                        <strong>Current Generation:</strong> {currentGeneration}
+                    </p>
+                    <p>
+                        <strong>Total Generations:</strong> {totalGenerations}
                     </p>
                     <p>
                         <strong>Created:</strong> {new Date(created).toLocaleString()}

@@ -7,6 +7,7 @@ import { Route, RouteComponentProps, Switch } from 'react-router';
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import RunsPage from '../pages/runsPage.component';
+import VisualisationContainer from '../pages/visualisationContainer.component';
 import VisualisationsPage from '../pages/visualisationsPage.component';
 
 const useStyles = makeStyles(() =>
@@ -53,15 +54,6 @@ const Routing = (props: RoutingProps & RoutingDispatchProps): React.ReactElement
     return (
         <div className={classes.root}>
             <Switch location={location}>
-                {/* <Route
-                    exact
-                    path="/"
-                    render={() => (
-                        <a style={{ margin: '64px' }} href="/runs/1/visualisations/test/data">
-                            Test
-                        </a>
-                    )}
-                /> */}
                 <Route exact path="/" component={RunsPage} />
                 <Route
                     exact
@@ -74,8 +66,14 @@ const Routing = (props: RoutingProps & RoutingDispatchProps): React.ReactElement
                     <Route
                         key={`${p.section}_${p.link}`}
                         exact
-                        path={p.link}
-                        render={() => <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />}
+                        // TODO: Put the expected location here instead of the plugin
+                        path={`/runs/:runId/visualisations/${p.plugin}/data`}
+                        // render={() => <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />}
+                        render={({ match }: RouteComponentProps<{ runId: string; visualisationName: string }>) => (
+                            <VisualisationContainer runId={match.params.runId} pluginName={p.plugin}>
+                                <PluginPlaceHolder id={p.plugin} buttonClick={clickedButton} />
+                            </VisualisationContainer>
+                        )}
                     />
                 ))}
             </Switch>

@@ -20,17 +20,17 @@ const RunSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    // totalPopulationSize: {
-    //   type: Number,
-    //   default: 0,
-    // },
-    generations: {
+    currentGeneration: {
       type: Number,
       default: 0,
     },
-    // TODO: Needs to define what types of graph
-    //       to plot it's data on
-    graphs: [String],
+    totalGenerations: {
+      type: Number,
+      default: 0,
+    },
+    graphs: {
+      type: [String],
+    },
     dataId: {
       type: String,
       required: true,

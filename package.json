@@ -14,7 +14,8 @@
     "frontend": "yarn workspace frontend start",
     "frontend-plugin": "yarn workspace frontend-plugin serve:build",
     "lint:frontend": "yarn workspace frontend lint",
-    "test:frontend": "yarn workspace frontend test"
+    "test:frontend": "yarn workspace frontend test",
+    "stack": "yarn backend | yarn frontend | yarn frontend-plugin"
   },
   "repository": {
     "type": "git",

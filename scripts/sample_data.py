@@ -32,7 +32,7 @@ algorithmParameters = {
 
 # Create the optimisation run
 optimiserClient.createRun("Pareto front estimation of DTLZ1", "DTLZ1",
-                          "NGSA-II", populationSize, algorithmParameters, ["pareto-front"])  # totalGenerations,
+                          "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["frontend-plugin"])
 
 # Send generation data to the server
 # generation = 1
@@ -57,4 +57,4 @@ for values in dtlz1_data:
         count = 1
         # print("Next Generation: ", generation)
 
-print("Completed sending, wait until queue has been processed")
+print("Completed adding items to queue, wait until queue has been processed")

@@ -11,8 +11,7 @@ const cors = require("cors");
 
 const runApiRoute = require("./src/routes/run");
 
-const { frontendConnection } = require("./src/sockets/frontendSocket");
-const { dataConnection } = require("./src/sockets/dataSocket");
+const { setupNamespaces } = require("./src/sockets/namespaces");
 
 // Connection information.
 let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";
@@ -37,20 +36,14 @@ app.use(express.static(path.join(__dirname, "resources")));
 // Define routes.
 app.use("/api", runApiRoute);
 
-// Initialise the socket server.
+// Initialise the socket server
+// and set up the namespaces.
 let io = socketIo(server);
-
-const dataNamespace = io.of("/data");
-const frontendNamespace = io.of("/frontend");
-
-frontendNamespace.on("connection", frontendConnection);
-
-// "On connection" handler
-dataNamespace.on("connection", dataConnection);
+setupNamespaces(io);
 
 // Display the running port
 app.get("/", (req, res) => {
-  res.send(`Running on port ${PORT}`);
+  res.send(`Backend running on port ${PORT}`);
 });
 
 server.listen(PORT, () => {

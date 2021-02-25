@@ -1,5 +1,5 @@
-const Data = require("../models/Data");
 const Run = require("../models/Run");
+const Data = require("../models/Data");
 
 // Create a new data document for an optimisation run
 const createData = async () => {
@@ -33,7 +33,7 @@ const createData = async () => {
 // Add optimisation data to the document
 // We need the runId to update the generation number afterwards
 const addBatchData = async (runId, dataId, batch) => {
-  let added = false;
+  let added = null;
 
   // await getData(id).then(async (optimiserData) => {
   //   if (optimiserData) {
@@ -57,34 +57,50 @@ const addBatchData = async (runId, dataId, batch) => {
   console.log("querying for run: ", runId);
   const run = await Run.findById(runId).exec();
   if (run) {
-    // Get the generation number
-    const generations = run.generations;
-    console.log("Current generation: ", generations);
+    if (!run.completed) {
+      // Get the generation number
+      const generation = run.currentGeneration;
+      console.log("Current generation: ", generation);
 
-    // Find the data given the ID
-    const data = await Data.findById(dataId).exec();
-    if (data) {
-      // Add the new data as a new generation property.
-      // console.log("retrieved data: ", data);
-      const optimiserData = data.data;
-      optimiserData.set(`${generations + 1}`, batch);
+      // Find the data given the ID
+      const data = await Data.findById(dataId).exec();
+      if (data) {
+        // Add the new data as a new generation property.
+        // console.log("retrieved data: ", data);
+        const optimiserData = data.data;
+        optimiserData.set(`${generation + 1}`, {
+          values: batch,
+        });
 
-      data.markModified("data");
-      console.log("optimiser data: ", optimiserData);
+        data.markModified("data");
+        // console.log("optimiser data: ", optimiserData);
 
-      await data.save().then(async () => {
-        // Once updated increment the generation number
-        run.generations++;
-        run.markModified("generations");
-        await run.save();
-      });
+        await data.save().then(async () => {
+          // Once updated increment the generation number
+          run.currentGeneration++;
+          run.markModified("currentGeneration");
 
-      added = true;
+          // Check to see if the run is complete.
+          if (run.currentGeneration === run.totalGenerations) {
+            run.completed = true;
+            console.log("Completed run: ", run._id);
+          }
+
+          await run.save();
+        });
+
+        added = run._id;
+      } else {
+        console.log("addBatchData: Unable to get data by id: ", dataId);
+      }
     } else {
-      console.log("addBatchData: Unable to get data by id: ", dataId);
+      console.log("addBatchData: The run is already complete: ", runId);
     }
   } else {
-    console.log("addBatchData: Unable to find run by ID: ", runId);
+    console.log(
+      "addBatchData: Unable to find run by id or the run is complete: ",
+      runId
+    );
   }
 
   return added;

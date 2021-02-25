@@ -1,7 +1,11 @@
 import * as log from "loglevel";
 import {
+  DataPayload,
+  DataType,
+  DisconnectSocketSuccessType,
   FetchRunResultType,
   FetchRunsResultType,
+  InitiateSocketSuccessType,
   LoadedSettingsType,
   LoadUrlsPayload,
   LoadUrlsType,
@@ -11,6 +15,11 @@ import {
   RegisterRouteType,
   RunPayload,
   RunsPayload,
+  SocketPayload,
+  SubscribedPayload,
+  SubscribedType,
+  VisualisationNamePayload,
+  VisualisationNameType,
 } from "../actions/action.types";
 import { FrontendState } from "../state.types";
 import createReducer from "./createReducer";
@@ -23,10 +32,15 @@ export const initialState: FrontendState = {
       backendUrl: "",
     },
     settingsLoaded: false,
+    socket: null,
+    // socketConnected: false,
+    subscribed: false,
   },
   runs: [],
   selectedRun: null,
   selectedVisualisation: "",
+  data: null,
+  // currentGeneration: 0,
 };
 
 const updatePlugins = (
@@ -110,6 +124,74 @@ export function handleFetchRun(
   };
 }
 
+export function handleVisualisationName(
+  state: FrontendState,
+  payload: VisualisationNamePayload
+): FrontendState {
+  return {
+    ...state,
+    selectedVisualisation: payload.visualisationName,
+  };
+}
+
+export function handleInitiateSocket(
+  state: FrontendState,
+  payload: SocketPayload
+): FrontendState {
+  return {
+    ...state,
+    configuration: {
+      ...state.configuration,
+      socket: payload.socket,
+      // socketConnected: true,
+    },
+  };
+}
+
+export function handleDisconnectSocket(state: FrontendState): FrontendState {
+  return {
+    ...state,
+    configuration: {
+      ...state.configuration,
+      socket: null,
+      // socketConnected: false,
+    },
+  };
+}
+
+// export function handleRunGeneration(
+//   state: FrontendState,
+//   payload: RunGenerationPayload
+// ): FrontendState {
+//   return {
+//     ...state,
+//     currentGeneration: payload.generation,
+//   };
+// }
+
+export function handleSubscribed(
+  state: FrontendState,
+  payload: SubscribedPayload
+): FrontendState {
+  return {
+    ...state,
+    configuration: {
+      ...state.configuration,
+      subscribed: payload.subscribed,
+    },
+  };
+}
+
+export function handleData(
+  state: FrontendState,
+  payload: DataPayload
+): FrontendState {
+  return {
+    ...state,
+    data: payload.data,
+  };
+}
+
 const CommonReducer = createReducer(initialState, {
   [NotificationType]: handleNotification,
   [RegisterRouteType]: handleRegisterPlugin,
@@ -117,6 +199,12 @@ const CommonReducer = createReducer(initialState, {
   [LoadedSettingsType]: handleLoadedSettings,
   [FetchRunsResultType]: handleFetchRuns,
   [FetchRunResultType]: handleFetchRun,
+  [InitiateSocketSuccessType]: handleInitiateSocket,
+  [DisconnectSocketSuccessType]: handleDisconnectSocket,
+  // [RunGenerationSuccessType]: handleRunGeneration,
+  [VisualisationNameType]: handleVisualisationName,
+  [SubscribedType]: handleSubscribed,
+  [DataType]: handleData,
 });
 
 export default CommonReducer;

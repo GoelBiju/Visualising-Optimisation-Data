@@ -26,7 +26,6 @@ headers = {"content-type": "application/json"}
 class DataNamespace(socketio.ClientNamespace):
     run_id = None
     data_id = None
-    # current_generation = 0
 
     sending_data = False
     batch_queue = None
@@ -54,8 +53,6 @@ class DataNamespace(socketio.ClientNamespace):
     def process_queue(self):
         while True:
             if (self.sending_data != True):
-                # print("Processing next item, remaining: ",
-                #       self.batch_queue.qsize())
                 # Get the next batch item
                 batch = self.batch_queue.get()
 
@@ -88,23 +85,22 @@ class OptimiserClient():
 
         # Connect to node server
         self.sio = socketio.Client(logger=False, engineio_logger=False)
-        # self.sio.connect(BACKEND_URL, namespaces=['/data'])
         self.sio.register_namespace(self.data_namespace)
         self.sio.connect(BACKEND_URL)
 
     # generations
-    def createRun(self, title, problem, algorithm, populationSize, algorithmParameters={}, graphs=[]):
+    def createRun(self, title, problem, algorithm, populationSize, totalGenerations, algorithmParameters={}, graphs=[]):
         # Create a new optimisation run given the parameters
         data = {
             "title": title,
             "problem": problem,
             "algorithm": algorithm,
             "populationSize": populationSize,
-            # "generations": generations,
+            "totalGenerations": totalGenerations,
             "algorithmParameters": algorithmParameters,
             "graphs": graphs
         }
-        print("Creating optmisation run: ", data)
+        print("Creating optimisation run: ", data)
 
         # Send the request to create the run
         response = requests.post(
@@ -116,14 +112,12 @@ class OptimiserClient():
             self.data_namespace.run_id = response["runId"]
             self.data_namespace.data_id = response["dataId"]
             self.data_namespace.initialise_queue()
-            print("Created optmisation run, run ID and data ID received: ",
+            print("Created optimisation run, run ID and data ID received: ",
                   self.data_namespace.data_id, self.data_namespace.run_id)
             print("Sending data: ", self.data_namespace.sending_data)
         else:
             print("Unable to create optimisation run: ", response["message"])
 
-    def addBatch(self, batch_data):  # generation
+    def addBatch(self, batch_data):
         # Set the new generation and add the data to the queue
-        # self.data_namespace.current_generation = generation
-
         self.data_namespace.batch_queue.put(batch_data)

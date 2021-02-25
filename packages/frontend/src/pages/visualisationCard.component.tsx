@@ -1,23 +1,16 @@
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 
-const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-});
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            minWidth: 275,
+            padding: theme.spacing(2),
+            textAlign: 'left',
+        },
+    }),
+);
 
 interface VisualisationCardProps {
     runId: string;
@@ -34,7 +27,7 @@ const VisualisationCard = (props: VisualisationCardProps): React.ReactElement =>
     return (
         <Card className={classes.root}>
             <CardContent>
-                <Typography variant="h5" component="h2">
+                <Typography variant="h5">
                     {/* <Link component={RouterLink} to={`/runs/${runId}/visualisations/${visualisationName}/data`}> */}
                     <Link href={`/runs/${runId}/visualisations/${visualisationName}/data`}>{displayName}</Link>
                 </Typography>

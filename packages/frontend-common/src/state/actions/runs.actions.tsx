@@ -1,6 +1,8 @@
 import axios from "axios";
-import { ActionType, Run, ThunkResult } from "../state.types";
+import { ActionType, Data, Run, ThunkResult } from "../state.types";
 import {
+  DataPayload,
+  DataType,
   FetchRunResultType,
   FetchRunsResultType,
   RunPayload,
@@ -29,6 +31,13 @@ export const setVisualisationName = (
   type: VisualisationNameType,
   payload: {
     visualisationName,
+  },
+});
+
+export const setData = (data: Data): ActionType<DataPayload> => ({
+  type: DataType,
+  payload: {
+    data,
   },
 });
 

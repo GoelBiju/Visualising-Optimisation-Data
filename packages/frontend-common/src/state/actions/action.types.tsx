@@ -1,4 +1,4 @@
-import { Run, SettingsUrls } from "../state.types";
+import { Data, Run, SettingsUrls } from "../state.types";
 
 // Define the microfrontend name
 export const microFrontendMessageId = "frontend";
@@ -15,7 +15,8 @@ export const LoadedSettingsType = `${microFrontendMessageId}:loaded_settings`;
 export const FetchRunsType = `${microFrontendMessageId}:fetch_runs`;
 export const FetchRunsResultType = `${microFrontendMessageId}:fetch_runs_result`;
 export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
-export const VisualisationNameType = `${microFrontendMessageId}:visualisation_name`;
+export const VisualisationNameType = `${microFrontendMessageId}:set_visualisation_name`;
+export const DataType = `${microFrontendMessageId}:set_data`;
 
 // Socket related actions
 export const InitiateSocketSuccessType = `${microFrontendMessageId}:initiate_socket_success`;
@@ -60,4 +61,8 @@ export interface SocketPayload {
 
 export interface SubscribedPayload {
   subscribed: boolean;
+}
+
+export interface DataPayload {
+  data: Data;
 }

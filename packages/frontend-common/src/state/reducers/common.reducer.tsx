@@ -1,5 +1,7 @@
 import * as log from "loglevel";
 import {
+  DataPayload,
+  DataType,
   DisconnectSocketSuccessType,
   FetchRunResultType,
   FetchRunsResultType,
@@ -37,7 +39,7 @@ export const initialState: FrontendState = {
   runs: [],
   selectedRun: null,
   selectedVisualisation: "",
-  data: [],
+  data: null,
   // currentGeneration: 0,
 };
 
@@ -180,6 +182,16 @@ export function handleSubscribed(
   };
 }
 
+export function handleData(
+  state: FrontendState,
+  payload: DataPayload
+): FrontendState {
+  return {
+    ...state,
+    data: payload.data,
+  };
+}
+
 const CommonReducer = createReducer(initialState, {
   [NotificationType]: handleNotification,
   [RegisterRouteType]: handleRegisterPlugin,
@@ -192,6 +204,7 @@ const CommonReducer = createReducer(initialState, {
   // [RunGenerationSuccessType]: handleRunGeneration,
   [VisualisationNameType]: handleVisualisationName,
   [SubscribedType]: handleSubscribed,
+  [DataType]: handleData,
 });
 
 export default CommonReducer;

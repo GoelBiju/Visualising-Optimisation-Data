@@ -1,9 +1,11 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
 import {
+    Data,
     fetchData,
     fetchRun,
     initiateSocket,
     Run,
+    setData,
     setSubscribed,
     setVisualisationName,
     StateType,
@@ -60,6 +62,7 @@ interface VCDispatchProps {
     fetchData: (dataId: string, generation: number) => Promise<void>;
     // setCurrentGeneration: (generation: number) => Action;
     setSubscribed: (subscribed: boolean) => Action;
+    setData: (data: Data) => Action;
 }
 
 interface VCStateProps {
@@ -90,6 +93,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         // setCurrentGeneration,
         subscribed,
         setSubscribed,
+        setData,
     } = props;
 
     const [loadedRun, setLoadedRun] = React.useState(false);
@@ -152,8 +156,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                 // Handle the data response event
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                socket.on('data', (data: any) => {
+                socket.on('data', (data: Data) => {
                     console.log('Data received for current generation: ', data);
+                    setData(data);
                 });
 
                 setSubscribed(true);
@@ -196,7 +201,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 </Grid>
             )}
 
-            <Grid style={{ textAlign: 'center' }} sm={3} xs={4}>
+            <Grid style={{ textAlign: 'center' }} item sm={3} xs={4}>
                 <Paper
                     square
                     style={{
@@ -228,6 +233,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
     fetchData: (dataId: string, generation: number) => dispatch(fetchData(dataId, generation)),
     // setCurrentGeneration: (generation: number) => dispatch(runGenerationSuccess(generation)),
     setSubscribed: (subscribed: boolean) => dispatch(setSubscribed(subscribed)),
+    setData: (data: Data) => dispatch(setData(data)),
 });
 
 const mapStateToProps = (state: StateType): VCStateProps => {

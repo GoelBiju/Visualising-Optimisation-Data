@@ -10,7 +10,7 @@ import { AnyAction, Store } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import "./App.css";
-import ExampleComponent from "./example.component";
+import VisualisationComponent from "./visualisation.component";
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -83,21 +83,7 @@ class App extends React.Component<unknown, AppState> {
     } else {
       return (
         <Provider store={this.state.store}>
-          {/* <ConnectedRouter history={history}>
-            <Switch>
-              <Route
-                exact
-                path={`/runs/:runId/visualisations/:visualisationName/data`}
-                render={({
-                  match,
-                }: RouteComponentProps<{
-                  runId: string;
-                  visualisationName: string;
-                }>) => <ExampleComponent />}
-              />
-            </Switch>
-          </ConnectedRouter> */}
-          <ExampleComponent />
+          <VisualisationComponent />
         </Provider>
       );
     }

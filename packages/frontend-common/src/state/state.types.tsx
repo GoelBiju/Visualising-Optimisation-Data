@@ -25,11 +25,11 @@ export interface Run {
   updatedAt: string;
 }
 
-export interface Data {
+export type Data = {
   generation: number;
   data: number[][];
   time: Date;
-}
+} | null;
 
 export interface FrontendState {
   notifications: string[];
@@ -46,7 +46,7 @@ export interface FrontendState {
   runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
-  data: Data | null;
+  data: Data;
   // currentGeneration: number;
 }
 

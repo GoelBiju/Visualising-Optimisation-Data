@@ -1,0 +1,213 @@
+import * as d3 from "d3";
+import { Data, StateType } from "frontend-common";
+import React from "react";
+import { connect } from "react-redux";
+
+interface VCProps {
+  data: Data;
+}
+
+// const sampleData = [
+//     [34, 78],
+//     [109, 280],
+//     [310, 120],
+//     [79, 411],
+//     [420, 220],
+//     [233, 145],
+//     [333, 96],
+//     [222, 333],
+//     [78, 320],
+//     [21, 123],
+// ];
+
+const VisualisationComponent = (props: VCProps): React.ReactElement => {
+  const chartRef: React.RefObject<SVGSVGElement> = React.createRef<SVGSVGElement>();
+
+  const margin = {
+    top: 10,
+    right: 30,
+    bottom: 30,
+    left: 60,
+  };
+  const width = 760 - margin.left - margin.right;
+  const height = 800 - margin.top - margin.bottom;
+
+  const xScale: d3.ScaleLinear<number, number> = d3
+    .scaleLinear()
+    .range([0, width]);
+  const yScale: d3.ScaleLinear<number, number> = d3
+    .scaleLinear()
+    .range([height, 0]);
+
+  const [builtChart, setBuiltChart] = React.useState(false);
+
+  // public constructor(props: VCStateProps) {
+  //   super(props);
+
+  //   // Create ref and configure D3 selection for svg chart.
+  //   this.chartRef = React.createRef<SVGSVGElement>();
+
+  //   // Initialise the chart sizes
+  //   this.margin = {
+  //     top: 10,
+  //     right: 30,
+  //     bottom: 30,
+  //     left: 60,
+  //   };
+  //   this.width = 760 - this.margin.left - this.margin.right;
+  //   this.height = 800 - this.margin.top - this.margin.bottom;
+
+  //   // Add scales
+  //   this.xScale = d3.scaleLinear().range([0, this.width]);
+  //   this.yScale = d3.scaleLinear().range([this.height, 0]);
+
+  //   // Initialise the state
+  //   // this.state = {
+  //   //     data: sampleData,
+  //   // };
+  // }
+
+  // Get current chart a D3 selection
+  const currentChart = React.useCallback(
+    (): d3.Selection<SVGSVGElement | null, unknown, null, undefined> =>
+      d3.select(chartRef.current),
+    [chartRef]
+  );
+
+  // public componentDidMount(): void {
+  //   this.buildChart();
+
+  //   // if (!this.state.chartConnected) {
+  //   //   //  Start socket connections.
+  //   //   initiateSocket();
+
+  //   //   // Subscribe to the data feed.
+  //   //   subscribeToData((data) => {
+  //   //     // Add the new data point.
+  //   //     this.setState({ data: [...this.state.data, [data.x, data.y]] });
+  //   //   });
+
+  //   //   // Set to being connected.
+  //   //   this.setState({ chartConnected: true });
+  //   // }
+  // }
+
+  // public componentDidUpdate(
+  //   prevProps: VCStateProps
+  // ): void {
+  //   // console.log("Previous: ", prevState.data);
+  //   // console.log("New: ", this.state.data);
+
+  //   this.updateChart();
+  // }
+
+  // Build the chart initially.
+  const buildChart = React.useCallback(
+    (data: number[][]) => {
+      // Adjust the svg.
+      const svg = currentChart()
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+      // Add x axis
+      const xAxis = xScale.domain([0, d3.max(data, (d) => d[0]) as number]);
+      svg
+        .append("g")
+        .attr("class", "scatter-chart-xaxis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xAxis));
+
+      // Add y axis
+      const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
+      svg
+        .append("g")
+        .attr("class", "scatter-chart-yaxis")
+        .call(d3.axisLeft(yAxis));
+
+      // Add dots
+      svg
+        .append("g")
+        .attr("class", "scatter-chart-points")
+        .selectAll("dot")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", (d) => d[0])
+        .attr("cy", (d) => d[1])
+        .attr("r", 3)
+        .style("fill", "#69b3a2");
+    },
+    [
+      currentChart,
+      height,
+      margin.bottom,
+      margin.left,
+      margin.right,
+      margin.top,
+      width,
+      xScale,
+      yScale,
+    ]
+  );
+
+  // Update the chart when with new data.
+  const updateChart = React.useCallback(
+    (data: number[][]) => {
+      // Get the current SVG of the chart
+      const svg = currentChart();
+
+      // Update the x-axis
+      const xAxis = xScale.domain([0, d3.max(data, (d) => d[0]) as number]);
+      // NOTE: This is a shorthand to update the axis without using .call
+      //       (using .call had type issues with .select).
+      d3.axisBottom(xAxis)(svg.select("g.scatter-chart-xaxis"));
+
+      // Update the y-axis
+      const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
+      d3.axisLeft(yAxis)(svg.select("g.scatter-chart-yaxis"));
+
+      // Update points
+      svg
+        .select("g.scatter-chart-points")
+        .selectAll("dot")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", (d) => xScale(d[0]) as number)
+        .attr("cy", (d) => yScale(d[1]) as number)
+        .attr("r", 3)
+        .style("fill", "#69b3a2");
+    },
+    [currentChart, xScale, yScale]
+  );
+
+  // Build or update chart when data changes
+  React.useEffect(() => {
+    const data = props.data ? props.data.data : [];
+    console.log("Render: ", data);
+
+    // Build chart initially otherwise update for data
+    if (!builtChart) {
+      buildChart(data);
+      setBuiltChart(true);
+    } else {
+      updateChart(data);
+    }
+  }, [buildChart, builtChart, props.data, updateChart]);
+
+  return (
+    <div id="chartContainer">
+      <svg ref={chartRef}></svg>
+    </div>
+  );
+};
+
+const mapStateToProps = (state: StateType): VCProps => {
+  return {
+    data: state.frontend.data,
+  };
+};
+
+export default connect(mapStateToProps)(VisualisationComponent);

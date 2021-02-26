@@ -102,55 +102,52 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
   // }
 
   // Build the chart initially.
-  const buildChart = React.useCallback(
-    (data: number[][]) => {
-      // Adjust the svg.
-      const svg = currentChart()
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  const buildChart = React.useCallback(() => {
+    // Adjust the svg.
+    const svg = currentChart()
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-      // Add x axis
-      const xAxis = xScale.domain([0, d3.max(data, (d) => d[0]) as number]);
-      svg
-        .append("g")
-        .attr("class", "scatter-chart-xaxis")
-        .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xAxis));
+    // Add x axis
+    // const xAxis = xScale.domain([0, d3.max(data, (d) => d[0]) as number]);
+    const xAxis = xScale.domain([0, 1.0]);
+    svg
+      .append("g")
+      .attr("class", "scatter-chart-xaxis")
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(xAxis));
 
-      // Add y axis
-      const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
-      svg
-        .append("g")
-        .attr("class", "scatter-chart-yaxis")
-        .call(d3.axisLeft(yAxis));
+    // Add y axis
+    // const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
+    const yAxis = yScale.domain([0, 1.0]);
+    svg
+      .append("g")
+      .attr("class", "scatter-chart-yaxis")
+      .call(d3.axisLeft(yAxis));
 
-      // Add dots
-      svg
-        .append("g")
-        .attr("class", "scatter-chart-points")
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", (d) => d[0])
-        .attr("cy", (d) => d[1])
-        .attr("r", 3)
-        .style("fill", "#69b3a2");
-    },
-    [
-      currentChart,
-      height,
-      margin.bottom,
-      margin.left,
-      margin.right,
-      margin.top,
-      width,
-      xScale,
-      yScale,
-    ]
-  );
+    // Add dots
+    svg.append("g").attr("class", "scatter-chart-points");
+    // .selectAll("dot")
+    // .data(data)
+    // .enter()
+    // .append("circle")
+    // .attr("cx", (d) => d[0])
+    // .attr("cy", (d) => d[1])
+    // .attr("r", 3)
+    // .style("fill", "#69b3a2");
+  }, [
+    currentChart,
+    height,
+    margin.bottom,
+    margin.left,
+    margin.right,
+    margin.top,
+    width,
+    xScale,
+    yScale,
+  ]);
 
   // Update the chart when with new data.
   const updateChart = React.useCallback(
@@ -168,7 +165,10 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
       const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
       d3.axisLeft(yAxis)(svg.select("g.scatter-chart-yaxis"));
 
-      // Update points
+      // Remove the old points
+      svg.selectAll("circle").remove();
+
+      // Append the new points
       svg
         .select("g.scatter-chart-points")
         .selectAll("dot")
@@ -190,7 +190,7 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
 
     // Build chart initially otherwise update for data
     if (!builtChart) {
-      buildChart(data);
+      buildChart(); // data
       setBuiltChart(true);
     } else {
       updateChart(data);

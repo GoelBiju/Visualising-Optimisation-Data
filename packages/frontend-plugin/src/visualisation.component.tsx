@@ -24,13 +24,14 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
   const chartRef: React.RefObject<SVGSVGElement> = React.createRef<SVGSVGElement>();
 
   const margin = {
-    top: 10,
+    top: 50,
     right: 30,
     bottom: 30,
     left: 60,
   };
+
   const width = 760 - margin.left - margin.right;
-  const height = 800 - margin.top - margin.bottom;
+  const height = 450 - margin.top - margin.bottom;
 
   const xScale: d3.ScaleLinear<number, number> = d3
     .scaleLinear()
@@ -178,7 +179,7 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
         .attr("cx", (d) => xScale(d[0]) as number)
         .attr("cy", (d) => yScale(d[1]) as number)
         .attr("r", 3)
-        .style("fill", "#69b3a2");
+        .style("fill", "blue");
     },
     [currentChart, xScale, yScale]
   );

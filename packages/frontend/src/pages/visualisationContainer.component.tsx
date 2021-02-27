@@ -17,6 +17,8 @@ import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 // TODO: Use queue (in state?)
+// TODO: Try to instead of having an object, store the list in the component
+//       then perform actions using setState on the list.
 // class GenerationQueue {
 //     generations: number[];
 
@@ -25,13 +27,14 @@ import { ThunkDispatch } from 'redux-thunk';
 //     }
 
 //     // Add a generation (enqueue)
-//     append(generation: number): void {
+//     push(generation: number): void {
 //         this.generations.push(generation);
 //     }
 
 //     // Remove a generation (dequeue)
 //     pop(): number | undefined {
 //         if (!this.isEmpty()) {
+//             console.log('Returning number');
 //             return this.generations.shift();
 //         } else {
 //             return -1;
@@ -60,7 +63,6 @@ interface VCDispatchProps {
     initiateSocket: (runId: string) => Promise<void>;
     subscribeToGenerations: (runId: string) => Promise<void>;
     fetchData: (dataId: string, generation: number) => Promise<void>;
-    // setCurrentGeneration: (generation: number) => Action;
     setSubscribed: (subscribed: boolean) => Action;
     setData: (data: Data) => Action;
 }
@@ -69,9 +71,8 @@ interface VCStateProps {
     selectedRun: Run | null;
     selectedVisualisation: string;
     socket: SocketIOClient.Socket | null;
-    // socketConnected: boolean;
-    // currentGeneration: number;
     subscribed: boolean;
+    fetchingData: boolean;
 }
 
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
@@ -79,7 +80,6 @@ type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const {
         socket,
-        // socketConnected,
         initiateSocket,
         fetchRun,
         setVisualisationName,
@@ -88,25 +88,52 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         selectedRun,
         selectedVisualisation,
         subscribeToGenerations,
-        // currentGeneration,
         fetchData,
-        // setCurrentGeneration,
         subscribed,
         setSubscribed,
         setData,
+        fetchingData,
     } = props;
 
     const [loadedRun, setLoadedRun] = React.useState(false);
-    // const [subscribed, setSubscribed] = React.useState(false);
-
     const [currentGeneration, setCurrentGeneration] = React.useState(-1);
 
+    // Create a generation queue object in state
+    // const [generationQueue] = React.useState(new GenerationQueue());
+    const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
+
+    const pushToGQ = (generation: number) => {
+        setGenerationQueue([...generationQueue, generation]);
+    };
+
+    // Remove a generation (dequeue)
+    const popFromGQ = (): number => {
+        if (!isEmpty()) {
+            const n = generationQueue.shift();
+            console.log('Returning n: ', -1);
+            if (n) {
+                return n;
+            } else {
+                return -1;
+            }
+        } else {
+            console.log('Queue empty');
+            return -1;
+        }
+    };
+
+    // Check if the queue is empty
+    const isEmpty = (): boolean => {
+        if (generationQueue.length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     // TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
-    //       * Prevent multiple event handlers (subcribed to state, replace with socketConnected?)
-    // DONE: Remove unnecessary items from state e.g. socketConnected? (replace with socket.connected?)
+    //       * Prevent multiple event handlers (subcribed to state)
     // TODO: * Wait until data has been received from server after firing request, before firing next request
-    // DONE: Remove/correct currentGeneration in state?
-    // DONE: currentGeneration should not be in state? Just in component.
 
     // Load run information
     React.useEffect(() => {
@@ -150,12 +177,16 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 // When we receive "subscribed" from
                 // server attach the callback function
                 socket.on('generation', (generation: number) => {
-                    // console.log('Generation received: ', generation);
-                    setCurrentGeneration(generation);
+                    // setCurrentGeneration(generation);
+
+                    // Add the generation to the queue.
+                    // generationQueue.push(generation);
+                    pushToGQ(generation);
+                    console.log('Generation added to queue: ', generation);
+                    console.log('Queue: ', generationQueue);
                 });
 
                 // Handle the data response event
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 socket.on('data', (data: Data) => {
                     console.log('Data received for current generation: ', data);
                     setData(data);
@@ -169,18 +200,35 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // TODO: Ensure this does not request multiple times
     // Handle fetching new data on generation changes
     React.useEffect(() => {
+        console.log('Got new update');
+
         // Fetch the data for the new generation
         if (selectedRun && socket && socket.connected) {
             if (currentGeneration < 0) {
                 // Initialise current generation with current run information
                 setCurrentGeneration(selectedRun.currentGeneration);
                 console.log('Set current generation to: ', selectedRun.currentGeneration);
+
+                pushToGQ(selectedRun.currentGeneration);
+                console.log('Queue: ', generationQueue);
             } else {
-                // console.log('Requesting data');
-                fetchData(selectedRun.dataId, currentGeneration);
+                // Fetch data if there are currently no requests
+                if (!fetchingData) {
+                    // Get the next generation to fetch
+                    console.log(generationQueue);
+                    const generation = popFromGQ();
+                    console.log('generation from queue: ', generation);
+                    if (generation && generation !== -1) {
+                        // TODO: Is this correct calling setCurrentGeneration here?
+                        setCurrentGeneration(generation);
+
+                        console.log('Requesting data');
+                        fetchData(selectedRun.dataId, generation);
+                    }
+                }
             }
         }
-    }, [selectedRun, socket, currentGeneration]);
+    }, [selectedRun, socket, currentGeneration, fetchingData, generationQueue]);
 
     return (
         <Grid container>
@@ -231,7 +279,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
     initiateSocket: (runId: string) => dispatch(initiateSocket(runId)),
     subscribeToGenerations: (runId: string) => dispatch(subscribeToGenerations(runId)),
     fetchData: (dataId: string, generation: number) => dispatch(fetchData(dataId, generation)),
-    // setCurrentGeneration: (generation: number) => dispatch(runGenerationSuccess(generation)),
     setSubscribed: (subscribed: boolean) => dispatch(setSubscribed(subscribed)),
     setData: (data: Data) => dispatch(setData(data)),
 });
@@ -239,11 +286,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
 const mapStateToProps = (state: StateType): VCStateProps => {
     return {
         socket: state.frontend.configuration.socket,
-        // socketConnected: state.frontend.configuration.socketConnected,
         selectedRun: state.frontend.selectedRun,
         selectedVisualisation: state.frontend.selectedVisualisation,
-        // currentGeneration: state.frontend.currentGeneration,
         subscribed: state.frontend.configuration.subscribed,
+        fetchingData: state.frontend.fetchingData,
     };
 };
 

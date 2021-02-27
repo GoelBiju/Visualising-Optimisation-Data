@@ -16,12 +16,12 @@ export const FetchRunsType = `${microFrontendMessageId}:fetch_runs`;
 export const FetchRunsResultType = `${microFrontendMessageId}:fetch_runs_result`;
 export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
 export const VisualisationNameType = `${microFrontendMessageId}:set_visualisation_name`;
+export const DataRequestType = `${microFrontendMessageId}:data_request`;
 export const DataType = `${microFrontendMessageId}:set_data`;
 
 // Socket related actions
 export const InitiateSocketSuccessType = `${microFrontendMessageId}:initiate_socket_success`;
 export const DisconnectSocketSuccessType = `${microFrontendMessageId}:disconnect_socket_success`;
-// export const RunGenerationSuccessType = `${microFrontendMessageId}:run_generation_success`;
 export const SubscribedType = `${microFrontendMessageId}:set_subscribed`;
 
 export interface RegisterRoutePayload {

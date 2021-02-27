@@ -38,16 +38,13 @@ export interface FrontendState {
     urls: SettingsUrls;
     settingsLoaded: boolean;
     socket: SocketIOClient.Socket | null;
-    // TODO: Add subscribed to state?
-    // TODO: Remove socketConnected
-    // socketConnected: boolean;
     subscribed: boolean;
   };
   runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
   data: Data;
-  // currentGeneration: number;
+  fetchingData: boolean;
 }
 
 export interface StateType {

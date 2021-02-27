@@ -266,6 +266,25 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 </Paper>
             </Grid>
 
+            {selectedRun && (
+                <Grid item xs={12}>
+                    <Typography variant="h6">
+                        <b>{selectedRun.title}</b>
+                    </Typography>
+
+                    <Typography>(Algorithm - {selectedRun.algorithm})</Typography>
+
+                    {selectedRun.algorithmParameters &&
+                        Object.entries(selectedRun.algorithmParameters).map(([name, value], index) => (
+                            <p key={index}>
+                                {name}: {value}
+                            </p>
+                        ))}
+                </Grid>
+            )}
+
+            {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
+                      otherwise the plugin may not load */}
             <Grid item xs={12}>
                 {props.children}
             </Grid>

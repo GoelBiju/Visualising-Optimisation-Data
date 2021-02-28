@@ -1,4 +1,5 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
     Data,
     fetchData,
@@ -16,40 +17,15 @@ import { connect } from 'react-redux';
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-// TODO: Use queue (in state?)
-// TODO: Try to instead of having an object, store the list in the component
-//       then perform actions using setState on the list.
-// class GenerationQueue {
-//     generations: number[];
+// TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
+//       * Prevent multiple event handlers (subcribed to state)
+// TODO: * Wait until data has been received from server after firing request, before firing next request
 
-//     constructor() {
-//         this.generations = [];
-//     }
-
-//     // Add a generation (enqueue)
-//     push(generation: number): void {
-//         this.generations.push(generation);
-//     }
-
-//     // Remove a generation (dequeue)
-//     pop(): number | undefined {
-//         if (!this.isEmpty()) {
-//             console.log('Returning number');
-//             return this.generations.shift();
-//         } else {
-//             return -1;
-//         }
-//     }
-
-//     // Check if the queue is empty
-//     isEmpty(): boolean {
-//         if (this.generations.length === 0) {
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
-// }
+const useStyles = makeStyles({
+    content: {
+        padding: '15px',
+    },
+});
 
 interface VCViewProps {
     runId: string;
@@ -78,6 +54,8 @@ interface VCStateProps {
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
+    const classes = useStyles();
+
     const {
         socket,
         initiateSocket,
@@ -99,7 +77,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const [currentGeneration, setCurrentGeneration] = React.useState(-1);
 
     // Create a generation queue object in state
-    // const [generationQueue] = React.useState(new GenerationQueue());
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
 
     const pushToGQ = (generation: number) => {
@@ -130,10 +107,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             return false;
         }
     };
-
-    // TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
-    //       * Prevent multiple event handlers (subcribed to state)
-    // TODO: * Wait until data has been received from server after firing request, before firing next request
 
     // Load run information
     React.useEffect(() => {
@@ -266,27 +239,42 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 </Paper>
             </Grid>
 
-            {selectedRun && (
-                <Grid item xs={12}>
-                    <Typography variant="h6">
-                        <b>{selectedRun.title}</b>
-                    </Typography>
+            <Grid className={classes.content} container direction="row" justify="center" spacing={2}>
+                <Grid item xs={3}>
+                    <Paper square>
+                        {selectedRun && (
+                            <div>
+                                <Typography>
+                                    <b>Optimisation Run</b>
+                                </Typography>
 
-                    <Typography>(Algorithm - {selectedRun.algorithm})</Typography>
+                                <Typography>(Algorithm - {selectedRun.algorithm})</Typography>
 
-                    {selectedRun.algorithmParameters &&
-                        Object.entries(selectedRun.algorithmParameters).map(([name, value], index) => (
-                            <p key={index}>
-                                {name}: {value}
-                            </p>
-                        ))}
+                                {selectedRun.algorithmParameters &&
+                                    Object.entries(selectedRun.algorithmParameters).map(([name, value], index) => (
+                                        <p key={index}>
+                                            {name}: {value}
+                                        </p>
+                                    ))}
+                            </div>
+                        )}
+                    </Paper>
                 </Grid>
-            )}
 
-            {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
-                      otherwise the plugin may not load */}
-            <Grid item xs={12}>
-                {props.children}
+                <Grid item xs>
+                    <Paper square>
+                        {selectedRun && (
+                            <div>
+                                <Typography variant="h6">
+                                    <b>{selectedRun.title}</b>
+                                </Typography>
+                            </div>
+                        )}
+                        {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
+                            otherwise the plugin may not load */}
+                        {props.children}
+                    </Paper>
+                </Grid>
             </Grid>
         </Grid>
     );

@@ -25,6 +25,10 @@ const useStyles = makeStyles({
     content: {
         padding: '15px',
     },
+    informationContent: {
+        padding: '10px',
+        textAlign: 'left',
+    },
 });
 
 interface VCViewProps {
@@ -245,17 +249,33 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         {selectedRun && (
                             <div>
                                 <Typography>
-                                    <b>Optimisation Run</b>
+                                    <b>Run Details</b>
                                 </Typography>
 
-                                <Typography>(Algorithm - {selectedRun.algorithm})</Typography>
+                                <div className={classes.informationContent}>
+                                    <p>
+                                        <b>Algorithm</b>: {selectedRun.algorithm}
+                                    </p>
 
-                                {selectedRun.algorithmParameters &&
-                                    Object.entries(selectedRun.algorithmParameters).map(([name, value], index) => (
-                                        <p key={index}>
-                                            {name}: {value}
-                                        </p>
-                                    ))}
+                                    <p>
+                                        <b>Population Size</b>: {selectedRun.populationSize}
+                                    </p>
+
+                                    {selectedRun.algorithmParameters &&
+                                        Object.entries(selectedRun.algorithmParameters).map(([name, value], index) => (
+                                            <p key={index}>
+                                                <b>{name}</b>: {value}
+                                            </p>
+                                        ))}
+
+                                    <p>
+                                        <b>Created</b>: {new Date(selectedRun.createdAt).toLocaleString()}
+                                    </p>
+
+                                    <p>
+                                        <b>Status</b>: {!selectedRun.completed ? 'Running' : 'Completed'}
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </Paper>

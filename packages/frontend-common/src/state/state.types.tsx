@@ -29,6 +29,7 @@ export type Data = {
   generation: number;
   data: number[][];
   time: Date;
+  completed: boolean;
 } | null;
 
 export interface FrontendState {

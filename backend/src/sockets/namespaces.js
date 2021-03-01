@@ -28,24 +28,33 @@ function setupNamespaces(io) {
       const { dataId, generation } = dataRequest;
 
       // Get the data based on the run ID
-      const data = await Data.findById(dataId).lean();
-      if (data) {
-        const optimiserData = data.data;
-        if (optimiserData[generation]) {
-          // Send the generation data to the client
-          // console.log("Got data: ", optimiserData[generation]);
-          socket.emit("data", {
-            generation,
-            data: optimiserData[generation].values,
-            time: optimiserData[generation].time,
-          });
+      console.log("Finding run with dataId: ", dataId);
+      const run = await Run.findOne({ dataId }).lean();
+      console.log("Run: ", run);
+      if (run) {
+        console.log("Run found: ", run);
+        const data = await Data.findById(dataId).lean();
+        if (data) {
+          const optimiserData = data.data;
+          if (optimiserData[generation]) {
+            // Send the generation data to the client
+            // console.log("Got data: ", optimiserData[generation]);
+            socket.emit("data", {
+              generation,
+              data: optimiserData[generation].values,
+              time: optimiserData[generation].time,
+              completed: run.completed,
+            });
+          } else {
+            console.log("Generation not present: ", generation);
+          }
         } else {
-          console.log("Generation not present: ", generation);
+          console.log(
+            `Unable to find data for ${dataId} for generation ${generation}`
+          );
         }
       } else {
-        console.log(
-          `Unable to find data for ${dataId} for generation ${generation}`
-        );
+        console.log(`Unable to find run with data ID: `, dataId);
       }
     });
   });

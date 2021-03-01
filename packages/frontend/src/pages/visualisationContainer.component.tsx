@@ -83,6 +83,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // Create a generation queue object in state
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
 
+    // All data has already been received from backend
+    const [dataComplete, setDataComplete] = React.useState(false);
+
     const pushToGQ = (generation: number) => {
         setGenerationQueue([...generationQueue, generation]);
     };
@@ -167,6 +170,12 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 socket.on('data', (data: Data) => {
                     console.log('Data received for current generation: ', data);
                     setData(data);
+
+                    // If this the final data, then reload the run information
+                    if (data && data.completed) {
+                        setDataComplete(true);
+                        setLoadedRun(false);
+                    }
                 });
 
                 setSubscribed(true);
@@ -190,7 +199,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 console.log('Queue: ', generationQueue);
             } else {
                 // Fetch data if there are currently no requests
-                if (!fetchingData) {
+                if (!fetchingData && !dataComplete) {
                     // Get the next generation to fetch
                     console.log(generationQueue);
                     const generation = popFromGQ();
@@ -205,7 +214,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 }
             }
         }
-    }, [selectedRun, socket, currentGeneration, fetchingData, generationQueue]);
+    }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
 
     return (
         <Grid container>
@@ -219,7 +228,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                             display: 'flex',
                         }}
                     >
-                        <Typography>
+                        <Typography style={{ margin: '5px' }}>
                             <b>Visualisation Name:</b> {selectedVisualisation} <i>({selectedRun._id})</i>
                         </Typography>
                     </Paper>

@@ -9,7 +9,6 @@ import socketio
 # http://opt-vis-backend.herokuapp.com/
 # http://localhost:9000
 BACKEND_URL = "http://localhost:9000"
-# 40185
 # PORT = "33585"
 # WEBSOCKET_URL = BACKEND_URL + ":" + PORT
 API_URL = BACKEND_URL + "/api"
@@ -40,7 +39,6 @@ class DataNamespace(socketio.ClientNamespace):
     def on_save(self, data):
         # print(data)
         if (data['saved']):
-            # print("Saved data for generation: ", data['generation'])
             self.sending_data = False
         else:
             print("Unable to save data: ", data['message'])
@@ -60,7 +58,6 @@ class DataNamespace(socketio.ClientNamespace):
                 data = {
                     "runId": self.run_id,
                     "dataId": self.data_id,
-                    # "generation": self.current_generation,
                     "batch": batch
                 }
                 self.emit("data", data)

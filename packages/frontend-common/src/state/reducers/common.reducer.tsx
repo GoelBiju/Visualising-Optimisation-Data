@@ -1,6 +1,7 @@
 import * as log from "loglevel";
 import {
   DataPayload,
+  DataRequestType,
   DataType,
   DisconnectSocketSuccessType,
   FetchRunResultType,
@@ -33,14 +34,13 @@ export const initialState: FrontendState = {
     },
     settingsLoaded: false,
     socket: null,
-    // socketConnected: false,
     subscribed: false,
   },
   runs: [],
   selectedRun: null,
   selectedVisualisation: "",
   data: null,
-  // currentGeneration: 0,
+  fetchingData: false,
 };
 
 const updatePlugins = (
@@ -143,7 +143,6 @@ export function handleInitiateSocket(
     configuration: {
       ...state.configuration,
       socket: payload.socket,
-      // socketConnected: true,
     },
   };
 }
@@ -154,20 +153,9 @@ export function handleDisconnectSocket(state: FrontendState): FrontendState {
     configuration: {
       ...state.configuration,
       socket: null,
-      // socketConnected: false,
     },
   };
 }
-
-// export function handleRunGeneration(
-//   state: FrontendState,
-//   payload: RunGenerationPayload
-// ): FrontendState {
-//   return {
-//     ...state,
-//     currentGeneration: payload.generation,
-//   };
-// }
 
 export function handleSubscribed(
   state: FrontendState,
@@ -182,6 +170,13 @@ export function handleSubscribed(
   };
 }
 
+export function handleDataRequest(state: FrontendState): FrontendState {
+  return {
+    ...state,
+    fetchingData: true,
+  };
+}
+
 export function handleData(
   state: FrontendState,
   payload: DataPayload
@@ -189,6 +184,7 @@ export function handleData(
   return {
     ...state,
     data: payload.data,
+    fetchingData: false,
   };
 }
 
@@ -201,9 +197,9 @@ const CommonReducer = createReducer(initialState, {
   [FetchRunResultType]: handleFetchRun,
   [InitiateSocketSuccessType]: handleInitiateSocket,
   [DisconnectSocketSuccessType]: handleDisconnectSocket,
-  // [RunGenerationSuccessType]: handleRunGeneration,
   [VisualisationNameType]: handleVisualisationName,
   [SubscribedType]: handleSubscribed,
+  [DataRequestType]: handleDataRequest,
   [DataType]: handleData,
 });
 

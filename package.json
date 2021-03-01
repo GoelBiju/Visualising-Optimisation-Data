@@ -12,10 +12,9 @@
     "tsc": "lerna run tsc",
     "backend": "yarn workspace backend dev",
     "frontend": "yarn workspace frontend start",
-    "frontend-plugin": "yarn workspace frontend-plugin serve:build",
+    "plugins": "yarn workspace frontend-plugin serve:build",
     "lint:frontend": "yarn workspace frontend lint",
-    "test:frontend": "yarn workspace frontend test",
-    "stack": "yarn backend | yarn frontend | yarn frontend-plugin"
+    "test:frontend": "yarn workspace frontend test"
   },
   "repository": {
     "type": "git",

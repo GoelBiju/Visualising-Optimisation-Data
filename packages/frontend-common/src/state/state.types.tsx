@@ -25,11 +25,12 @@ export interface Run {
   updatedAt: string;
 }
 
-export interface Data {
+export type Data = {
   generation: number;
   data: number[][];
   time: Date;
-}
+  completed: boolean;
+} | null;
 
 export interface FrontendState {
   notifications: string[];
@@ -38,16 +39,13 @@ export interface FrontendState {
     urls: SettingsUrls;
     settingsLoaded: boolean;
     socket: SocketIOClient.Socket | null;
-    // TODO: Add subscribed to state?
-    // TODO: Remove socketConnected
-    // socketConnected: boolean;
     subscribed: boolean;
   };
   runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
-  data: Data | null;
-  // currentGeneration: number;
+  data: Data;
+  fetchingData: boolean;
 }
 
 export interface StateType {

@@ -2,6 +2,7 @@ import { Action } from "redux";
 import ioclient from "socket.io-client";
 import { ActionType, ThunkResult } from "../state.types";
 import {
+  DataRequestType,
   DisconnectSocketSuccessType,
   InitiateSocketSuccessType,
 
@@ -23,15 +24,6 @@ export const initiateSocketSuccess = (
 export const disconnectSocketSuccess = (): Action => ({
   type: DisconnectSocketSuccessType,
 });
-
-// export const runGenerationSuccess = (
-//   generation: number
-// ): ActionType<RunGenerationPayload> => ({
-//   type: RunGenerationSuccessType,
-//   payload: {
-//     generation,
-//   },
-// });
 
 export const setSubscribed = (
   subscribed: boolean
@@ -90,6 +82,10 @@ export const subscribeToGenerations = (
   };
 };
 
+export const dataRequest = (): Action => ({
+  type: DataRequestType,
+});
+
 // Retrieve the data from a run given the ID and generation number
 export const fetchData = (
   dataId: string,
@@ -98,8 +94,10 @@ export const fetchData = (
   return async (dispatch, getState) => {
     const { socket } = getState().frontend.configuration;
 
-    // socketConnected
     if (socket && socket.connected) {
+      // Dispatch the fetch data request
+      dispatch(dataRequest());
+
       // Emit the socket event
       socket.emit("data", {
         dataId,

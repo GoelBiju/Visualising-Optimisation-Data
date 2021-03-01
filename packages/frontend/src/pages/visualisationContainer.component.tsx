@@ -1,4 +1,5 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
     Data,
     fetchData,
@@ -16,37 +17,19 @@ import { connect } from 'react-redux';
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-// TODO: Use queue (in state?)
-// class GenerationQueue {
-//     generations: number[];
+// TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
+//       * Prevent multiple event handlers (subcribed to state)
+// TODO: * Wait until data has been received from server after firing request, before firing next request
 
-//     constructor() {
-//         this.generations = [];
-//     }
-
-//     // Add a generation (enqueue)
-//     append(generation: number): void {
-//         this.generations.push(generation);
-//     }
-
-//     // Remove a generation (dequeue)
-//     pop(): number | undefined {
-//         if (!this.isEmpty()) {
-//             return this.generations.shift();
-//         } else {
-//             return -1;
-//         }
-//     }
-
-//     // Check if the queue is empty
-//     isEmpty(): boolean {
-//         if (this.generations.length === 0) {
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
-// }
+const useStyles = makeStyles({
+    content: {
+        padding: '15px',
+    },
+    informationContent: {
+        padding: '10px',
+        textAlign: 'left',
+    },
+});
 
 interface VCViewProps {
     runId: string;
@@ -60,7 +43,6 @@ interface VCDispatchProps {
     initiateSocket: (runId: string) => Promise<void>;
     subscribeToGenerations: (runId: string) => Promise<void>;
     fetchData: (dataId: string, generation: number) => Promise<void>;
-    // setCurrentGeneration: (generation: number) => Action;
     setSubscribed: (subscribed: boolean) => Action;
     setData: (data: Data) => Action;
 }
@@ -69,17 +51,17 @@ interface VCStateProps {
     selectedRun: Run | null;
     selectedVisualisation: string;
     socket: SocketIOClient.Socket | null;
-    // socketConnected: boolean;
-    // currentGeneration: number;
     subscribed: boolean;
+    fetchingData: boolean;
 }
 
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
+    const classes = useStyles();
+
     const {
         socket,
-        // socketConnected,
         initiateSocket,
         fetchRun,
         setVisualisationName,
@@ -88,25 +70,50 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         selectedRun,
         selectedVisualisation,
         subscribeToGenerations,
-        // currentGeneration,
         fetchData,
-        // setCurrentGeneration,
         subscribed,
         setSubscribed,
         setData,
+        fetchingData,
     } = props;
 
     const [loadedRun, setLoadedRun] = React.useState(false);
-    // const [subscribed, setSubscribed] = React.useState(false);
-
     const [currentGeneration, setCurrentGeneration] = React.useState(-1);
 
-    // TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
-    //       * Prevent multiple event handlers (subcribed to state, replace with socketConnected?)
-    // DONE: Remove unnecessary items from state e.g. socketConnected? (replace with socket.connected?)
-    // TODO: * Wait until data has been received from server after firing request, before firing next request
-    // DONE: Remove/correct currentGeneration in state?
-    // DONE: currentGeneration should not be in state? Just in component.
+    // Create a generation queue object in state
+    const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
+
+    // All data has already been received from backend
+    const [dataComplete, setDataComplete] = React.useState(false);
+
+    const pushToGQ = (generation: number) => {
+        setGenerationQueue([...generationQueue, generation]);
+    };
+
+    // Remove a generation (dequeue)
+    const popFromGQ = (): number => {
+        if (!isEmpty()) {
+            const n = generationQueue.shift();
+            console.log('Returning n: ', -1);
+            if (n) {
+                return n;
+            } else {
+                return -1;
+            }
+        } else {
+            console.log('Queue empty');
+            return -1;
+        }
+    };
+
+    // Check if the queue is empty
+    const isEmpty = (): boolean => {
+        if (generationQueue.length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
     // Load run information
     React.useEffect(() => {
@@ -150,15 +157,25 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 // When we receive "subscribed" from
                 // server attach the callback function
                 socket.on('generation', (generation: number) => {
-                    // console.log('Generation received: ', generation);
-                    setCurrentGeneration(generation);
+                    // setCurrentGeneration(generation);
+
+                    // Add the generation to the queue.
+                    // generationQueue.push(generation);
+                    pushToGQ(generation);
+                    console.log('Generation added to queue: ', generation);
+                    console.log('Queue: ', generationQueue);
                 });
 
                 // Handle the data response event
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 socket.on('data', (data: Data) => {
                     console.log('Data received for current generation: ', data);
                     setData(data);
+
+                    // If this the final data, then reload the run information
+                    if (data && data.completed) {
+                        setDataComplete(true);
+                        setLoadedRun(false);
+                    }
                 });
 
                 setSubscribed(true);
@@ -169,18 +186,49 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // TODO: Ensure this does not request multiple times
     // Handle fetching new data on generation changes
     React.useEffect(() => {
+        console.log('Got new update');
+
         // Fetch the data for the new generation
         if (selectedRun && socket && socket.connected) {
             if (currentGeneration < 0) {
                 // Initialise current generation with current run information
                 setCurrentGeneration(selectedRun.currentGeneration);
                 console.log('Set current generation to: ', selectedRun.currentGeneration);
+
+                pushToGQ(selectedRun.currentGeneration);
+                console.log('Queue: ', generationQueue);
             } else {
-                // console.log('Requesting data');
-                fetchData(selectedRun.dataId, currentGeneration);
+                // Fetch data if there are currently no requests
+                if (!fetchingData && !dataComplete) {
+                    // Get the next generation to fetch
+                    console.log(generationQueue);
+                    const generation = popFromGQ();
+                    console.log('generation from queue: ', generation);
+                    if (generation && generation !== -1) {
+                        // TODO: Is this correct calling setCurrentGeneration here?
+                        setCurrentGeneration(generation);
+
+                        console.log('Requesting data');
+                        fetchData(selectedRun.dataId, generation);
+                    }
+                }
             }
         }
-    }, [selectedRun, socket, currentGeneration]);
+    }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
+
+    const secondsToDHMS = (seconds: number): string => {
+        const d = Math.floor(seconds / (3600 * 24));
+        const h = Math.floor((seconds % (3600 * 24)) / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = Math.floor(seconds % 60);
+
+        const dDisplay = d > 0 ? d + (d === 1 ? ' day' : ' days') + (h + m + s > 0 ? ', ' : '') : '';
+        const hDisplay = h > 0 ? h + (h === 1 ? ' hour' : ' hours') + (m + s > 0 ? ', ' : '') : '';
+        const mDisplay = m > 0 ? m + (s > 0 ? ' min, ' : ' min') : '';
+        const sDisplay = s > 0 ? s + ' sec' : '';
+
+        return dDisplay + hDisplay + mDisplay + sDisplay || '< 1 second';
+    };
 
     return (
         <Grid container>
@@ -194,7 +242,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                             display: 'flex',
                         }}
                     >
-                        <Typography>
+                        <Typography style={{ margin: '5px' }}>
                             <b>Visualisation Name:</b> {selectedVisualisation} <i>({selectedRun._id})</i>
                         </Typography>
                     </Paper>
@@ -218,8 +266,75 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 </Paper>
             </Grid>
 
-            <Grid item xs={12}>
-                {props.children}
+            <Grid className={classes.content} container direction="row" justify="center" spacing={2}>
+                <Grid item xs={3}>
+                    <Paper square>
+                        {selectedRun && (
+                            <div>
+                                <Typography>
+                                    <b>Run Details</b>
+                                </Typography>
+
+                                <div className={classes.informationContent}>
+                                    <p>
+                                        <b>Algorithm</b>: {selectedRun.algorithm}
+                                    </p>
+
+                                    <p>
+                                        <b>Population Size</b>: {selectedRun.populationSize}
+                                    </p>
+
+                                    {selectedRun.algorithmParameters &&
+                                        Object.entries(selectedRun.algorithmParameters).map(([name, value], index) => (
+                                            <p key={index}>
+                                                <b>{name}</b>: {value}
+                                            </p>
+                                        ))}
+
+                                    <p>
+                                        <b>Created</b>: {new Date(selectedRun.createdAt).toLocaleString()}
+                                    </p>
+
+                                    {selectedRun.completed && (
+                                        <div>
+                                            <p>
+                                                <b>Completed</b>: {new Date(selectedRun.updatedAt).toLocaleString()}
+                                            </p>
+
+                                            <p>
+                                                <b>Run duration</b>:{' '}
+                                                {secondsToDHMS(
+                                                    (new Date(selectedRun.updatedAt).getTime() -
+                                                        new Date(selectedRun.createdAt).getTime()) /
+                                                        1000,
+                                                )}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <p>
+                                        <b>Status</b>: {!selectedRun.completed ? 'Running' : 'Completed'}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </Paper>
+                </Grid>
+
+                <Grid item xs>
+                    <Paper square>
+                        {selectedRun && (
+                            <div>
+                                <Typography variant="h6">
+                                    <b>{selectedRun.title}</b>
+                                </Typography>
+                            </div>
+                        )}
+                        {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
+                            otherwise the plugin may not load */}
+                        {props.children}
+                    </Paper>
+                </Grid>
             </Grid>
         </Grid>
     );
@@ -231,7 +346,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
     initiateSocket: (runId: string) => dispatch(initiateSocket(runId)),
     subscribeToGenerations: (runId: string) => dispatch(subscribeToGenerations(runId)),
     fetchData: (dataId: string, generation: number) => dispatch(fetchData(dataId, generation)),
-    // setCurrentGeneration: (generation: number) => dispatch(runGenerationSuccess(generation)),
     setSubscribed: (subscribed: boolean) => dispatch(setSubscribed(subscribed)),
     setData: (data: Data) => dispatch(setData(data)),
 });
@@ -239,11 +353,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
 const mapStateToProps = (state: StateType): VCStateProps => {
     return {
         socket: state.frontend.configuration.socket,
-        // socketConnected: state.frontend.configuration.socketConnected,
         selectedRun: state.frontend.selectedRun,
         selectedVisualisation: state.frontend.selectedVisualisation,
-        // currentGeneration: state.frontend.currentGeneration,
         subscribed: state.frontend.configuration.subscribed,
+        fetchingData: state.frontend.fetchingData,
     };
 };
 

@@ -1,7 +1,6 @@
 import { AppBar, CssBaseline, Link, Toolbar, Typography } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -20,7 +19,7 @@ const MainAppBar = (): React.ReactElement => {
             <AppBar position="fixed">
                 <Toolbar>
                     <Typography variant="h6" noWrap>
-                        <Link component={RouterLink} to="/" color="inherit" underline="none">
+                        <Link href="/" color="inherit" underline="none">
                             Visualising Optimisation Data
                         </Link>
                     </Typography>

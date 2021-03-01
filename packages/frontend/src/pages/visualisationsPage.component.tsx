@@ -11,6 +11,7 @@ const useStyles = makeStyles({
         flexGrow: 1,
         padding: '15px',
     },
+    label: { padding: '15px', textAlign: 'left' },
 });
 
 interface VisualisationsPageProps {
@@ -46,6 +47,10 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
 
     return (
         <div className={classes.root}>
+            <Typography className={classes.label} variant="h4">
+                Visualisations
+            </Typography>
+
             <Grid container spacing={3}>
                 {selectedRun ? (
                     plugins.length > 0 ? (

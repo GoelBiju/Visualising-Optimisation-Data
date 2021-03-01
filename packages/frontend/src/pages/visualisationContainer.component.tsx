@@ -216,6 +216,20 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
 
+    const secondsToDHMS = (seconds: number): string => {
+        const d = Math.floor(seconds / (3600 * 24));
+        const h = Math.floor((seconds % (3600 * 24)) / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = Math.floor(seconds % 60);
+
+        const dDisplay = d > 0 ? d + (d === 1 ? ' day' : ' days') + (h + m + s > 0 ? ', ' : '') : '';
+        const hDisplay = h > 0 ? h + (h === 1 ? ' hour' : ' hours') + (m + s > 0 ? ', ' : '') : '';
+        const mDisplay = m > 0 ? m + (s > 0 ? ' min, ' : ' min') : '';
+        const sDisplay = s > 0 ? s + ' sec' : '';
+
+        return dDisplay + hDisplay + mDisplay + sDisplay || '< 1 second';
+    };
+
     return (
         <Grid container>
             {selectedRun && (
@@ -280,6 +294,23 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                     <p>
                                         <b>Created</b>: {new Date(selectedRun.createdAt).toLocaleString()}
                                     </p>
+
+                                    {selectedRun.completed && (
+                                        <div>
+                                            <p>
+                                                <b>Completed</b>: {new Date(selectedRun.updatedAt).toLocaleString()}
+                                            </p>
+
+                                            <p>
+                                                <b>Run duration</b>:{' '}
+                                                {secondsToDHMS(
+                                                    (new Date(selectedRun.updatedAt).getTime() -
+                                                        new Date(selectedRun.createdAt).getTime()) /
+                                                        1000,
+                                                )}
+                                            </p>
+                                        </div>
+                                    )}
 
                                     <p>
                                         <b>Status</b>: {!selectedRun.completed ? 'Running' : 'Completed'}

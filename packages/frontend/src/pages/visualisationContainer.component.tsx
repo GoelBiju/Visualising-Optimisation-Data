@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Box, Grid, Paper, Slider, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
     Data,
@@ -322,18 +322,40 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 </Grid>
 
                 <Grid item xs>
-                    <Paper square>
+                    <Box display="flex" flexDirection="column">
+                        <Box>
+                            <Paper square>
+                                {selectedRun && (
+                                    <div>
+                                        <Typography variant="h6">
+                                            <b>{selectedRun.title}</b>
+                                        </Typography>
+                                    </div>
+                                )}
+
+                                {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
+                                        otherwise the plugin may not load */}
+                                {props.children}
+                            </Paper>
+                        </Box>
+
+                        {/* TODO: Create the slider component to control generations */}
                         {selectedRun && (
-                            <div>
-                                <Typography variant="h6">
-                                    <b>{selectedRun.title}</b>
-                                </Typography>
-                            </div>
+                            <Box style={{ marginTop: '10px' }}>
+                                <Paper square>
+                                    <Slider
+                                        defaultValue={currentGeneration !== -1 ? currentGeneration : 0}
+                                        valueLabelDisplay="on"
+                                        step={1}
+                                        marks
+                                        min={1}
+                                        value={currentGeneration}
+                                        max={selectedRun.totalGenerations}
+                                    />
+                                </Paper>
+                            </Box>
                         )}
-                        {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
-                            otherwise the plugin may not load */}
-                        {props.children}
-                    </Paper>
+                    </Box>
                 </Grid>
             </Grid>
         </Grid>

@@ -1,5 +1,8 @@
-import { Box, Grid, Paper, Slider, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, Paper, Slider, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import PauseIcon from '@material-ui/icons/Pause';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import ReplayIcon from '@material-ui/icons/Replay';
 import {
     Data,
     fetchData,
@@ -28,6 +31,9 @@ const useStyles = makeStyles({
     informationContent: {
         padding: '10px',
         textAlign: 'left',
+    },
+    generationTextField: {
+        width: 150,
     },
 });
 
@@ -86,6 +92,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // All data has already been received from backend
     const [dataComplete, setDataComplete] = React.useState(false);
 
+    // Visualisation controls
+    const [liveMode, setLiveMode] = React.useState(true);
+
+    // Add generation to the queue (enqueue)
     const pushToGQ = (generation: number) => {
         setGenerationQueue([...generationQueue, generation]);
     };
@@ -319,6 +329,54 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                             </div>
                         )}
                     </Paper>
+
+                    {/* TODO: Visualisation controls; text box to go to generation
+                              Play/Pause buttons and replay button (enabled only when paused) */}
+                    {selectedRun && (
+                        <Paper square style={{ marginTop: '10px' }}>
+                            <Typography>
+                                <b>Visualisation Controls</b>
+                            </Typography>
+
+                            <Box display="flex" flexDirection="row" justifyContent="center">
+                                <Box p={2}>
+                                    {liveMode ? (
+                                        <IconButton color="primary">
+                                            <PauseIcon fontSize="large">Pause</PauseIcon>
+                                        </IconButton>
+                                    ) : (
+                                        <IconButton color="primary">
+                                            <PlayArrowIcon fontSize="large">Live</PlayArrowIcon>
+                                        </IconButton>
+                                    )}
+                                </Box>
+
+                                <Box p={2}>
+                                    <IconButton color="secondary">
+                                        <ReplayIcon fontSize="large">Replay</ReplayIcon>
+                                    </IconButton>
+                                </Box>
+                            </Box>
+
+                            <Box display="flex" flexDirection="row" justifyContent="center">
+                                <Box p={2}>
+                                    <TextField
+                                        className={classes.generationTextField}
+                                        id="generation-textfield"
+                                        label="Generation"
+                                        variant="outlined"
+                                        size="small"
+                                        type="number"
+                                        value={currentGeneration}
+                                    />
+                                </Box>
+
+                                <Box p={2}>
+                                    <Button variant="contained">View</Button>
+                                </Box>
+                            </Box>
+                        </Paper>
+                    )}
                 </Grid>
 
                 <Grid item xs>
@@ -339,19 +397,25 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                             </Paper>
                         </Box>
 
-                        {/* TODO: Create the slider component to control generations */}
+                        {/* Slider to control generations */}
                         {selectedRun && (
                             <Box style={{ marginTop: '10px' }}>
                                 <Paper square>
-                                    <Slider
-                                        defaultValue={currentGeneration !== -1 ? currentGeneration : 0}
-                                        valueLabelDisplay="on"
-                                        step={1}
-                                        marks
-                                        min={1}
-                                        value={currentGeneration}
-                                        max={selectedRun.totalGenerations}
-                                    />
+                                    <Typography>
+                                        <b>Generation Slider</b>
+                                    </Typography>
+
+                                    <div style={{ margin: '10px' }}>
+                                        <Slider
+                                            defaultValue={currentGeneration !== -1 ? currentGeneration : 0}
+                                            valueLabelDisplay="on"
+                                            marks
+                                            min={1}
+                                            max={selectedRun.totalGenerations}
+                                            step={1}
+                                            value={currentGeneration}
+                                        />
+                                    </div>
                                 </Paper>
                             </Box>
                         )}

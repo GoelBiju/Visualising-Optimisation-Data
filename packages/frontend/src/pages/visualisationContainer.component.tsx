@@ -226,6 +226,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
 
+    // Convert seconds to DHMS format
     const secondsToDHMS = (seconds: number): string => {
         const d = Math.floor(seconds / (3600 * 24));
         const h = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -330,8 +331,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         )}
                     </Paper>
 
-                    {/* TODO: Visualisation controls; text box to go to generation
-                              Play/Pause buttons and replay button (enabled only when paused) */}
+                    {/* Visualisation controls:
+                            - Text box to view a generation
+                            - Live/Pause buttons
+                            - Replay button (enabled only when paused) 
+                    */}
                     {selectedRun && (
                         <Paper square style={{ marginTop: '10px' }}>
                             <Typography>
@@ -340,19 +344,13 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                             <Box display="flex" flexDirection="row" justifyContent="center">
                                 <Box p={2}>
-                                    {liveMode ? (
-                                        <IconButton color="primary">
-                                            <PauseIcon fontSize="large">Pause</PauseIcon>
-                                        </IconButton>
-                                    ) : (
-                                        <IconButton color="primary">
-                                            <PlayArrowIcon fontSize="large">Live</PlayArrowIcon>
-                                        </IconButton>
-                                    )}
+                                    <IconButton color="primary" onClick={() => setLiveMode((mode) => !mode)}>
+                                        {liveMode ? <PauseIcon fontSize="large" /> : <PlayArrowIcon fontSize="large" />}
+                                    </IconButton>
                                 </Box>
 
                                 <Box p={2}>
-                                    <IconButton color="secondary">
+                                    <IconButton color="secondary" disabled>
                                         <ReplayIcon fontSize="large">Replay</ReplayIcon>
                                     </IconButton>
                                 </Box>
@@ -368,11 +366,14 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         size="small"
                                         type="number"
                                         value={currentGeneration}
+                                        disabled
                                     />
                                 </Box>
 
                                 <Box p={2}>
-                                    <Button variant="contained">View</Button>
+                                    <Button variant="contained" disabled>
+                                        View
+                                    </Button>
                                 </Box>
                             </Box>
                         </Paper>
@@ -414,6 +415,8 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                             max={selectedRun.totalGenerations}
                                             step={1}
                                             value={currentGeneration}
+                                            // TODO: Needs onChange to handle changing
+                                            //       generation by sliding
                                         />
                                     </div>
                                 </Paper>

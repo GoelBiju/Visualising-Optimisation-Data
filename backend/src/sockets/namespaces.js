@@ -16,9 +16,12 @@ function setupNamespaces(io) {
     socket.on("subscribe", (runId) => {
       socket.join(runId);
       console.log("Subscribed to: ", runId);
+    });
 
-      // TODO: Handle subscribed
-      socket.emit("subscribed", runId);
+    // Allow a client to unsubscribe from a room
+    socket.on("unsubscribe", (runId) => {
+      socket.leave(runId);
+      console.log("Unsubscribed to: ", runId);
     });
 
     // Fetch generation data given the data ID

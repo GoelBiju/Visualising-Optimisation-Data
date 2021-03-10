@@ -226,21 +226,24 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
 
     // BUG: This runs initially and sets loadedRun to false
-    // // TODO: Pause and play the visualisation by catching live mode change
-    // React.useEffect(() => {
-    //     // Clear the queue
-    //     setGenerationQueue([]);
-    //     // Check if live mode is set to false
-    //     if (!liveMode) {
-    //         console.log('Got live mode set to false');
-    //         // Unsubscribe from the run and generation information being sent
-    //         unsubscribeFromGenerations(runId);
-    //     } else {
-    //         subscribeToGenerations(runId);
-    //         console.log('Subscribing again');
-    //         setLoadedRun(false);
-    //     }
-    // }, [liveMode]);
+    // TODO: Pause and play the visualisation by catching live mode change
+    const handleLiveMode = (mode: boolean): void => {
+        // Clear the queue
+        setGenerationQueue([]);
+        // Check if live mode is set to false
+        if (!mode) {
+            console.log('Got live mode set to false');
+            // Unsubscribe from the run and generation information being sent
+            unsubscribeFromGenerations(runId);
+        } else {
+            subscribeToGenerations(runId);
+            console.log('Subscribing again');
+            setLoadedRun(false);
+        }
+
+        // Set the live mode value
+        setLiveMode(mode);
+    };
 
     // Convert seconds to DHMS format
     const secondsToDHMS = (seconds: number): string => {
@@ -362,7 +365,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                 <Box p={2}>
                                     <IconButton
                                         color="primary"
-                                        onClick={() => setLiveMode((mode) => !mode)}
+                                        onClick={() => handleLiveMode(!liveMode)}
                                         disabled={selectedRun.completed}
                                     >
                                         {liveMode ? <PauseIcon fontSize="large" /> : <PlayArrowIcon fontSize="large" />}

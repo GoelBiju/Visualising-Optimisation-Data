@@ -10,10 +10,10 @@ import {
     initiateSocket,
     Run,
     setData,
-    setSubscribed,
     setVisualisationName,
     StateType,
     subscribeToGenerations,
+    unsubscribeFromGenerations,
 } from 'frontend-common';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -48,9 +48,11 @@ interface VCDispatchProps {
     setVisualisationName: (visualisationName: string) => Action;
     initiateSocket: (runId: string) => Promise<void>;
     subscribeToGenerations: (runId: string) => Promise<void>;
+
     fetchData: (dataId: string, generation: number) => Promise<void>;
-    setSubscribed: (subscribed: boolean) => Action;
+    // setSubscribed: (subscribed: boolean) => Action;
     setData: (data: Data) => Action;
+    unsubscribeFromGenerations: (runId: string) => Promise<void>;
 }
 
 interface VCStateProps {
@@ -78,9 +80,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         subscribeToGenerations,
         fetchData,
         subscribed,
-        setSubscribed,
+        // setSubscribed,
         setData,
         fetchingData,
+        unsubscribeFromGenerations,
     } = props;
 
     const [loadedRun, setLoadedRun] = React.useState(false);
@@ -127,50 +130,44 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Load run information
     React.useEffect(() => {
+        console.log('Fetching run information');
+        console.log('Loaded run: ', loadedRun);
+
         // Fetch the run information
         if (!loadedRun) {
             // Fetching the run information into state
             fetchRun(runId);
 
-            // Set the selected visualisation name
             // TODO: check if the visualisation name from the root
             //       is appropriate for this run (maybe do this before render)
+            // Set the selected visualisation name when mounting the component
             setVisualisationName(pluginName);
+            console.log('Set visualisation name to: ', pluginName);
 
             setLoadedRun(true);
         }
     }, [loadedRun]);
 
     // Handle setting up the connection/subscribing to data
-    // TODO: Fires multiple times
     // TODO: This needs to be cleared up and checked
     React.useEffect(() => {
         console.log('Setting up connection');
+        console.log('Loaded run: ', loadedRun);
 
         // Set up the connection to the backend
         // socketConnected
         if (!socket || !socket.connected) {
             // Start socket connection
-            initiateSocket(props.runId);
+            initiateSocket(runId);
         } else {
-            // If the socket is connected and not subscribed,
+            // TODO: We only need to subscribe to generation if the run isn't complete
+            // If the socket is connected and not subscribed and we are in live mode,
             // proceed to subcribe to the optimisation run
-            if (socket && socket.connected && !subscribed) {
-                // Subscribe to the data from the optimisation run room
-                subscribeToGenerations(runId);
-
-                // Set subscribed
-                // socket.on('subscribed', (runId: string) => {
-                //     console.log('Subscribed to: ', runId);
-                // });
-
+            if (socket && socket.connected && !subscribed && liveMode) {
                 // When we receive "subscribed" from
                 // server attach the callback function
                 socket.on('generation', (generation: number) => {
-                    // setCurrentGeneration(generation);
-
                     // Add the generation to the queue.
-                    // generationQueue.push(generation);
                     pushToGQ(generation);
                     console.log('Generation added to queue: ', generation);
                     console.log('Queue: ', generationQueue);
@@ -185,18 +182,20 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                     if (data && data.completed) {
                         setDataComplete(true);
                         setLoadedRun(false);
+                        console.log('Set loaded run to false');
                     }
                 });
 
-                setSubscribed(true);
+                // Subscribe to the data from the optimisation run room
+                subscribeToGenerations(runId);
             }
         }
     }, [socket, subscribed]);
 
-    // TODO: Ensure this does not request multiple times
     // Handle fetching new data on generation changes
     React.useEffect(() => {
         console.log('Got new update');
+        console.log('Loaded run: ', loadedRun);
 
         // Fetch the data for the new generation
         if (selectedRun && socket && socket.connected) {
@@ -211,20 +210,37 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 // Fetch data if there are currently no requests
                 if (!fetchingData && !dataComplete) {
                     // Get the next generation to fetch
-                    console.log(generationQueue);
                     const generation = popFromGQ();
-                    console.log('generation from queue: ', generation);
+                    console.log('Next generation from queue: ', generation);
                     if (generation && generation !== -1) {
-                        // TODO: Is this correct calling setCurrentGeneration here?
+                        // TODO: Is this correct calling setCurrentGeneration here,
+                        //       we could set the generation once we have received the data?
                         setCurrentGeneration(generation);
 
-                        console.log('Requesting data');
+                        console.log(`Requesting data for generation ${generation}`);
                         fetchData(selectedRun.dataId, generation);
                     }
                 }
             }
         }
     }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
+
+    // BUG: This runs initially and sets loadedRun to false
+    // // TODO: Pause and play the visualisation by catching live mode change
+    // React.useEffect(() => {
+    //     // Clear the queue
+    //     setGenerationQueue([]);
+    //     // Check if live mode is set to false
+    //     if (!liveMode) {
+    //         console.log('Got live mode set to false');
+    //         // Unsubscribe from the run and generation information being sent
+    //         unsubscribeFromGenerations(runId);
+    //     } else {
+    //         subscribeToGenerations(runId);
+    //         console.log('Subscribing again');
+    //         setLoadedRun(false);
+    //     }
+    // }, [liveMode]);
 
     // Convert seconds to DHMS format
     const secondsToDHMS = (seconds: number): string => {
@@ -344,13 +360,18 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                             <Box display="flex" flexDirection="row" justifyContent="center">
                                 <Box p={2}>
-                                    <IconButton color="primary" onClick={() => setLiveMode((mode) => !mode)}>
+                                    <IconButton
+                                        color="primary"
+                                        onClick={() => setLiveMode((mode) => !mode)}
+                                        disabled={selectedRun.completed}
+                                    >
                                         {liveMode ? <PauseIcon fontSize="large" /> : <PlayArrowIcon fontSize="large" />}
                                     </IconButton>
                                 </Box>
 
                                 <Box p={2}>
-                                    <IconButton color="secondary" disabled>
+                                    {/* // TODO: Replay features; add functionality for replay control */}
+                                    <IconButton color="secondary" disabled={liveMode}>
                                         <ReplayIcon fontSize="large">Replay</ReplayIcon>
                                     </IconButton>
                                 </Box>
@@ -435,8 +456,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
     initiateSocket: (runId: string) => dispatch(initiateSocket(runId)),
     subscribeToGenerations: (runId: string) => dispatch(subscribeToGenerations(runId)),
     fetchData: (dataId: string, generation: number) => dispatch(fetchData(dataId, generation)),
-    setSubscribed: (subscribed: boolean) => dispatch(setSubscribed(subscribed)),
+    // setSubscribed: (subscribed: boolean) => dispatch(setSubscribed(subscribed)),
     setData: (data: Data) => dispatch(setData(data)),
+    unsubscribeFromGenerations: (runId: string) => dispatch(unsubscribeFromGenerations(runId)),
 });
 
 const mapStateToProps = (state: StateType): VCStateProps => {

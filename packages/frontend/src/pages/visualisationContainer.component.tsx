@@ -153,7 +153,12 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
             setLoadedRun(true);
         }
-    }, [loadedRun]);
+
+        if (selectedRun && selectedRun.completed) {
+            setCurrentGeneration(selectedRun.currentGeneration);
+            console.log('Set current generation to: ', selectedRun.currentGeneration);
+        }
+    }, [loadedRun, selectedRun]);
 
     // Handle setting up the connection/subscribing to data
     // TODO: This needs to be cleared up and checked

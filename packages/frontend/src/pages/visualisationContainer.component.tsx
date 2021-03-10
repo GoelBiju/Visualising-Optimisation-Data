@@ -35,6 +35,10 @@ const useStyles = makeStyles({
     generationTextField: {
         width: 150,
     },
+    button: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
 });
 
 interface VCViewProps {
@@ -50,7 +54,6 @@ interface VCDispatchProps {
     subscribeToGenerations: (runId: string) => Promise<void>;
 
     fetchData: (dataId: string, generation: number) => Promise<void>;
-    // setSubscribed: (subscribed: boolean) => Action;
     setData: (data: Data) => Action;
     unsubscribeFromGenerations: (runId: string) => Promise<void>;
 }
@@ -89,15 +92,12 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // Set when we have fetched run information
     const [loadedRun, setLoadedRun] = React.useState(false);
 
-    // TODO: Do we need current generation in the component (use from state?)
+    // Current generation stored only for this component
+    // (different from run stored in state); allows for pause/play
     const [currentGeneration, setCurrentGeneration] = React.useState(-1);
 
     // Create a generation queue object in state
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
-
-    // TODO: Do we need a data complete in this component (use from state?)
-    // All data has already been received from backend
-    // const [dataComplete, setDataComplete] = React.useState(false);
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
@@ -132,11 +132,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     };
 
-    // Run on mounting the component
+    // Set the selected visualisation name when mounting the component
     React.useEffect(() => {
-        // TODO: check if the visualisation name from the root
+        // TODO: Check if the visualisation name from the root
         //       is appropriate for this run (maybe do this before render)
-        // Set the selected visualisation name when mounting the component
         setVisualisationName(pluginName);
         console.log('Set visualisation name to: ', pluginName);
     }, []);
@@ -156,7 +155,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     }, [loadedRun]);
 
     // Handle setting up the connection/subscribing to data
-    // TODO: This needs to be cleared up and checked
     React.useEffect(() => {
         // Set up the connection to the backend
         // socketConnected
@@ -164,7 +162,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // Start socket connection
             initiateSocket(runId);
         } else {
-            // TODO: We only need to subscribe to generation if the run isn't complete
             // If the socket is connected and not subscribed and we are in live mode,
             // proceed to subcribe to the optimisation run
             if (socket && socket.connected && !subscribed && liveMode) {
@@ -185,7 +182,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                     // If this the final data, then reload the run information
                     if (data) {
                         if (data.completed) {
-                            // setDataComplete(true);
                             setLoadedRun(false);
                             console.log('Set loaded run to false');
                         }
@@ -195,6 +191,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                     }
                 });
 
+                // TODO: We only need to subscribe to generation if the run isn't complete
                 // Subscribe to the data from the optimisation run room
                 subscribeToGenerations(runId);
             }
@@ -370,20 +367,30 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                             <Box display="flex" flexDirection="row" justifyContent="center">
                                 <Box p={2}>
-                                    <IconButton
-                                        color="primary"
-                                        onClick={() => handleLiveMode(!liveMode)}
-                                        disabled={selectedRun.completed}
-                                    >
-                                        {liveMode ? <PauseIcon fontSize="large" /> : <PlayArrowIcon fontSize="large" />}
-                                    </IconButton>
+                                    <div className={classes.button}>
+                                        <IconButton
+                                            color="primary"
+                                            onClick={() => handleLiveMode(!liveMode)}
+                                            disabled={selectedRun.completed}
+                                        >
+                                            {liveMode ? (
+                                                <PauseIcon fontSize="large" />
+                                            ) : (
+                                                <PlayArrowIcon fontSize="large" />
+                                            )}
+                                        </IconButton>
+                                        {liveMode ? 'Pause' : 'Live'}
+                                    </div>
                                 </Box>
 
                                 <Box p={2}>
-                                    {/* // TODO: Replay features; add functionality for replay control */}
-                                    <IconButton color="secondary" disabled={liveMode}>
-                                        <ReplayIcon fontSize="large">Replay</ReplayIcon>
-                                    </IconButton>
+                                    <div className={classes.button}>
+                                        {/* TODO: Replay features; add functionality for replay control */}
+                                        <IconButton color="secondary" disabled={liveMode && !selectedRun.completed}>
+                                            <ReplayIcon fontSize="large">Replay</ReplayIcon>
+                                        </IconButton>
+                                        Replay
+                                    </div>
                                 </Box>
                             </Box>
 
@@ -397,12 +404,12 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         size="small"
                                         type="number"
                                         value={currentGeneration}
-                                        disabled
+                                        disabled={liveMode && !selectedRun.completed}
                                     />
                                 </Box>
 
                                 <Box p={2}>
-                                    <Button variant="contained" disabled>
+                                    <Button variant="contained" disabled={liveMode && !selectedRun.completed}>
                                         View
                                     </Button>
                                 </Box>
@@ -424,7 +431,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                 )}
 
                                 {/* NOTE: Do not make this render based on any other variable (e.g. selectedRun), 
-                                        otherwise the plugin may not load */}
+                                          otherwise the plugin may not load */}
                                 {props.children}
                             </Paper>
                         </Box>
@@ -466,7 +473,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
     initiateSocket: (runId: string) => dispatch(initiateSocket(runId)),
     subscribeToGenerations: (runId: string) => dispatch(subscribeToGenerations(runId)),
     fetchData: (dataId: string, generation: number) => dispatch(fetchData(dataId, generation)),
-    // setSubscribed: (subscribed: boolean) => dispatch(setSubscribed(subscribed)),
     setData: (data: Data) => dispatch(setData(data)),
     unsubscribeFromGenerations: (runId: string) => dispatch(unsubscribeFromGenerations(runId)),
 });

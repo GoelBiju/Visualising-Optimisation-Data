@@ -215,7 +215,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 console.log('Queue: ', generationQueue);
             } else {
                 // Fetch data if there are currently no requests
-                if (!fetchingData && !selectedRun.completed) {
+                if (!fetchingData || selectedRun.completed) {
                     // Get the next generation to fetch
                     const generation = popFromGQ();
                     console.log('Next generation from queue: ', generation);
@@ -243,9 +243,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // Unsubscribe from the run and generation information being sent
             unsubscribeFromGenerations(runId);
         } else {
+            // Subscribe again to the generations
             subscribeToGenerations(runId);
             console.log('Subscribing again');
             setLoadedRun(false);
+            // setCurrentGeneration(-1);
         }
 
         // Set the live mode value

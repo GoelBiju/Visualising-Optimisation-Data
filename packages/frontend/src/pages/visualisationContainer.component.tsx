@@ -86,14 +86,18 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         unsubscribeFromGenerations,
     } = props;
 
+    // Set when we have fetched run information
     const [loadedRun, setLoadedRun] = React.useState(false);
+
+    // TODO: Do we need current generation in the component (use from state?)
     const [currentGeneration, setCurrentGeneration] = React.useState(-1);
 
     // Create a generation queue object in state
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
 
+    // TODO: Do we need a data complete in this component (use from state?)
     // All data has already been received from backend
-    const [dataComplete, setDataComplete] = React.useState(false);
+    // const [dataComplete, setDataComplete] = React.useState(false);
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
@@ -128,6 +132,15 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     };
 
+    // Run on mounting the component
+    React.useEffect(() => {
+        // TODO: check if the visualisation name from the root
+        //       is appropriate for this run (maybe do this before render)
+        // Set the selected visualisation name when mounting the component
+        setVisualisationName(pluginName);
+        console.log('Set visualisation name to: ', pluginName);
+    }, []);
+
     // Load run information
     React.useEffect(() => {
         console.log('Fetching run information');
@@ -137,12 +150,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         if (!loadedRun) {
             // Fetching the run information into state
             fetchRun(runId);
-
-            // TODO: check if the visualisation name from the root
-            //       is appropriate for this run (maybe do this before render)
-            // Set the selected visualisation name when mounting the component
-            setVisualisationName(pluginName);
-            console.log('Set visualisation name to: ', pluginName);
 
             setLoadedRun(true);
         }
@@ -180,7 +187,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                     // If this the final data, then reload the run information
                     if (data && data.completed) {
-                        setDataComplete(true);
+                        // setDataComplete(true);
                         setLoadedRun(false);
                         console.log('Set loaded run to false');
                     }
@@ -208,7 +215,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 console.log('Queue: ', generationQueue);
             } else {
                 // Fetch data if there are currently no requests
-                if (!fetchingData && !dataComplete) {
+                if (!fetchingData && !selectedRun.completed) {
                     // Get the next generation to fetch
                     const generation = popFromGQ();
                     console.log('Next generation from queue: ', generation);
@@ -223,7 +230,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 }
             }
         }
-    }, [selectedRun, socket, currentGeneration, fetchingData, dataComplete, generationQueue]);
+    }, [selectedRun, socket, currentGeneration, fetchingData, generationQueue]);
 
     // BUG: This runs initially and sets loadedRun to false
     // TODO: Pause and play the visualisation by catching live mode change

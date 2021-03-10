@@ -183,10 +183,15 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                     setData(data);
 
                     // If this the final data, then reload the run information
-                    if (data && data.completed) {
-                        // setDataComplete(true);
-                        setLoadedRun(false);
-                        console.log('Set loaded run to false');
+                    if (data) {
+                        if (data.completed) {
+                            // setDataComplete(true);
+                            setLoadedRun(false);
+                            console.log('Set loaded run to false');
+                        }
+
+                        // Set the current generation from the data
+                        setCurrentGeneration(data.generation);
                     }
                 });
 
@@ -200,10 +205,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         // Fetch the data for the new generation
         if (socket && socket.connected && selectedRun) {
             if (currentGeneration < 0) {
-                // Initialise current generation with current run information
-                setCurrentGeneration(selectedRun.currentGeneration);
-                console.log('Set current generation to: ', selectedRun.currentGeneration);
-
                 console.log('Pushing to queue: ', selectedRun.currentGeneration);
                 pushToGQ(selectedRun.currentGeneration);
                 console.log('Queue: ', generationQueue);
@@ -211,7 +212,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     }, [socket, selectedRun]);
 
-    // TODO: Handle fetching new data on generation queue changes
+    // Handle fetching new data on generation queue changes
     React.useEffect(() => {
         console.log(generationQueue);
         // Fetch data if there are currently no requests
@@ -220,10 +221,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             const generation = popFromGQ();
             console.log('Next generation from queue: ', generation);
             if (generation && generation !== -1) {
-                // TODO: Is this correct calling setCurrentGeneration here,
-                //       we could set the generation once we have received the data?
-                setCurrentGeneration(generation);
-
                 console.log(`Requesting data for generation ${generation}`);
                 fetchData(selectedRun.dataId, generation);
             }
@@ -244,6 +241,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             subscribeToGenerations(runId);
             console.log('Subscribing again');
             setLoadedRun(false);
+
+            // TODO: This is one of way of resetting, the slider however
+            //       moves back to -1 and then jumps to the current value.
+            // Reset the current generations
+            setCurrentGeneration(-1);
         }
 
         // Set the live mode value

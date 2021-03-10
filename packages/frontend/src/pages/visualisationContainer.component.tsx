@@ -153,19 +153,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
             setLoadedRun(true);
         }
-
-        if (selectedRun && selectedRun.completed) {
-            setCurrentGeneration(selectedRun.currentGeneration);
-            console.log('Set current generation to: ', selectedRun.currentGeneration);
-        }
-    }, [loadedRun, selectedRun]);
+    }, [loadedRun]);
 
     // Handle setting up the connection/subscribing to data
     // TODO: This needs to be cleared up and checked
     React.useEffect(() => {
-        console.log('Setting up connection');
-        console.log('Loaded run: ', loadedRun);
-
         // Set up the connection to the backend
         // socketConnected
         if (!socket || !socket.connected) {
@@ -204,41 +196,41 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     }, [socket, subscribed]);
 
-    // Handle fetching new data on generation changes
     React.useEffect(() => {
-        console.log('Got new update');
-        console.log('Loaded run: ', loadedRun);
-
         // Fetch the data for the new generation
-        if (selectedRun && socket && socket.connected) {
+        if (socket && socket.connected && selectedRun) {
             if (currentGeneration < 0) {
                 // Initialise current generation with current run information
                 setCurrentGeneration(selectedRun.currentGeneration);
                 console.log('Set current generation to: ', selectedRun.currentGeneration);
 
+                console.log('Pushing to queue: ', selectedRun.currentGeneration);
                 pushToGQ(selectedRun.currentGeneration);
                 console.log('Queue: ', generationQueue);
-            } else {
-                // Fetch data if there are currently no requests
-                if (!fetchingData || selectedRun.completed) {
-                    // Get the next generation to fetch
-                    const generation = popFromGQ();
-                    console.log('Next generation from queue: ', generation);
-                    if (generation && generation !== -1) {
-                        // TODO: Is this correct calling setCurrentGeneration here,
-                        //       we could set the generation once we have received the data?
-                        setCurrentGeneration(generation);
-
-                        console.log(`Requesting data for generation ${generation}`);
-                        fetchData(selectedRun.dataId, generation);
-                    }
-                }
             }
         }
-    }, [selectedRun, socket, currentGeneration, fetchingData, generationQueue]);
+    }, [socket, selectedRun]);
 
-    // BUG: This runs initially and sets loadedRun to false
-    // TODO: Pause and play the visualisation by catching live mode change
+    // TODO: Handle fetching new data on generation queue changes
+    React.useEffect(() => {
+        console.log(generationQueue);
+        // Fetch data if there are currently no requests
+        if (selectedRun && !fetchingData) {
+            // Get the next generation to fetch
+            const generation = popFromGQ();
+            console.log('Next generation from queue: ', generation);
+            if (generation && generation !== -1) {
+                // TODO: Is this correct calling setCurrentGeneration here,
+                //       we could set the generation once we have received the data?
+                setCurrentGeneration(generation);
+
+                console.log(`Requesting data for generation ${generation}`);
+                fetchData(selectedRun.dataId, generation);
+            }
+        }
+    }, [fetchingData, generationQueue]);
+
+    // Pause and play the visualisation by catching live mode change
     const handleLiveMode = (mode: boolean): void => {
         // Clear the queue
         setGenerationQueue([]);
@@ -252,7 +244,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             subscribeToGenerations(runId);
             console.log('Subscribing again');
             setLoadedRun(false);
-            // setCurrentGeneration(-1);
         }
 
         // Set the live mode value

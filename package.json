@@ -3,16 +3,16 @@
   "private": true,
   "version": "1.0.0",
   "workspaces": [
-    "backend",
     "packages/*"
   ],
   "description": "This is the COMP3000 Computing Project on the topic of creating \"A Web Platform for Visualising Optimisation Data\".",
   "scripts": {
     "prepare": "lerna run prepare",
     "tsc": "lerna run tsc",
-    "backend": "yarn workspace backend dev",
+    "backend": "yarn --cwd backend dev",
     "frontend": "yarn workspace frontend start",
     "plugins": "yarn workspace frontend-plugin serve:build",
+    "heroku-postbuild": "yarn workspaces run build",
     "lint:frontend": "yarn workspace frontend lint",
     "test:frontend": "yarn workspace frontend test"
   },

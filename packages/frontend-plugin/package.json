@@ -32,10 +32,9 @@
   },
   "scripts": {
     "dev": "craco start",
-    "start": "serve build",
     "build": "craco build",
+    "start": "serve build",
     "serve:build": "yarn build && yarn start",
-    "heroku-postbuild": "yarn serve:build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

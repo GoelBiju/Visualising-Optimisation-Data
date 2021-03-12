@@ -45,7 +45,6 @@
     "start": "react-scripts start",
     "serve:plugins": "node micro-frontend-tools/serve-plugins.js",
     "build": "react-scripts build",
-    "lerna-build": "lerna run build",
     "test": "jest --env=jsdom --coverage --watchAll=false",
     "lint": "eslint --ext=tsx --ext=ts --ext=js --ext=jsx --fix ./src && yarn build",
     "eject": "react-scripts eject"

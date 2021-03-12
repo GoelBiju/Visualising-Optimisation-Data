@@ -36,16 +36,10 @@ jobs:
     #   name: Frontend
     #   script: yarn test:frontend
 
-    # - stage: Build Frontend
-    #   script:
-    #     - yarn --cwd frontend install
-    #     - yarn --cwd frontend build
-
     - stage: Deploy Frontend
       script: skip
       before_deploy:
         - cd packages/frontend
-        - yarn lerna-build
       deploy:
         provider: heroku
         api_key:

@@ -45,7 +45,7 @@ jobs:
       script: skip
       before_deploy:
         - cd packages/frontend
-        - yarn build
+        - yarn lerna-build
       deploy:
         provider: heroku
         api_key:

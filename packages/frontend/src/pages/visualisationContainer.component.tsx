@@ -253,7 +253,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             console.log('Subscribing again');
             setLoadedRun(false);
 
-            // TODO: This is one of way of resetting, the slider however
+            // TODO: * This is one of way of resetting, the slider however
             //       moves back to -1 and then jumps to the current value.
             // Reset the current generations
             // setCurrentGeneration(-1);
@@ -425,8 +425,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         variant="outlined"
                                         size="small"
                                         type="number"
-                                        // TODO: Use a separate generation view value
-                                        //       (needs to match up with currentGeneration)
                                         value={viewValue}
                                         InputProps={{
                                             inputProps: {
@@ -482,14 +480,8 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                                     <div style={{ margin: '10px' }}>
                                         <Slider
-                                            // TODO: Prevent values higher than the current maximum generation
-                                            //       being selected, in order to prevent the backend returning
-                                            //       an error
-                                            // TODO: Use a separate slider value (needs to match to currentGeneration)
                                             value={sliderValue}
                                             defaultValue={sliderValue !== -1 ? sliderValue : 0}
-                                            // TODO: Needs onChange to handle changing
-                                            //       generation by sliding
                                             onChange={(e, v) => setSliderValue(v as number)}
                                             onChangeCommitted={(e, v) => {
                                                 console.log('New value: ', v);

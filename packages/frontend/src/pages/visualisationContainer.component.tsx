@@ -20,10 +20,6 @@ import { connect } from 'react-redux';
 import { Action, AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-// TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
-//       * Prevent multiple event handlers (subcribed to state)
-// TODO: * Wait until data has been received from server after firing request, before firing next request
-
 const useStyles = makeStyles({
     content: {
         padding: '15px',
@@ -52,7 +48,6 @@ interface VCDispatchProps {
     setVisualisationName: (visualisationName: string) => Action;
     initiateSocket: (runId: string) => Promise<void>;
     subscribeToGenerations: (runId: string) => Promise<void>;
-
     fetchData: (dataId: string, generation: number) => Promise<void>;
     setData: (data: Data) => Action;
     unsubscribeFromGenerations: (runId: string) => Promise<void>;
@@ -67,6 +62,10 @@ interface VCStateProps {
 }
 
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
+
+// TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
+//       * Prevent multiple event handlers (subcribed to state)
+// TODO: * Wait until data has been received from server after firing request, before firing next request
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const classes = useStyles();
@@ -83,7 +82,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         subscribeToGenerations,
         fetchData,
         subscribed,
-        // setSubscribed,
         setData,
         fetchingData,
         unsubscribeFromGenerations,
@@ -95,6 +93,13 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // Current generation stored only for this component
     // (different from run stored in state); allows for pause/play
     const [currentGeneration, setCurrentGeneration] = React.useState(-1);
+
+    // Values for the controls (textfield and slider) which hold the value
+    // of current generation but allows for the component using it to have
+    // it adjusted for its own use.
+    const [viewValue, setViewValue] = React.useState(-1);
+    const [sliderValue, setSliderValue] = React.useState(-1);
+    const [sliderMax, setSliderMax] = React.useState(0);
 
     // Create a generation queue object in state
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
@@ -181,13 +186,18 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                     // If this the final data, then reload the run information
                     if (data) {
+                        // Set the current generation from the data
+                        // setCurrentGeneration(data.generation);
+                        setGenerationValue(data.generation);
+
+                        // TODO: If the data was complete, we should not
+                        //       need to re-subscribe anymore
+                        // If at any point the server returns that the data
+                        // has been completed, update the run information.
                         if (data.completed) {
                             setLoadedRun(false);
                             console.log('Set loaded run to false');
                         }
-
-                        // Set the current generation from the data
-                        setCurrentGeneration(data.generation);
                     }
                 });
 
@@ -233,6 +243,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             console.log('Got live mode set to false');
             // Unsubscribe from the run and generation information being sent
             unsubscribeFromGenerations(runId);
+
+            // Set the slider maximum when live is turned off
+            // (this is to get the maximum slidable value at this time)
+            setSliderMax(currentGeneration);
         } else {
             // Subscribe again to the generations
             subscribeToGenerations(runId);
@@ -242,11 +256,19 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // TODO: This is one of way of resetting, the slider however
             //       moves back to -1 and then jumps to the current value.
             // Reset the current generations
-            setCurrentGeneration(-1);
+            // setCurrentGeneration(-1);
+            setGenerationValue(-1);
         }
 
         // Set the live mode value
         setLiveMode(mode);
+    };
+
+    // Set generation value for all variables which need it
+    const setGenerationValue = (value: number) => {
+        setCurrentGeneration(value);
+        setViewValue(value);
+        setSliderValue(value);
     };
 
     // Convert seconds to DHMS format
@@ -371,7 +393,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         <IconButton
                                             color="primary"
                                             onClick={() => handleLiveMode(!liveMode)}
-                                            disabled={selectedRun.completed}
+                                            disabled={liveMode && selectedRun.completed}
                                         >
                                             {liveMode ? (
                                                 <PauseIcon fontSize="large" />
@@ -403,7 +425,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         variant="outlined"
                                         size="small"
                                         type="number"
-                                        value={currentGeneration}
+                                        // TODO: Use a separate generation view value
+                                        //       (needs to match up with currentGeneration)
+                                        value={viewValue}
                                         disabled={liveMode && !selectedRun.completed}
                                     />
                                 </Box>
@@ -446,15 +470,25 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                                     <div style={{ margin: '10px' }}>
                                         <Slider
-                                            defaultValue={currentGeneration !== -1 ? currentGeneration : 0}
-                                            valueLabelDisplay="on"
-                                            marks
-                                            min={1}
-                                            max={selectedRun.totalGenerations}
-                                            step={1}
-                                            value={currentGeneration}
+                                            // TODO: Prevent values higher than the current maximum generation
+                                            //       being selected, in order to prevent the backend returning
+                                            //       an error
+                                            // TODO: Use a separate slider value (needs to match to currentGeneration)
+                                            value={sliderValue}
+                                            defaultValue={sliderValue !== -1 ? sliderValue : 0}
                                             // TODO: Needs onChange to handle changing
                                             //       generation by sliding
+                                            onChange={(e, v) => setSliderValue(v as number)}
+                                            onChangeCommitted={(e, v) => {
+                                                console.log('New value: ', v);
+                                                // Request to fetch the new data.
+                                                pushToGQ(v as number);
+                                            }}
+                                            min={1}
+                                            max={liveMode ? selectedRun.totalGenerations : sliderMax}
+                                            step={1}
+                                            marks
+                                            valueLabelDisplay={!selectedRun.completed ? 'on' : 'auto'}
                                         />
                                     </div>
                                 </Paper>

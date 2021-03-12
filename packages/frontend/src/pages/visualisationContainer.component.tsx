@@ -99,7 +99,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // it adjusted for its own use.
     const [viewValue, setViewValue] = React.useState(-1);
     const [sliderValue, setSliderValue] = React.useState(-1);
-    const [sliderMax, setSliderMax] = React.useState(0);
+    const [controlsMax, setControlsMax] = React.useState(0);
 
     // Create a generation queue object in state
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
@@ -246,7 +246,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
             // Set the slider maximum when live is turned off
             // (this is to get the maximum slidable value at this time)
-            setSliderMax(currentGeneration);
+            setControlsMax(currentGeneration);
         } else {
             // Subscribe again to the generations
             subscribeToGenerations(runId);
@@ -428,12 +428,24 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         // TODO: Use a separate generation view value
                                         //       (needs to match up with currentGeneration)
                                         value={viewValue}
+                                        InputProps={{
+                                            inputProps: {
+                                                min: 0,
+                                                max: liveMode ? selectedRun.totalGenerations : controlsMax,
+                                            },
+                                        }}
+                                        onChange={(e) => setViewValue(parseInt(e.target.value))}
                                         disabled={liveMode && !selectedRun.completed}
                                     />
                                 </Box>
 
                                 <Box p={2}>
-                                    <Button variant="contained" disabled={liveMode && !selectedRun.completed}>
+                                    <Button
+                                        color="primary"
+                                        variant="contained"
+                                        disabled={liveMode && !selectedRun.completed}
+                                        onClick={() => pushToGQ(viewValue)}
+                                    >
                                         View
                                     </Button>
                                 </Box>
@@ -485,7 +497,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                                 pushToGQ(v as number);
                                             }}
                                             min={1}
-                                            max={liveMode ? selectedRun.totalGenerations : sliderMax}
+                                            max={liveMode ? selectedRun.totalGenerations : controlsMax}
                                             step={1}
                                             marks
                                             valueLabelDisplay={!selectedRun.completed ? 'on' : 'auto'}

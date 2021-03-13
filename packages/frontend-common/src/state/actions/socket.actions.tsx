@@ -78,6 +78,21 @@ export const subscribeToGenerations = (
       // Emit a subscribe message to the backend with the run ID
       socket.emit("subscribe", runId);
       console.log("Emitted subscribe for: ", runId);
+      dispatch(setSubscribed(true));
+    }
+  };
+};
+
+export const unsubscribeFromGenerations = (
+  runId: string
+): ThunkResult<Promise<void>> => {
+  return async (dispatch, getState) => {
+    const { socket } = getState().frontend.configuration;
+
+    if (socket && socket.connected) {
+      socket.emit("unsubscribe", runId);
+      console.log("Emitted unsubscribe for: ", runId);
+      dispatch(setSubscribed(false));
     }
   };
 };

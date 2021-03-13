@@ -12,7 +12,6 @@ cache:
 
 install:
   - yarn install --frozen-lockfile
-  - yarn workspaces run build
 
 jobs:
   include:
@@ -40,6 +39,7 @@ jobs:
     - stage: Deploy Frontend
       script: skip
       before_deploy:
+        - yarn workspace frontend build
         - cd packages/frontend
       deploy:
         provider: heroku
@@ -53,6 +53,7 @@ jobs:
     - stage: Deploy Frontend Plugin
       script: skip
       before_deploy:
+        - yarn workspace frontend-plugin build
         - cd packages/frontend-plugin
       deploy:
         provider: heroku

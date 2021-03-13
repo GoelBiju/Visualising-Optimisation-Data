@@ -1,1 +1,1 @@
-main: cd packages/frontend && yarn start
+main: yarn frontend

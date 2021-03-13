@@ -1,1 +1,1 @@
-main: yarn frontend
+main: yarn workspace frontend start

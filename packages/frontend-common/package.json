@@ -30,10 +30,10 @@
     "typescript": "^4.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
     "tsc": "tsc -p tsconfig.lib.json",
+    "start": "react-scripts start",
     "prepare": "yarn tsc",
+    "build": "yarn tsc",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

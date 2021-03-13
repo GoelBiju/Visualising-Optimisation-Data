@@ -1,0 +1,11 @@
+{
+    "backendUrl": "https://opt-vis-backend.herokuapp.com",
+    "plugins":[
+        {
+            "name": "frontend-plugin",
+            "src": "https://opt-vis-frontend-plugin.herokuapp.com/main.js",
+            "enable": true,
+            "location": "main"
+        }
+    ]
+}

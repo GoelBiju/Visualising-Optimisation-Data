@@ -47,11 +47,14 @@ const store = createStore(FrontendCommonReducer(history), composeEnhancers(apply
 // Listen to plugins
 listenToPlugins(store.dispatch);
 
+// Get the settings file name
+const settingsFile = process.env.SETTINGS_FILE || 'settings.json';
+
 const configureFrontend = (store: Store<unknown, AnyAction>): ThunkResult<Promise<void>> => {
     return async (dispatch) => {
         // Request the settings file
         await axios
-            .get('/settings.json')
+            .get(`/${settingsFile}`)
             .then((res) => {
                 const settings = res.data;
                 dispatch(frontendNotification(JSON.stringify(settings)));

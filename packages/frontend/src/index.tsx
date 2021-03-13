@@ -78,7 +78,7 @@ const configureFrontend = (store: Store<unknown, AnyAction>): ThunkResult<Promis
                 dispatch(loadedSettings());
             })
             .catch((error) => {
-                console.log(`Frontend Error: loading settings.json: ${error.message}`);
+                throw Error(`Frontend Error: loading settings.json: ${error.message}`);
             });
     };
 };

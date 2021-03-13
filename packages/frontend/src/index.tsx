@@ -48,7 +48,9 @@ const store = createStore(FrontendCommonReducer(history), composeEnhancers(apply
 listenToPlugins(store.dispatch);
 
 // Get the settings file name
+console.log('Settings file: ', process.env.SETTINGS_FILE);
 const settingsFile = process.env.SETTINGS_FILE || 'settings.json';
+console.log('Settings file to load: ', settingsFile);
 
 const configureFrontend = (store: Store<unknown, AnyAction>): ThunkResult<Promise<void>> => {
     return async (dispatch) => {

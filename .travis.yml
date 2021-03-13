@@ -38,8 +38,6 @@ jobs:
 
     - stage: Deploy Frontend
       script: skip
-      before_deploy:
-        - cd packages/frontend
       deploy:
         provider: heroku
         api_key:
@@ -51,8 +49,6 @@ jobs:
 
     - stage: Deploy Frontend Plugin
       script: skip
-      before_deploy:
-        - cd packages/frontend-plugin
       deploy:
         provider: heroku
         api_key:

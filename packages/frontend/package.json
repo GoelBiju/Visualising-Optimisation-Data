@@ -37,13 +37,11 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "serve": "^11.3.2",
     "single-spa": "^5.5.4",
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "start": "serve build",
-    "dev": "react-scripts start",
+    "start": "react-scripts start",
     "serve:plugins": "node micro-frontend-tools/serve-plugins.js",
     "build": "react-scripts build && mv ./public/settings.json ./public/deploy-settings.json ./build",
     "test": "jest --env=jsdom --coverage --watchAll=false",

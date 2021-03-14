@@ -1,1 +1,1 @@
-web: yarn workspace frontend start
+web: node packages/frontend/serve-build.js

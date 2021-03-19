@@ -14,6 +14,7 @@ export const LoadedSettingsType = `${microFrontendMessageId}:loaded_settings`;
 // Run related actions
 export const FetchRunsType = `${microFrontendMessageId}:fetch_runs`;
 export const FetchRunsResultType = `${microFrontendMessageId}:fetch_runs_result`;
+export const FetchRunRequestType = `${microFrontendMessageId}:fetch_run_request`;
 export const FetchRunResultType = `${microFrontendMessageId}:fetch_run_result`;
 export const VisualisationNameType = `${microFrontendMessageId}:set_visualisation_name`;
 export const DataRequestType = `${microFrontendMessageId}:data_request`;

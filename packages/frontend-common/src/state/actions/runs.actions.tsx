@@ -1,8 +1,10 @@
 import axios from "axios";
+import { Action } from "redux";
 import { ActionType, Data, Run, ThunkResult } from "../state.types";
 import {
   DataPayload,
   DataType,
+  FetchRunRequestType,
   FetchRunResultType,
   FetchRunsResultType,
   RunPayload,
@@ -16,6 +18,10 @@ export const fetchRunsResult = (runs: Run[]): ActionType<RunsPayload> => ({
   payload: {
     runs,
   },
+});
+
+export const fetchRunRequest = (): Action => ({
+  type: FetchRunRequestType,
 });
 
 export const fetchRunResult = (run: Run): ActionType<RunPayload> => ({
@@ -41,6 +47,8 @@ export const setData = (data: Data): ActionType<DataPayload> => ({
   },
 });
 
+
+
 // Retrieve all the runs from the API
 export const fetchRuns = (): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
@@ -60,6 +68,8 @@ export const fetchRuns = (): ThunkResult<Promise<void>> => {
 // Retrieve a specific run from the API
 export const fetchRun = (runId: string): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
+    dispatch(fetchRunRequest());
+
     const { backendUrl } = getState().frontend.configuration.urls;
     // console.log("Config: ", getState().frontend.configuration);
     await axios

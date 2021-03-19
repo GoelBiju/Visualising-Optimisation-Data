@@ -54,8 +54,9 @@ interface VCDispatchProps {
 }
 
 interface VCStateProps {
-    selectedRun: Run | null;
     selectedVisualisation: string;
+    fetchingRun: boolean;
+    selectedRun: Run | null;
     socket: SocketIOClient.Socket | null;
     subscribed: boolean;
     fetchingData: boolean;
@@ -81,14 +82,15 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const classes = useStyles();
 
     const {
-        socket,
-        initiateSocket,
-        fetchRun,
+        selectedVisualisation,
         setVisualisationName,
         runId,
         pluginName,
+        socket,
+        initiateSocket,
+        fetchingRun,
+        fetchRun,
         selectedRun,
-        selectedVisualisation,
         subscribeToGenerations,
         fetchData,
         subscribed,
@@ -158,14 +160,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Load run information
     React.useEffect(() => {
-        console.log('Fetching run information');
-
         // Fetch the run information
-        if (!loadedRun) {
+        if (!loadedRun && !fetchingRun) {
+            console.log('Fetching run information');
             // Fetching the run information into state
             fetchRun(runId);
-
-            console.log('doing');
             setLoadedRun(true);
         }
     }, [loadedRun]);
@@ -199,7 +198,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         // Set the current generation from the data
                         setGenerationValue(data.generation);
 
-                        // BUG: This is causing issues and fetches the run twice.
+                        // BUG: This is causing issues (and fetches the run twice?)
                         // If at any point the server returns that the data
                         // has been completed, update the run information.
                         if (data.completed) {
@@ -527,9 +526,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
 
 const mapStateToProps = (state: StateType): VCStateProps => {
     return {
-        socket: state.frontend.configuration.socket,
-        selectedRun: state.frontend.selectedRun,
         selectedVisualisation: state.frontend.selectedVisualisation,
+        fetchingRun: state.frontend.fetchingRun,
+        selectedRun: state.frontend.selectedRun,
+        socket: state.frontend.configuration.socket,
         subscribed: state.frontend.configuration.subscribed,
         fetchingData: state.frontend.fetchingData,
     };

@@ -116,7 +116,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
-    const [replayMode, setReplayMode] = React.useState(false);
+    // const [replayMode, setReplayMode] = React.useState(false);
 
     // Add generation to the queue (enqueue)
     const pushToGQ = (generation: number) => {
@@ -165,21 +165,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // Fetching the run information into state
             fetchRun(runId);
 
+            console.log('doing');
             setLoadedRun(true);
         }
     }, [loadedRun]);
-
-    // If the current generation has not been initialised,
-    // we push the generation data we have received from run information.
-    React.useEffect(() => {
-        // Fetch the data for the new generation
-        if (socket && socket.connected && selectedRun) {
-            if (currentGeneration < 0) {
-                console.log('Pushing to queue: ', selectedRun.currentGeneration);
-                pushToGQ(selectedRun.currentGeneration);
-            }
-        }
-    }, [socket, selectedRun]);
 
     // Handle setting up the connection/subscribing to data
     React.useEffect(() => {
@@ -213,10 +202,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         // BUG: This is causing issues and fetches the run twice.
                         // If at any point the server returns that the data
                         // has been completed, update the run information.
-                        // if (data.completed) {
-                        //     setLoadedRun(false);
-                        //     console.log('Set loaded run to false');
-                        // }
+                        if (data.completed) {
+                            setLoadedRun(false);
+                            console.log('Set loaded run to false');
+                        }
                     }
                 });
 
@@ -226,6 +215,18 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             }
         }
     }, [socket, subscribed]);
+
+    // If the current generation has not been initialised,
+    // we push the generation data we have received from run information.
+    React.useEffect(() => {
+        // Fetch the data for the new generation
+        if (socket && socket.connected && selectedRun) {
+            if (currentGeneration < 0) {
+                console.log('Pushing to queue: ', selectedRun.currentGeneration);
+                pushToGQ(selectedRun.currentGeneration);
+            }
+        }
+    }, [socket, selectedRun]);
 
     // Handle fetching new data on generation queue changes
     React.useEffect(() => {
@@ -417,10 +418,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                 <Box p={2}>
                                     <div className={classes.button}>
                                         {/* TODO: Replay features; add functionality for replay control */}
-                                        <IconButton
-                                            color="secondary"
-                                            disabled={replayMode || (liveMode && !selectedRun.completed)}
-                                        >
+                                        <IconButton color="secondary" disabled={liveMode && !selectedRun.completed}>
                                             <ReplayIcon fontSize="large">Replay</ReplayIcon>
                                         </IconButton>
                                         Replay

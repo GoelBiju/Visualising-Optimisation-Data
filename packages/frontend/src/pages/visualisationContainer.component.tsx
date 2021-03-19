@@ -63,9 +63,19 @@ interface VCStateProps {
 
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 
-// TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
-//       * Prevent multiple event handlers (subcribed to state)
-// TODO: * Wait until data has been received from server after firing request, before firing next request
+// TODO:
+//  - Replay should in a live run
+//  - Replay should work on a completed run
+//  - Should be able to press live button to return to latest generation from replay mode
+//  - Should go back to live mode after replay is complete
+// When the replay mode button is pressed,
+// we replay from the first generation until the current generation.
+
+// BUG: When pressing live button after turning on replay mode, it does not move to the latest generation but
+//      stays at the generation it was last on before hitting the live button (could be related to clearing the queue and
+//      the next run information loading)
+// BUG: We keep on fetching the run information when a run is complete due to data.completed,
+//      this is also causing issues with the replay mode requesting run after every data request
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const classes = useStyles();
@@ -106,6 +116,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
+    const [replayMode, setReplayMode] = React.useState(false);
 
     // Add generation to the queue (enqueue)
     const pushToGQ = (generation: number) => {
@@ -238,6 +249,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const handleLiveMode = (mode: boolean): void => {
         // Clear the queue
         setGenerationQueue([]);
+
         // Check if live mode is set to false
         if (!mode) {
             console.log('Got live mode set to false');
@@ -408,7 +420,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                 <Box p={2}>
                                     <div className={classes.button}>
                                         {/* TODO: Replay features; add functionality for replay control */}
-                                        <IconButton color="secondary" disabled={liveMode && !selectedRun.completed}>
+                                        <IconButton
+                                            color="secondary"
+                                            disabled={replayMode || (liveMode && !selectedRun.completed)}
+                                        >
                                             <ReplayIcon fontSize="large">Replay</ReplayIcon>
                                         </IconButton>
                                         Replay

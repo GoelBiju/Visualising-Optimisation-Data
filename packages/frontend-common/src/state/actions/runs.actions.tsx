@@ -45,7 +45,7 @@ export const setData = (data: Data): ActionType<DataPayload> => ({
 export const fetchRuns = (): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
     const { backendUrl } = getState().frontend.configuration.urls;
-    console.log("Config: ", getState().frontend.configuration);
+    // console.log("Config: ", getState().frontend.configuration);
     await axios
       .get(`${backendUrl}/api/runs`)
       .then((response) => {
@@ -61,7 +61,7 @@ export const fetchRuns = (): ThunkResult<Promise<void>> => {
 export const fetchRun = (runId: string): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
     const { backendUrl } = getState().frontend.configuration.urls;
-    console.log("Config: ", getState().frontend.configuration);
+    // console.log("Config: ", getState().frontend.configuration);
     await axios
       .get(`${backendUrl}/api/runs/${runId}`)
       .then((response) => {

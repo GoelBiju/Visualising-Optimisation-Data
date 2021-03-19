@@ -127,14 +127,14 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const popFromGQ = (): number => {
         if (!isEmpty()) {
             const n = generationQueue.shift();
-            console.log('Returning n: ', -1);
+            // console.log('Returning n: ', -1);
             if (n) {
                 return n;
             } else {
                 return -1;
             }
         } else {
-            console.log('Queue empty');
+            // console.log('Queue empty');
             return -1;
         }
     };
@@ -159,7 +159,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // Load run information
     React.useEffect(() => {
         console.log('Fetching run information');
-        console.log('Loaded run: ', loadedRun);
 
         // Fetch the run information
         if (!loadedRun) {
@@ -170,6 +169,18 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         }
     }, [loadedRun]);
 
+    // If the current generation has not been initialised,
+    // we push the generation data we have received from run information.
+    React.useEffect(() => {
+        // Fetch the data for the new generation
+        if (socket && socket.connected && selectedRun) {
+            if (currentGeneration < 0) {
+                console.log('Pushing to queue: ', selectedRun.currentGeneration);
+                pushToGQ(selectedRun.currentGeneration);
+            }
+        }
+    }, [socket, selectedRun]);
+
     // Handle setting up the connection/subscribing to data
     React.useEffect(() => {
         // Set up the connection to the backend
@@ -178,7 +189,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             initiateSocket(runId);
         } else {
             // If the socket is connected and not subscribed and we are in live mode,
-            // proceed to subcribe to the optimisation run
+            // proceed to subcribe to the optimisation run.
             if (socket && socket.connected && !subscribed && liveMode) {
                 // When we receive "subscribed" from
                 // server attach the callback function
@@ -186,52 +197,40 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                     // Add the generation to the queue.
                     pushToGQ(generation);
                     console.log('Generation added to queue: ', generation);
-                    console.log('Queue: ', generationQueue);
                 });
 
                 // Handle the data response event
                 socket.on('data', (data: Data) => {
-                    console.log('Data received for current generation: ', data);
+                    console.log('Got data');
+                    // Set the data received.
                     setData(data);
 
                     // If this the final data, then reload the run information
                     if (data) {
                         // Set the current generation from the data
-                        // setCurrentGeneration(data.generation);
                         setGenerationValue(data.generation);
 
-                        // TODO: If the data was complete, we should not
-                        //       need to re-subscribe anymore
+                        // BUG: This is causing issues and fetches the run twice.
                         // If at any point the server returns that the data
                         // has been completed, update the run information.
-                        if (data.completed) {
-                            setLoadedRun(false);
-                            console.log('Set loaded run to false');
-                        }
+                        // if (data.completed) {
+                        //     setLoadedRun(false);
+                        //     console.log('Set loaded run to false');
+                        // }
                     }
                 });
 
-                // TODO: We only need to subscribe to generation if the run isn't complete
-                // Subscribe to the data from the optimisation run room
+                // Subscribe to the data from the optimisation run room,
+                // we only need to subscribe to generation if the run isn't complete.
                 subscribeToGenerations(runId);
             }
         }
     }, [socket, subscribed]);
 
-    React.useEffect(() => {
-        // Fetch the data for the new generation
-        if (socket && socket.connected && selectedRun) {
-            if (currentGeneration < 0) {
-                console.log('Pushing to queue: ', selectedRun.currentGeneration);
-                pushToGQ(selectedRun.currentGeneration);
-                console.log('Queue: ', generationQueue);
-            }
-        }
-    }, [socket, selectedRun]);
-
     // Handle fetching new data on generation queue changes
     React.useEffect(() => {
-        console.log(generationQueue);
+        console.log('Queue: ', generationQueue);
+
         // Fetch data if there are currently no requests
         if (selectedRun && !fetchingData) {
             // Get the next generation to fetch
@@ -264,10 +263,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             console.log('Subscribing again');
             setLoadedRun(false);
 
-            // TODO: * This is one of way of resetting, the slider however
+            // TODO: This is one of way of resetting, the slider however
             //       moves back to -1 and then jumps to the current value.
             // Reset the current generations
-            // setCurrentGeneration(-1);
             setGenerationValue(-1);
         }
 
@@ -498,7 +496,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                             defaultValue={sliderValue !== -1 ? sliderValue : 0}
                                             onChange={(e, v) => setSliderValue(v as number)}
                                             onChangeCommitted={(e, v) => {
-                                                console.log('New value: ', v);
+                                                console.log('New slider value to push to queue: ', v);
                                                 // Request to fetch the new data.
                                                 pushToGQ(v as number);
                                             }}

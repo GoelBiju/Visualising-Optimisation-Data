@@ -173,7 +173,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // Handle setting up the connection/subscribing to data
     React.useEffect(() => {
         // Set up the connection to the backend
-        // socketConnected
         if (!socket || !socket.connected) {
             // Start socket connection
             initiateSocket(runId);

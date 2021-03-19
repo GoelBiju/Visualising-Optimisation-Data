@@ -11,7 +11,7 @@
     "tsc": "lerna run tsc",
     "backend": "yarn --cwd backend dev",
     "frontend": "yarn workspace frontend start",
-    "plugins": "yarn workspace frontend-plugin serve:build",
+    "plugins": "yarn workspace pareto-front serve:build",
     "heroku-postbuild": "yarn workspaces run build",
     "lint:frontend": "yarn workspace frontend lint",
     "test:frontend": "yarn workspace frontend test"

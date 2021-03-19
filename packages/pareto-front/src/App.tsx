@@ -40,8 +40,8 @@ const registerRouteAction = {
     section: "Test",
     // TODO: Remove this, this should be declared from parent
     link: "/runs/:runId/visualisations/frontend-plugin/data",
-    plugin: "frontend-plugin",
-    displayName: "Frontend Plugin",
+    plugin: "pareto-front",
+    displayName: "Pareto Front",
   },
 };
 
@@ -68,7 +68,7 @@ class App extends React.Component<unknown, AppState> {
 
   public componentDidCatch(error: Error | null): void {
     this.setState({ ...this.state, hasError: true });
-    log.error(`frontend-plugin failed with error: ${error}`);
+    log.error(`pareto-front failed with error: ${error}`);
   }
 
   public render(): React.ReactNode {

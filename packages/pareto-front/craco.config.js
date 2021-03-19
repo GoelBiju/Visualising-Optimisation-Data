@@ -7,7 +7,7 @@ module.exports = {
       };
 
       if (env === "production" && !process.env.REACT_APP_E2E_TESTING) {
-        webpackConfig.output.library = "frontend-plugin";
+        webpackConfig.output.library = "pareto-front";
         webpackConfig.output.libraryTarget = "window";
 
         webpackConfig.output.filename = "[name].js";

@@ -499,7 +499,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         <IconButton
                                             color="secondary"
                                             onClick={() => handleReplayMode()}
-                                            // TODO: At the moment, a full replay is not available during a live run
                                             disabled={replayMode || (liveMode && !selectedRun.completed)}
                                         >
                                             <ReplayIcon fontSize="large">Replay</ReplayIcon>
@@ -535,7 +534,13 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         color="primary"
                                         variant="contained"
                                         disabled={(liveMode && !selectedRun.completed) || replayMode}
-                                        onClick={() => pushToGQ(viewValue)}
+                                        onClick={() => {
+                                            console.log('view value: ', viewValue);
+                                            const max = liveMode ? selectedRun.totalGenerations : controlsMax;
+                                            if (viewValue && viewValue > 0 && viewValue <= max) {
+                                                pushToGQ(viewValue);
+                                            }
+                                        }}
                                     >
                                         View
                                     </Button>

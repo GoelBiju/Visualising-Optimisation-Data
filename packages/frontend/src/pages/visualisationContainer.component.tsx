@@ -71,6 +71,7 @@ type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 //  - Should go back to live mode after replay is complete
 // When the replay mode button is pressed,
 // we replay from the first generation until the current generation.
+// TODO: To make it easier for now, just disable all controls except live mode when in replay mode
 
 // BUG: When pressing live button after turning on replay mode, it does not move to the latest generation but
 //      stays at the generation it was last on before hitting the live button (could be related to clearing the queue and
@@ -118,7 +119,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
-    // const [replayMode, setReplayMode] = React.useState(false);
+    const [replayMode, setReplayMode] = React.useState(false);
 
     // Add generation to the queue (enqueue)
     const pushToGQ = (generation: number) => {
@@ -160,6 +161,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Load run information
     React.useEffect(() => {
+        console.log('Loaded run: ', loadedRun);
+        console.log('Fetching run: ', fetchingRun);
+
         // Fetch the run information
         if (!loadedRun && !fetchingRun) {
             console.log('Fetching run information');
@@ -178,7 +182,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         } else {
             // If the socket is connected and not subscribed and we are in live mode,
             // proceed to subcribe to the optimisation run.
-            if (socket && socket.connected && !subscribed && liveMode) {
+            if (socket && socket.connected && !subscribed && liveMode && !replayMode) {
                 // When we receive "subscribed" from
                 // server attach the callback function
                 socket.on('generation', (generation: number) => {
@@ -201,10 +205,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         // BUG: This is causing issues (and fetches the run twice?)
                         // If at any point the server returns that the data
                         // has been completed, update the run information.
-                        if (data.completed) {
-                            setLoadedRun(false);
-                            console.log('Set loaded run to false');
-                        }
+                        // if (data.completed) {
+                        //     setLoadedRun(false);
+                        //     console.log('Set loaded run to false');
+                        // }
                     }
                 });
 
@@ -218,12 +222,17 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     // If the current generation has not been initialised,
     // we push the generation data we have received from run information.
     React.useEffect(() => {
+        console.log('Current generation: ', currentGeneration);
+        console.log('Selected current: ', selectedRun && selectedRun.currentGeneration);
+
         // Fetch the data for the new generation
         if (socket && socket.connected && selectedRun) {
-            if (currentGeneration < 0) {
-                console.log('Pushing to queue: ', selectedRun.currentGeneration);
-                pushToGQ(selectedRun.currentGeneration);
-            }
+            // NOTE: Checking if currentGeneration is -1 does not work when going back
+            //      live mode from replay since the current generation set was changed by the late arriving data
+            // if (currentGeneration < 0) {
+            console.log('Pushing to queue: ', selectedRun.currentGeneration);
+            pushToGQ(selectedRun.currentGeneration);
+            // }
         }
     }, [socket, selectedRun]);
 
@@ -231,8 +240,8 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     React.useEffect(() => {
         console.log('Queue: ', generationQueue);
 
-        // Fetch data if there are currently no requests
-        if (selectedRun && !fetchingData) {
+        // Fetch data if there are currently no requests for run/data
+        if (selectedRun && !fetchingRun && !fetchingData) {
             // Get the next generation to fetch
             const generation = popFromGQ();
             console.log('Next generation from queue: ', generation);
@@ -241,7 +250,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 fetchData(selectedRun.dataId, generation);
             }
         }
-    }, [fetchingData, generationQueue]);
+    }, [fetchingRun, fetchingData, generationQueue]);
 
     // Pause and play the visualisation by catching live mode change
     const handleLiveMode = (mode: boolean): void => {
@@ -258,19 +267,40 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // (this is to get the maximum slidable value at this time)
             setControlsMax(currentGeneration);
         } else {
+            // If replay mode was on then turn it off
+            if (replayMode) {
+                setReplayMode(false);
+            }
+
             // Subscribe again to the generations
             subscribeToGenerations(runId);
-            console.log('Subscribing again');
+            console.log('Subscribed');
             setLoadedRun(false);
 
+            // BUG: This reset does not work when going back to live from replay
+            //      since the -1 is overwritten by the late arriving data
             // TODO: This is one of way of resetting, the slider however
             //       moves back to -1 and then jumps to the current value.
             // Reset the current generations
-            setGenerationValue(-1);
+            // setGenerationValue(-1);
         }
 
         // Set the live mode value
         setLiveMode(mode);
+    };
+
+    // Enable replay mode
+    const handleReplayMode = () => {
+        console.log('Got replay mode enabled');
+
+        // Turn live mode off
+        handleLiveMode(false);
+
+        // Add the generations to replay to the queue
+        setGenerationQueue(Array.from({ length: currentGeneration }, (_, i) => i + 1));
+
+        // Turn on replay mode
+        setReplayMode(true);
     };
 
     // Set generation value for all variables which need it
@@ -417,7 +447,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                 <Box p={2}>
                                     <div className={classes.button}>
                                         {/* TODO: Replay features; add functionality for replay control */}
-                                        <IconButton color="secondary" disabled={liveMode && !selectedRun.completed}>
+                                        <IconButton
+                                            color="secondary"
+                                            onClick={() => handleReplayMode()}
+                                            disabled={replayMode || (liveMode && !selectedRun.completed)}
+                                        >
                                             <ReplayIcon fontSize="large">Replay</ReplayIcon>
                                         </IconButton>
                                         Replay
@@ -442,7 +476,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                             },
                                         }}
                                         onChange={(e) => setViewValue(parseInt(e.target.value))}
-                                        disabled={liveMode && !selectedRun.completed}
+                                        disabled={(liveMode && !selectedRun.completed) || replayMode}
                                     />
                                 </Box>
 
@@ -450,7 +484,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                     <Button
                                         color="primary"
                                         variant="contained"
-                                        disabled={liveMode && !selectedRun.completed}
+                                        disabled={(liveMode && !selectedRun.completed) || replayMode}
                                         onClick={() => pushToGQ(viewValue)}
                                     >
                                         View

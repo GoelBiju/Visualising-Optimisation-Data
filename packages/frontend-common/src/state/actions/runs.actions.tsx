@@ -75,7 +75,7 @@ export const fetchRun = (runId: string): ThunkResult<Promise<void>> => {
     await axios
       .get(`${backendUrl}/api/runs/${runId}`)
       .then((response) => {
-        console.log("Got run: ", response.data);
+        // console.log("Got run: ", response.data);
         dispatch(fetchRunResult(response.data.run));
       })
       .catch((error) => {

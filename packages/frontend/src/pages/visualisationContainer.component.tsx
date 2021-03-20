@@ -230,6 +230,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         // If we were on replay mode when it completes,
                         // then set it off and turn on live mode
                         // BUG: controls max is always zero (this is due to stale closure)
+                        console.log(
+                            `Replay complete: ${replayCompleteRef.current}, Live complete: ${liveCompleteRef.current}`,
+                        );
                         console.log(`Replay: ${replayModeRef.current}, Controls max: ${controlsMaxRef.current}`);
                         if (
                             !replayCompleteRef.current &&
@@ -341,6 +344,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
         // Add the generations to replay to the queue
         setGenerationQueue(Array.from({ length: currentGeneration }, (_, i) => i + 1));
+
+        // Reset replay complete
+        setReplayComplete(false);
 
         // Turn on replay mode
         setReplayMode(true);

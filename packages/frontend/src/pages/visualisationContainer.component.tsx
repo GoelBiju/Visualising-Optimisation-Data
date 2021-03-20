@@ -119,6 +119,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
+    const [liveComplete, setLiveComplete] = React.useState(false);
     const [replayMode, setReplayMode] = React.useState(false);
 
     // Add generation to the queue (enqueue)
@@ -209,6 +210,23 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         //     setLoadedRun(false);
                         //     console.log('Set loaded run to false');
                         // }
+
+                        // NOTE: We will not get an update on if the run was completed when paused with this
+                        //       since we do not use the complete information from the server.
+                        // If we were on replay mode when it completes,
+                        // then set it off and turn on live mode
+                        // BUG: controls max is always zero
+                        if (replayMode && data.generation === controlsMax) {
+                            handleLiveMode(true);
+                            console.log('Replay complete');
+                        } else {
+                            // If the run was complete in live mode then load run information again
+                            if (selectedRun && data.generation === selectedRun.totalGenerations) {
+                                setLoadedRun(false);
+                                setLiveComplete(true);
+                                console.log('Live complete');
+                            }
+                        }
                     }
                 });
 
@@ -226,7 +244,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         console.log('Selected current: ', selectedRun && selectedRun.currentGeneration);
 
         // Fetch the data for the new generation
-        if (socket && socket.connected && selectedRun) {
+        if (socket && socket.connected && selectedRun && !liveComplete) {
             // NOTE: Checking if currentGeneration is -1 does not work when going back
             //      live mode from replay since the current generation set was changed by the late arriving data
             // if (currentGeneration < 0) {
@@ -266,6 +284,9 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // Set the slider maximum when live is turned off
             // (this is to get the maximum slidable value at this time)
             setControlsMax(currentGeneration);
+
+            // Reset complete
+            setLiveComplete(false);
         } else {
             // If replay mode was on then turn it off
             if (replayMode) {

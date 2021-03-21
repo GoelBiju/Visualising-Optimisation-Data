@@ -4,6 +4,7 @@ import {
   DataRequestType,
   DataType,
   DisconnectSocketSuccessType,
+  FetchRunRequestType,
   FetchRunResultType,
   FetchRunsResultType,
   InitiateSocketSuccessType,
@@ -36,11 +37,12 @@ export const initialState: FrontendState = {
     socket: null,
     subscribed: false,
   },
-  runs: [],
   selectedRun: null,
   selectedVisualisation: "",
-  data: null,
+  fetchingRun: false,
+  runs: [],
   fetchingData: false,
+  data: null,
 };
 
 const updatePlugins = (
@@ -113,12 +115,20 @@ export function handleFetchRuns(
   };
 }
 
+export function handleFetchRunRequest(state: FrontendState): FrontendState {
+  return {
+    ...state,
+    fetchingRun: true,
+  };
+}
+
 export function handleFetchRun(
   state: FrontendState,
   payload: RunPayload
 ): FrontendState {
   return {
     ...state,
+    fetchingRun: false,
     selectedRun: payload.run,
     runs: [],
   };
@@ -194,6 +204,7 @@ const CommonReducer = createReducer(initialState, {
   [LoadUrlsType]: handleLoadUrls,
   [LoadedSettingsType]: handleLoadedSettings,
   [FetchRunsResultType]: handleFetchRuns,
+  [FetchRunRequestType]: handleFetchRunRequest,
   [FetchRunResultType]: handleFetchRun,
   [InitiateSocketSuccessType]: handleInitiateSocket,
   [DisconnectSocketSuccessType]: handleDisconnectSocket,

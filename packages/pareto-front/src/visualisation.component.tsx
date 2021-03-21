@@ -111,7 +111,7 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
   // Build or update chart when data changes
   React.useEffect(() => {
     const data = props.data ? props.data.data : [];
-    console.log("Render: ", data);
+    // console.log("Render: ", data);
 
     // Build chart initially otherwise update for data
     if (!builtChart) {

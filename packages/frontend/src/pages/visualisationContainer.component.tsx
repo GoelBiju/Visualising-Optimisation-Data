@@ -35,6 +35,18 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'column',
     },
+    visualisationName: {
+        backgroundColor: 'inherit',
+        height: '100%',
+        display: 'flex',
+    },
+    currentGeneration: {
+        backgroundColor: 'inherit',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
 });
 
 interface VCViewProps {
@@ -54,8 +66,9 @@ interface VCDispatchProps {
 }
 
 interface VCStateProps {
-    selectedRun: Run | null;
     selectedVisualisation: string;
+    fetchingRun: boolean;
+    selectedRun: Run | null;
     socket: SocketIOClient.Socket | null;
     subscribed: boolean;
     fetchingData: boolean;
@@ -63,22 +76,32 @@ interface VCStateProps {
 
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 
-// TODO: * Be careful about where we place receiving data from sockets (prevent duplicate data)
-//       * Prevent multiple event handlers (subcribed to state)
-// TODO: * Wait until data has been received from server after firing request, before firing next request
+// DONE: Replay should work in a live run
+// DONE: Replay should work on a completed run
+// DONE: Should be able to press live button to return to latest generation from replay mode
+// DONE: Should go back to live mode after replay is complete
+// DONE: When the replay mode button is pressed, we replay from the first generation until the current generation.
+// DONE: To make it easier for now, just disable all controls except live mode when in replay mode
+
+// FIXED: When pressing live button after turning on replay mode, it does not move to the latest generation but
+//        stays at the generation it was last on before hitting the live button (could be related to clearing the queue and
+//        the next run information loading) (this was due to the -1 being changed and not fetching the new)
+// FIXED: We keep on fetching the run information when a run is complete due to data.completed,
+//        this is also causing issues with the replay mode requesting run after every data request
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const classes = useStyles();
 
     const {
-        socket,
-        initiateSocket,
-        fetchRun,
+        selectedVisualisation,
         setVisualisationName,
         runId,
         pluginName,
+        socket,
+        initiateSocket,
+        fetchingRun,
+        fetchRun,
         selectedRun,
-        selectedVisualisation,
         subscribeToGenerations,
         fetchData,
         subscribed,
@@ -100,12 +123,19 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const [viewValue, setViewValue] = React.useState(-1);
     const [sliderValue, setSliderValue] = React.useState(-1);
     const [controlsMax, setControlsMax] = React.useState(0);
+    const controlsMaxRef = React.useRef(controlsMax);
 
     // Create a generation queue object in state
     const [generationQueue, setGenerationQueue] = React.useState<number[]>([]);
 
     // Visualisation controls
     const [liveMode, setLiveMode] = React.useState(true);
+    const [liveComplete, setLiveComplete] = React.useState(false);
+    const liveCompleteRef = React.useRef(liveComplete);
+    const [replayMode, setReplayMode] = React.useState(false);
+    const replayModeRef = React.useRef(replayMode);
+    const [replayComplete, setReplayComplete] = React.useState(false);
+    const replayCompleteRef = React.useRef(replayComplete);
 
     // Add generation to the queue (enqueue)
     const pushToGQ = (generation: number) => {
@@ -116,14 +146,12 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const popFromGQ = (): number => {
         if (!isEmpty()) {
             const n = generationQueue.shift();
-            console.log('Returning n: ', -1);
             if (n) {
                 return n;
             } else {
                 return -1;
             }
         } else {
-            console.log('Queue empty');
             return -1;
         }
     };
@@ -139,91 +167,132 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Set the selected visualisation name when mounting the component
     React.useEffect(() => {
-        // TODO: Check if the visualisation name from the root
-        //       is appropriate for this run (maybe do this before render)
         setVisualisationName(pluginName);
         console.log('Set visualisation name to: ', pluginName);
     }, []);
 
     // Load run information
     React.useEffect(() => {
-        console.log('Fetching run information');
         console.log('Loaded run: ', loadedRun);
+        console.log('Fetching run: ', fetchingRun);
 
         // Fetch the run information
-        if (!loadedRun) {
+        if (!loadedRun && !fetchingRun) {
+            console.log('Fetching run information');
             // Fetching the run information into state
             fetchRun(runId);
-
             setLoadedRun(true);
         }
     }, [loadedRun]);
 
+    // NOTE: We use this reference to controls max/live/replay modes since
+    //       it needs to be used in the data callback.
+    React.useEffect(() => {
+        controlsMaxRef.current = controlsMax;
+        liveCompleteRef.current = liveComplete;
+        replayModeRef.current = replayMode;
+        replayCompleteRef.current = replayComplete;
+    }, [controlsMax, liveComplete, replayMode, replayComplete]);
+
     // Handle setting up the connection/subscribing to data
     React.useEffect(() => {
         // Set up the connection to the backend
-        // socketConnected
         if (!socket || !socket.connected) {
             // Start socket connection
             initiateSocket(runId);
         } else {
             // If the socket is connected and not subscribed and we are in live mode,
-            // proceed to subcribe to the optimisation run
-            if (socket && socket.connected && !subscribed && liveMode) {
+            // proceed to subcribe to the optimisation run.
+            if (socket && socket.connected && !subscribed && liveMode && !replayMode) {
                 // When we receive "subscribed" from
                 // server attach the callback function
                 socket.on('generation', (generation: number) => {
                     // Add the generation to the queue.
                     pushToGQ(generation);
                     console.log('Generation added to queue: ', generation);
-                    console.log('Queue: ', generationQueue);
                 });
 
                 // Handle the data response event
                 socket.on('data', (data: Data) => {
-                    console.log('Data received for current generation: ', data);
+                    console.log('Received data');
+                    // Set the data received.
                     setData(data);
 
                     // If this the final data, then reload the run information
                     if (data) {
                         // Set the current generation from the data
-                        // setCurrentGeneration(data.generation);
                         setGenerationValue(data.generation);
 
-                        // TODO: If the data was complete, we should not
-                        //       need to re-subscribe anymore
+                        // FIXED (No longer used): This was causing issues (and fetches the run twice?)
                         // If at any point the server returns that the data
                         // has been completed, update the run information.
-                        if (data.completed) {
-                            setLoadedRun(false);
-                            console.log('Set loaded run to false');
+                        // if (data.completed) {
+                        //     setLoadedRun(false);
+                        //     console.log('Set loaded run to false');
+                        // }
+
+                        // FIXED: controls max is always zero (this is due to stale closure), fixed by using refs.
+                        console.log(
+                            `Replay complete: ${replayCompleteRef.current}, Live complete: ${liveCompleteRef.current}`,
+                        );
+                        console.log(`Replay: ${replayModeRef.current}, Controls max: ${controlsMaxRef.current}`);
+                        // NOTE: We will not get an update on if the run was completed when paused with this
+                        //       since we do not use the complete information from the server.
+                        // If we were on replay mode when it completes,
+                        // then set it off and turn on live mode
+                        if (
+                            !replayCompleteRef.current &&
+                            replayModeRef.current &&
+                            data.generation === controlsMaxRef.current
+                        ) {
+                            handleLiveMode(true);
+                            setReplayComplete(true);
+                            console.log('Replay complete');
+                        } else {
+                            // If the run was complete in live mode then load run information again
+                            if (
+                                !liveCompleteRef.current &&
+                                selectedRun &&
+                                data.generation === selectedRun.totalGenerations
+                            ) {
+                                setLoadedRun(false);
+                                setLiveComplete(true);
+                                console.log('Live complete');
+                            }
                         }
                     }
                 });
 
-                // TODO: We only need to subscribe to generation if the run isn't complete
-                // Subscribe to the data from the optimisation run room
+                // Subscribe to the data from the optimisation run room,
+                // we only need to subscribe to generation if the run isn't complete.
                 subscribeToGenerations(runId);
             }
         }
     }, [socket, subscribed]);
 
+    // If the current generation has not been initialised,
+    // we push the generation data we have received from run information.
     React.useEffect(() => {
+        console.log('Current generation: ', currentGeneration);
+        console.log('Selected current: ', selectedRun && selectedRun.currentGeneration);
+
         // Fetch the data for the new generation
         if (socket && socket.connected && selectedRun) {
-            if (currentGeneration < 0) {
-                console.log('Pushing to queue: ', selectedRun.currentGeneration);
-                pushToGQ(selectedRun.currentGeneration);
-                console.log('Queue: ', generationQueue);
-            }
+            // NOTE: Checking if currentGeneration is -1 does not work when going back
+            //       live mode from replay since the current generation set was changed by the late arriving data
+            // if (currentGeneration < 0) {
+            console.log('Pushing to queue: ', selectedRun.currentGeneration);
+            pushToGQ(selectedRun.currentGeneration);
+            // }
         }
     }, [socket, selectedRun]);
 
     // Handle fetching new data on generation queue changes
     React.useEffect(() => {
-        console.log(generationQueue);
-        // Fetch data if there are currently no requests
-        if (selectedRun && !fetchingData) {
+        console.log('Queue: ', generationQueue);
+
+        // Fetch data if there are currently no requests for run/data
+        if (selectedRun && !fetchingRun && !fetchingData) {
             // Get the next generation to fetch
             const generation = popFromGQ();
             console.log('Next generation from queue: ', generation);
@@ -232,14 +301,18 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                 fetchData(selectedRun.dataId, generation);
             }
         }
-    }, [fetchingData, generationQueue]);
+    }, [fetchingRun, fetchingData, generationQueue]);
 
     // Pause and play the visualisation by catching live mode change
     const handleLiveMode = (mode: boolean): void => {
         // Clear the queue
         setGenerationQueue([]);
+
         // Check if live mode is set to false
         if (!mode) {
+            // Reset complete
+            setLiveComplete(false);
+
             console.log('Got live mode set to false');
             // Unsubscribe from the run and generation information being sent
             unsubscribeFromGenerations(runId);
@@ -248,20 +321,41 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             // (this is to get the maximum slidable value at this time)
             setControlsMax(currentGeneration);
         } else {
+            // If replay mode was on then turn it off
+            setReplayMode(false);
+
             // Subscribe again to the generations
             subscribeToGenerations(runId);
-            console.log('Subscribing again');
+            console.log('Subscribed');
             setLoadedRun(false);
 
-            // TODO: * This is one of way of resetting, the slider however
-            //       moves back to -1 and then jumps to the current value.
+            // FIXED (No longer used): This reset does not work when going back to live from replay
+            //      since the -1 is overwritten by the late arriving data
+            // This is one of way of resetting, the slider however
+            // moves back to -1 and then jumps to the current value.
             // Reset the current generations
-            // setCurrentGeneration(-1);
-            setGenerationValue(-1);
+            // setGenerationValue(-1);
         }
 
         // Set the live mode value
         setLiveMode(mode);
+    };
+
+    // Enable replay mode
+    const handleReplayMode = () => {
+        console.log('Got replay mode enabled');
+
+        // Turn live mode off
+        handleLiveMode(false);
+
+        // Add the generations to replay to the queue
+        setGenerationQueue(Array.from({ length: currentGeneration }, (_, i) => i + 1));
+
+        // Reset replay complete
+        setReplayComplete(false);
+
+        // Turn on replay mode
+        setReplayMode(true);
     };
 
     // Set generation value for all variables which need it
@@ -290,14 +384,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         <Grid container>
             {selectedRun && (
                 <Grid item xs>
-                    <Paper
-                        square
-                        style={{
-                            backgroundColor: 'inherit',
-                            height: '100%',
-                            display: 'flex',
-                        }}
-                    >
+                    <Paper className={classes.visualisationName} square>
                         <Typography style={{ margin: '5px' }}>
                             <b>Visualisation Name:</b> {selectedVisualisation} <i>({selectedRun._id})</i>
                         </Typography>
@@ -306,16 +393,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             )}
 
             <Grid style={{ textAlign: 'center' }} item sm={3} xs={4}>
-                <Paper
-                    square
-                    style={{
-                        backgroundColor: 'inherit',
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                    }}
-                >
+                <Paper className={classes.currentGeneration} square>
                     <Typography>
                         <b>Current Generation:</b> {currentGeneration}
                     </Typography>
@@ -407,8 +485,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                                 <Box p={2}>
                                     <div className={classes.button}>
-                                        {/* TODO: Replay features; add functionality for replay control */}
-                                        <IconButton color="secondary" disabled={liveMode && !selectedRun.completed}>
+                                        <IconButton
+                                            color="secondary"
+                                            onClick={() => handleReplayMode()}
+                                            disabled={replayMode || (liveMode && !selectedRun.completed)}
+                                        >
                                             <ReplayIcon fontSize="large">Replay</ReplayIcon>
                                         </IconButton>
                                         Replay
@@ -433,7 +514,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                             },
                                         }}
                                         onChange={(e) => setViewValue(parseInt(e.target.value))}
-                                        disabled={liveMode && !selectedRun.completed}
+                                        disabled={(liveMode && !selectedRun.completed) || replayMode}
                                     />
                                 </Box>
 
@@ -441,8 +522,14 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                     <Button
                                         color="primary"
                                         variant="contained"
-                                        disabled={liveMode && !selectedRun.completed}
-                                        onClick={() => pushToGQ(viewValue)}
+                                        disabled={(liveMode && !selectedRun.completed) || replayMode}
+                                        onClick={() => {
+                                            console.log('View value: ', viewValue);
+                                            const max = liveMode ? selectedRun.totalGenerations : controlsMax;
+                                            if (viewValue && viewValue > 0 && viewValue <= max) {
+                                                pushToGQ(viewValue);
+                                            }
+                                        }}
                                     >
                                         View
                                     </Button>
@@ -484,9 +571,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                             defaultValue={sliderValue !== -1 ? sliderValue : 0}
                                             onChange={(e, v) => setSliderValue(v as number)}
                                             onChangeCommitted={(e, v) => {
-                                                console.log('New value: ', v);
-                                                // Request to fetch the new data.
-                                                pushToGQ(v as number);
+                                                if ((v as number) !== currentGeneration) {
+                                                    console.log('New slider value to push to queue: ', v);
+                                                    // Request to fetch the new data.
+                                                    pushToGQ(v as number);
+                                                }
                                             }}
                                             min={1}
                                             max={liveMode ? selectedRun.totalGenerations : controlsMax}
@@ -517,9 +606,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
 
 const mapStateToProps = (state: StateType): VCStateProps => {
     return {
-        socket: state.frontend.configuration.socket,
-        selectedRun: state.frontend.selectedRun,
         selectedVisualisation: state.frontend.selectedVisualisation,
+        fetchingRun: state.frontend.fetchingRun,
+        selectedRun: state.frontend.selectedRun,
+        socket: state.frontend.configuration.socket,
         subscribed: state.frontend.configuration.subscribed,
         fetchingData: state.frontend.fetchingData,
     };

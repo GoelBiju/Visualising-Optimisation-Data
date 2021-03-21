@@ -41,11 +41,12 @@ export interface FrontendState {
     socket: SocketIOClient.Socket | null;
     subscribed: boolean;
   };
-  runs: Run[];
   selectedRun: Run | null;
   selectedVisualisation: string;
-  data: Data;
+  fetchingRun: boolean;
+  runs: Run[];
   fetchingData: boolean;
+  data: Data;
 }
 
 export interface StateType {

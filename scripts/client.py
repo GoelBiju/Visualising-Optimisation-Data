@@ -78,7 +78,7 @@ class OptimiserClient():
 
         # Create the data namespace
         self.data_namespace = DataNamespace('/data')
-        print("namespace sending data: ", self.data_namespace.sending_data)
+        print("Namespace sending data: ", self.data_namespace.sending_data)
 
         # Connect to node server
         self.sio = socketio.Client(logger=False, engineio_logger=False)

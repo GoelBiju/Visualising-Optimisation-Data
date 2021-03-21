@@ -1,9 +1,9 @@
 {
     "backendUrl": "https://opt-vis-backend.herokuapp.com",
-    "plugins":[
+    "plugins": [
         {
-            "name": "frontend-plugin",
-            "src": "https://opt-vis-frontend-plugin.herokuapp.com/main.js",
+            "name": "pareto-front",
+            "src": "https://opt-vis-pareto-front.herokuapp.com/main.js",
             "enable": true,
             "location": "main"
         }

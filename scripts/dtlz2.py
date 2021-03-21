@@ -28,7 +28,7 @@ algorithmParameters = {
 
 # Create the optimisation run
 optimiserClient.createRun("Pareto front estimation of DTLZ2", "DTLZ2",
-                          "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["frontend-plugin"])
+                          "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["pareto-front"])
 
 # Send generation data to the server
 count = 1

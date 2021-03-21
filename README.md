@@ -15,8 +15,37 @@ The web platform will provide:
 - the playback of saved optimisation runs,
 - a deployed web platform acting as a single tool which collects all appropriate visualisations for optimisation runs.
 
+## Installation
+
+# Optimiser Client
+
+The examples provided make use of Python 3.9.
+
+To run and test the sample data already provided, install the Python dependencies:
+
+```bash
+pip install -r requirements --user
+
+```
+
+Run DTLZ1:
+
+```bash
+python scripts/dtlz1.py
+```
+
+Run DTLZ2:
+
+```bash
+python scripts/dtlz2.py
+```
+
 ## Deployments
 
 Frontend: http://opt-vis-frontend.herokuapp.com/
 
 Backend: http://opt-vis-backend.herokuapp.com/
+
+```
+
+```

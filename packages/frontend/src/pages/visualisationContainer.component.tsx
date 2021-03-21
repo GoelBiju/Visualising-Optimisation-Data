@@ -76,20 +76,18 @@ interface VCStateProps {
 
 type VCProps = VCViewProps & VCDispatchProps & VCStateProps;
 
-// TODO:
-//  - Replay should in a live run
-//  - Replay should work on a completed run
-//  - Should be able to press live button to return to latest generation from replay mode
-//  - Should go back to live mode after replay is complete
-// When the replay mode button is pressed,
-// we replay from the first generation until the current generation.
-// TODO: To make it easier for now, just disable all controls except live mode when in replay mode
+// DONE: Replay should work in a live run
+// DONE: Replay should work on a completed run
+// DONE: Should be able to press live button to return to latest generation from replay mode
+// DONE: Should go back to live mode after replay is complete
+// DONE: When the replay mode button is pressed, we replay from the first generation until the current generation.
+// DONE: To make it easier for now, just disable all controls except live mode when in replay mode
 
-// BUG: When pressing live button after turning on replay mode, it does not move to the latest generation but
-//      stays at the generation it was last on before hitting the live button (could be related to clearing the queue and
-//      the next run information loading)
-// BUG: We keep on fetching the run information when a run is complete due to data.completed,
-//      this is also causing issues with the replay mode requesting run after every data request
+// FIXED: When pressing live button after turning on replay mode, it does not move to the latest generation but
+//        stays at the generation it was last on before hitting the live button (could be related to clearing the queue and
+//        the next run information loading) (this was due to the -1 being changed and not fetching the new)
+// FIXED: We keep on fetching the run information when a run is complete due to data.completed,
+//        this is also causing issues with the replay mode requesting run after every data request
 
 const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const classes = useStyles();
@@ -148,14 +146,12 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
     const popFromGQ = (): number => {
         if (!isEmpty()) {
             const n = generationQueue.shift();
-            // console.log('Returning n: ', -1);
             if (n) {
                 return n;
             } else {
                 return -1;
             }
         } else {
-            // console.log('Queue empty');
             return -1;
         }
     };
@@ -171,8 +167,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
     // Set the selected visualisation name when mounting the component
     React.useEffect(() => {
-        // TODO: Check if the visualisation name from the root
-        //       is appropriate for this run (maybe do this before render)
         setVisualisationName(pluginName);
         console.log('Set visualisation name to: ', pluginName);
     }, []);
@@ -229,7 +223,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         // Set the current generation from the data
                         setGenerationValue(data.generation);
 
-                        // BUG: This is causing issues (and fetches the run twice?)
+                        // FIXED (No longer used): This was causing issues (and fetches the run twice?)
                         // If at any point the server returns that the data
                         // has been completed, update the run information.
                         // if (data.completed) {
@@ -237,15 +231,15 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                         //     console.log('Set loaded run to false');
                         // }
 
-                        // NOTE: We will not get an update on if the run was completed when paused with this
-                        //       since we do not use the complete information from the server.
-                        // If we were on replay mode when it completes,
-                        // then set it off and turn on live mode
-                        // BUG: controls max is always zero (this is due to stale closure)
+                        // FIXED: controls max is always zero (this is due to stale closure), fixed by using refs.
                         console.log(
                             `Replay complete: ${replayCompleteRef.current}, Live complete: ${liveCompleteRef.current}`,
                         );
                         console.log(`Replay: ${replayModeRef.current}, Controls max: ${controlsMaxRef.current}`);
+                        // NOTE: We will not get an update on if the run was completed when paused with this
+                        //       since we do not use the complete information from the server.
+                        // If we were on replay mode when it completes,
+                        // then set it off and turn on live mode
                         if (
                             !replayCompleteRef.current &&
                             replayModeRef.current &&
@@ -285,7 +279,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         // Fetch the data for the new generation
         if (socket && socket.connected && selectedRun) {
             // NOTE: Checking if currentGeneration is -1 does not work when going back
-            //      live mode from replay since the current generation set was changed by the late arriving data
+            //       live mode from replay since the current generation set was changed by the late arriving data
             // if (currentGeneration < 0) {
             console.log('Pushing to queue: ', selectedRun.currentGeneration);
             pushToGQ(selectedRun.currentGeneration);
@@ -335,10 +329,10 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             console.log('Subscribed');
             setLoadedRun(false);
 
-            // BUG: This reset does not work when going back to live from replay
+            // FIXED (No longer used): This reset does not work when going back to live from replay
             //      since the -1 is overwritten by the late arriving data
-            // TODO: This is one of way of resetting, the slider however
-            //       moves back to -1 and then jumps to the current value.
+            // This is one of way of resetting, the slider however
+            // moves back to -1 and then jumps to the current value.
             // Reset the current generations
             // setGenerationValue(-1);
         }
@@ -491,7 +485,6 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                                 <Box p={2}>
                                     <div className={classes.button}>
-                                        {/* TODO: Replay features; add functionality for replay control */}
                                         <IconButton
                                             color="secondary"
                                             onClick={() => handleReplayMode()}

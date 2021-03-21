@@ -390,7 +390,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         <Grid container>
             {selectedRun && (
                 <Grid item xs>
-                    <Paper square className={classes.visualisationName}>
+                    <Paper className={classes.visualisationName} square>
                         <Typography style={{ margin: '5px' }}>
                             <b>Visualisation Name:</b> {selectedVisualisation} <i>({selectedRun._id})</i>
                         </Typography>
@@ -399,7 +399,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             )}
 
             <Grid style={{ textAlign: 'center' }} item sm={3} xs={4}>
-                <Paper square className={classes.currentGeneration}>
+                <Paper className={classes.currentGeneration} square>
                     <Typography>
                         <b>Current Generation:</b> {currentGeneration}
                     </Typography>
@@ -578,9 +578,11 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                             defaultValue={sliderValue !== -1 ? sliderValue : 0}
                                             onChange={(e, v) => setSliderValue(v as number)}
                                             onChangeCommitted={(e, v) => {
-                                                console.log('New slider value to push to queue: ', v);
-                                                // Request to fetch the new data.
-                                                pushToGQ(v as number);
+                                                if ((v as number) !== currentGeneration) {
+                                                    console.log('New slider value to push to queue: ', v);
+                                                    // Request to fetch the new data.
+                                                    pushToGQ(v as number);
+                                                }
                                             }}
                                             min={1}
                                             max={liveMode ? selectedRun.totalGenerations : controlsMax}

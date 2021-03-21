@@ -46,6 +46,7 @@ function setupNamespaces(io) {
               generation,
               data: optimiserData[generation].values,
               time: optimiserData[generation].time,
+              // TODO: Remove this
               completed: run.completed,
             });
           } else {

@@ -35,6 +35,18 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'column',
     },
+    visualisationName: {
+        backgroundColor: 'inherit',
+        height: '100%',
+        display: 'flex',
+    },
+    currentGeneration: {
+        backgroundColor: 'inherit',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
 });
 
 interface VCViewProps {
@@ -208,7 +220,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
 
                 // Handle the data response event
                 socket.on('data', (data: Data) => {
-                    console.log('Got data');
+                    console.log('Received data');
                     // Set the data received.
                     setData(data);
 
@@ -378,14 +390,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
         <Grid container>
             {selectedRun && (
                 <Grid item xs>
-                    <Paper
-                        square
-                        style={{
-                            backgroundColor: 'inherit',
-                            height: '100%',
-                            display: 'flex',
-                        }}
-                    >
+                    <Paper square className={classes.visualisationName}>
                         <Typography style={{ margin: '5px' }}>
                             <b>Visualisation Name:</b> {selectedVisualisation} <i>({selectedRun._id})</i>
                         </Typography>
@@ -394,16 +399,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             )}
 
             <Grid style={{ textAlign: 'center' }} item sm={3} xs={4}>
-                <Paper
-                    square
-                    style={{
-                        backgroundColor: 'inherit',
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                    }}
-                >
+                <Paper square className={classes.currentGeneration}>
                     <Typography>
                         <b>Current Generation:</b> {currentGeneration}
                     </Typography>
@@ -535,7 +531,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
                                         variant="contained"
                                         disabled={(liveMode && !selectedRun.completed) || replayMode}
                                         onClick={() => {
-                                            console.log('view value: ', viewValue);
+                                            console.log('View value: ', viewValue);
                                             const max = liveMode ? selectedRun.totalGenerations : controlsMax;
                                             if (viewValue && viewValue > 0 && viewValue <= max) {
                                                 pushToGQ(viewValue);

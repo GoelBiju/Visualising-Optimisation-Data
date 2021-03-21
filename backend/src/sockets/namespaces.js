@@ -31,11 +31,12 @@ function setupNamespaces(io) {
       const { dataId, generation } = dataRequest;
 
       // Get the data based on the run ID
-      console.log("Finding run with dataId: ", dataId);
-      const run = await Run.findOne({ dataId }).lean();
-      console.log("Run: ", run);
-      if (run) {
-        console.log("Run found: ", run);
+      // console.log("Finding run with dataId: ", dataId);
+      // const run = await Run.findOne({ dataId }).lean();
+      // console.log("Run: ", run);
+      // if (run) {
+        // console.log("Run found: ", run);
+        console.log("Finding data with dataId: ", dataId);
         const data = await Data.findById(dataId).lean();
         if (data) {
           const optimiserData = data.data;
@@ -46,8 +47,8 @@ function setupNamespaces(io) {
               generation,
               data: optimiserData[generation].values,
               time: optimiserData[generation].time,
-              // TODO: Remove this
-              completed: run.completed,
+              // NOTE: This is no longer needed
+              // completed: run.completed,
             });
           } else {
             console.log("Generation not present: ", generation);
@@ -57,9 +58,9 @@ function setupNamespaces(io) {
             `Unable to find data for ${dataId} for generation ${generation}`
           );
         }
-      } else {
-        console.log(`Unable to find run with data ID: `, dataId);
-      }
+      // } else {
+        // console.log(`Unable to find run with data ID: `, dataId);
+      // }
     });
   });
 

@@ -24,7 +24,7 @@ const DataSchema = mongoose.Schema(
     data: {
       type: mongoose.SchemaTypes.Map,
       of: {
-        values: [[Number, Number]],
+        values: [[Number]],
         time: { type: Date, default: Date.now },
       },
       default: {},

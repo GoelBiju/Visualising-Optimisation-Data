@@ -17,7 +17,7 @@ populationSize = 100
 totalGenerations = 282
 
 # Create an optimiser client
-optimiserClient = client.OptimiserClient(populationSize)
+optimiserClient = client.OptimiserClient()  # populationSize
 
 # Algorithm parameters
 algorithmParameters = {

@@ -21,12 +21,14 @@ The web platform will provide:
 
 The examples provided make use of Python 3.9.
 
-To run and test the sample data already provided, install the Python dependencies:
+To run and test the sample data already provided, install the Python dependencies in the root of the project:
 
 ```bash
-pip install -r requirements --user
+pip install -r requirements.txt --user
 
 ```
+
+The scripts are in the /scripts folder, you can run from them the root with the following:
 
 Run DTLZ1:
 
@@ -40,12 +42,28 @@ Run DTLZ2:
 python scripts/dtlz2.py
 ```
 
+# Plugins
+
+To configure a plugin give a specific name you will have to change:
+
+1. `webpackConfig.output.library` in `craco.config.js` to the plugin name,
+
+2. `settings.json/deploy-settings.json` to add the plugin details (look at examples already provided),
+
+3. `name` in `package.json` of the plugin project,
+
+4. `div` id in `index.html` in public folder of plugin project to identify where the plugin will load,
+
+5. `registerRouteAction` in `src/App.tsx` for the plugin and provide additional plugin details,
+
+6. `pluginName` in `src/index.tsx`,
+
+7. `plugins` command in `package.json` to add the plugin to start with the command,
+
+8. web dyno start in `Procfile` for plugin project (if you are using Heroku).
+
 ## Deployments
 
 Frontend: http://opt-vis-frontend.herokuapp.com/
 
 Backend: http://opt-vis-backend.herokuapp.com/
-
-```
-
-```

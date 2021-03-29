@@ -4,6 +4,10 @@ This is the COMP3000 Computing Project on the topic of creating "A Web Platform 
 
 **Project Supervisor**: _Dr. David Walker_
 
+## Poster
+
+![Project poster](documents/poster.jpg)
+
 ## Project Vision
 
 This project aims to develop a “Web Platform for Visualising Optimisation Data”, for

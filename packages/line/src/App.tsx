@@ -5,7 +5,7 @@ import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
-import { AnyAction, Store } from "redux";
+import { AnyAction, createStore, Store } from "redux";
 // import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
@@ -58,9 +58,9 @@ interface AppState {
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-class App extends React.Component<unknown, AppState> {
+class App extends React.Component<{ dev?: boolean }, AppState> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  public constructor(props: AppState) {
+  public constructor(props: { dev?: boolean } & AppState) {
     super(props);
     this.state = { hasError: false, store: props.store };
     console.log("Props: ", props);
@@ -72,20 +72,26 @@ class App extends React.Component<unknown, AppState> {
   }
 
   public render(): React.ReactNode {
-    if (this.state.hasError) {
-      return (
-        <div className="error">An error occurred when loading the plugin.</div>
-      );
-    } else if (!this.state.store) {
-      return (
-        <div className="error">Did not receive a store from the parent.</div>
-      );
+    if (!this.props.dev) {
+      if (this.state.hasError) {
+        return (
+          <div className="error">
+            An error occurred when loading the plugin.
+          </div>
+        );
+      } else if (!this.state.store) {
+        return (
+          <div className="error">Did not receive a store from the parent.</div>
+        );
+      } else {
+        return (
+          <Provider store={this.state.store}>
+            <VisualisationComponent />
+          </Provider>
+        );
+      }
     } else {
-      return (
-        <Provider store={this.state.store}>
-          <VisualisationComponent />
-        </Provider>
-      );
+      return <VisualisationComponent />;
     }
   }
 }

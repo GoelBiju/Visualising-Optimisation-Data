@@ -17,7 +17,7 @@ The web platform will provide:
 
 ## Installation
 
-# Optimiser Client
+## Optimiser Client
 
 The examples provided make use of Python 3.9.
 
@@ -42,7 +42,7 @@ Run DTLZ2:
 python scripts/dtlz2.py
 ```
 
-# Plugins
+## Plugins
 
 To configure a plugin give a specific name you will have to change:
 

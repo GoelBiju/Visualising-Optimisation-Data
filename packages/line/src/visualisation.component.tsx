@@ -1,13 +1,37 @@
 import * as d3 from "d3";
-import { Data, StateType } from "frontend-common";
+// import { Data, StateType } from "frontend-common";
 import React from "react";
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 
-interface VCProps {
-  data: Data;
-}
+// interface VCProps {
+//   data: Data;
+// }
 
-const VisualisationComponent = (props: VCProps): React.ReactElement => {
+const data = [
+  [6.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 4.0],
+  [7.0, 6.0, 6.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+  [7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0, 5.0, 5.0, 5.0],
+  [7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0],
+  [7.0, 7.0, 7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0],
+  [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0],
+  [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+  [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+  [8.0, 8.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+  [8.0, 8.0, 8.0, 8.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0, 7.0, 7.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+];
+
+const VisualisationComponent = (): React.ReactElement => {
+  // props: VCProps
   const chartRef: React.RefObject<SVGSVGElement> = React.createRef<SVGSVGElement>();
 
   const margin = {
@@ -36,7 +60,7 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
     [chartRef]
   );
 
-  // Build the chart initially.
+  // NOTE: Change this section to build the chart initially.
   const buildChart = React.useCallback(() => {
     // Adjust the svg.
     const svg = currentChart()
@@ -46,23 +70,20 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // Add x axis
-    const xAxis = xScale.domain([0, 1.0]);
+    const xAxis = xScale.domain([0, data.length]);
     svg
       .append("g")
       .attr("class", "line-chart-xaxis")
       .attr("transform", `translate(0, ${height})`)
       .call(d3.axisBottom(xAxis));
 
+    // TODO: this should be the max generations from the run info
     // Add y axis
     const yAxis = yScale.domain([0, 1.0]);
-    svg
-      .append("g")
-      .attr("class", "line-chart-yaxis")
-      .call(d3.axisLeft(yAxis));
+    svg.append("g").attr("class", "line-chart-yaxis").call(d3.axisLeft(yAxis));
 
     // Add line
-    svg.append("path")
-      .attr("class", "line-chart-line");
+    svg.append("path").attr("class", "line-chart-line");
   }, [
     currentChart,
     height,
@@ -75,44 +96,51 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
     yScale,
   ]);
 
-  // Update the chart when with new data.
+  // NOTE: Change this section to update the chart when with new data.
   const updateChart = React.useCallback(
     (data: number[][]) => {
       // Get the current SVG of the chart
       const svg = currentChart();
 
-      // Update the x-axis
-      const xAxis = xScale.domain([0, d3.max(data, (d) => d[0]) as number]);
+      // Update the x-axis with the maximum generation we have (length of the data)
+      const xAxis = xScale.domain([0, data.length]);
       // NOTE: This is a shorthand to update the axis without using .call
       //       (using .call had type issues with .select).
-      d3.axisBottom(xAxis)(svg.select("g.scatter-chart-xaxis"));
+      d3.axisBottom(xAxis)(svg.select("g.line-chart-xaxis"));
 
-      // Update the y-axis
-      const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
-      d3.axisLeft(yAxis)(svg.select("g.scatter-chart-yaxis"));
+      // TODO: Y axis needs to be calculated based on: P+max(1, np.ceil(P/10))
+      // Update the y-axis with the max of all the arrays
+      const yAxis = yScale.domain([
+        0,
+        d3.max(data, (d) => d3.max(d)) as number,
+      ]);
+      d3.axisLeft(yAxis)(svg.select("g.line-chart-yaxis"));
 
-      // Remove the old points
-      svg.selectAll("circle").remove();
+      // TODO: Remove the old points
+      // svg.selectAll("g.path").remove();
 
-      // Append the new points
+      var line = d3
+        .line<number[]>()
+        .x((_, i) => xScale(i) as number)
+        .y((d: number[]) => yScale(d3.median(d) as number) as number);
+
+      // Append the new line
       svg
-        .select("g.scatter-chart-points")
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", (d) => xScale(d[0]) as number)
-        .attr("cy", (d) => yScale(d[1]) as number)
-        .attr("r", 3)
-        .style("fill", "blue");
+        .select("path.line-chart-line")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "blue")
+        .attr("stroke-width", 1.5)
+        .attr("d", line);
     },
     [currentChart, xScale, yScale]
   );
 
   // Build or update chart when data changes
   React.useEffect(() => {
-    const data = props.data ? props.data.data : [];
+    // const data = props.data ? props.data.data : [];
     // console.log("Render: ", data);
+    // const data: number[] | number[][] = []
 
     // Build chart initially otherwise update for data
     if (!builtChart) {
@@ -121,7 +149,7 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
     } else {
       updateChart(data);
     }
-  }, [buildChart, builtChart, props.data, updateChart]);
+  }, [buildChart, builtChart, updateChart]); // props.data
 
   return (
     <div id="chartContainer">
@@ -130,10 +158,11 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
   );
 };
 
-const mapStateToProps = (state: StateType): VCProps => {
-  return {
-    data: state.frontend.data,
-  };
-};
+// const mapStateToProps = (state: StateType): VCProps => {
+//   return {
+//     data: state.frontend.data,
+//   };
+// };
 
-export default connect(mapStateToProps)(VisualisationComponent);
+// export default connect(mapStateToProps)(VisualisationComponent);
+export default VisualisationComponent;

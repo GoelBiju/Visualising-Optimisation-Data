@@ -25,13 +25,20 @@ let reactLifecycles: singleSpaReact.Lifecycles;
 //   }
 // };
 
+const render = (): void => {
+  const el = document.getElementById(pluginName);
+  if (el) {
+    ReactDOM.render(<App dev={true} />, document.getElementById(pluginName));
+  }
+};
+
 // This for local development.
-// if (process.env.NODE_ENV === "development") {
-//   render();
-//   log.setDefaultLevel(log.levels.DEBUG);
-// } else {
-//   log.setDefaultLevel(log.levels.ERROR);
-// }
+if (process.env.NODE_ENV === "development") {
+  render();
+  log.setDefaultLevel(log.levels.DEBUG);
+} else {
+  log.setDefaultLevel(log.levels.ERROR);
+}
 
 function domElementGetter(): HTMLElement {
   console.log("Element getter");

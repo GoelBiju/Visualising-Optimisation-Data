@@ -39,7 +39,7 @@ const registerRouteAction = {
   payload: {
     section: "Test",
     // TODO: Remove this, this should be declared from parent
-    link: "/runs/:runId/visualisations/frontend-plugin/data",
+    link: "/runs/:runId/visualisations/line/data",
     plugin: "line",
     displayName: "Line Graph",
   },

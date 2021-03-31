@@ -9,7 +9,6 @@ export interface SettingsUrls {
 
 export interface Run {
   _id: string;
-  dataId: string;
   title: string;
   problem: string;
   algorithm: string;
@@ -23,6 +22,7 @@ export interface Run {
   completed: boolean;
   createdAt: string;
   updatedAt: string;
+  dataId: string;
 }
 
 export type Data = {

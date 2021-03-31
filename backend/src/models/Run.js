@@ -31,12 +31,16 @@ const RunSchema = mongoose.Schema(
     graphs: {
       type: [String],
     },
-    dataId: {
-      type: String,
-      required: true,
-    },
     completed: {
       type: Boolean,
+      required: true,
+    },
+    previousData: {
+      type: Boolean,
+      default: false,
+    },
+    dataId: {
+      type: String,
       required: true,
     },
   },

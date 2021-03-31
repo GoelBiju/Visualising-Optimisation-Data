@@ -7,7 +7,7 @@ import client
 
 dirname = os.path.dirname(__file__)
 
-# optimiserClient = client.OptimiserClient()
+optimiserClient = client.OptimiserClient()
 
 
 def get_pathname(path):
@@ -88,7 +88,7 @@ def ga(N, P, ngens):
 
         # Send the population
         print(Y.tolist())
-        # optimiserClient.addBatch(Y.tolist())
+        optimiserClient.addBatch(Y.tolist())
 
     # Return the best solution.
     idx = np.argmax(Y)
@@ -118,14 +118,15 @@ def experiment(N, P, ngens):
 
 
 if __name__ == "__main__":
-    # Create our run
-    # optimiserClient.createRun("OneMax", "OneMax", "GA", 100, 1000, {
-    #                           "P": 800}, graphs=["line"])
+    # Create our run (provide previous data parameter to use data from
+    # the generations before in the visualisation)
+    optimiserClient.createRun("OneMax", "OneMax", "GA", 10, 20, {
+                              "P": 8}, graphs=["line"], previousData=True)
 
     # Run the GA.
     # Experiment (population size, probability, total generations)
     experiment(10, 8, 20)
-    plt.savefig(get_pathname("figs/ga_10_8_20.pdf"), bbox_inches="tight")
+    # plt.savefig(get_pathname("figs/ga_10_8_20.pdf"), bbox_inches="tight")
 
     # experiment(10, 800, 20)
     # plt.savefig(get_pathname("figs/ga_10_800_20.pdf"), bbox_inches="tight")
@@ -137,4 +138,4 @@ if __name__ == "__main__":
     # plt.savefig(get_pathname("figs/ga_100_800_1000.pdf"), bbox_inches="tight")
 
     print("Finished experiment")
-    plt.show()
+    # plt.show()

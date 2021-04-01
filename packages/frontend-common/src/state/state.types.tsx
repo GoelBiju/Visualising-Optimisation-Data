@@ -20,9 +20,10 @@ export interface Run {
   totalGenerations: number;
   graphs: string[];
   completed: boolean;
+  previousData: boolean;
+  dataId: string;
   createdAt: string;
   updatedAt: string;
-  dataId: string;
 }
 
 export type Data = {

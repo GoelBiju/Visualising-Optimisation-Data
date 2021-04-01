@@ -104,7 +104,8 @@ export const dataRequest = (): Action => ({
 // Retrieve the data from a run given the ID and generation number
 export const fetchData = (
   dataId: string,
-  generation: number
+  generation: number,
+  includePrevious?: boolean
 ): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
     const { socket } = getState().frontend.configuration;
@@ -117,6 +118,7 @@ export const fetchData = (
       socket.emit("data", {
         dataId,
         generation,
+        includePrevious: includePrevious ? true : false,
       });
     }
   };

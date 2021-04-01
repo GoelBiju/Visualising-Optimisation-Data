@@ -28,17 +28,21 @@ function setupNamespaces(io) {
     // and generation number
     socket.on("data", async (dataRequest) => {
       // Get the dataId and generation from the request object
-      const { dataId, generation } = dataRequest;
+      const { dataId, generation, includePrevious } = dataRequest;
+      console.log("Include previous: ", includePrevious);
 
       // Get the data based on the run ID
       // console.log("Finding run with dataId: ", dataId);
       // const run = await Run.findOne({ dataId }).lean();
       // console.log("Run: ", run);
       // if (run) {
-        // console.log("Run found: ", run);
-        console.log("Finding data with dataId: ", dataId);
-        const data = await Data.findById(dataId).lean();
-        if (data) {
+      // console.log("Run found: ", run);
+      console.log("Finding data with dataId: ", dataId);
+      const data = await Data.findById(dataId).lean();
+      if (data) {
+        if (!includePrevious) {
+          console.log("Processing single generation");
+
           const optimiserData = data.data;
           if (optimiserData[generation]) {
             // Send the generation data to the client
@@ -54,12 +58,35 @@ function setupNamespaces(io) {
             console.log("Generation not present: ", generation);
           }
         } else {
-          console.log(
-            `Unable to find data for ${dataId} for generation ${generation}`
-          );
+          console.log("Processing include previous");
+
+          // Get all the generations up to and including
+          // the requested generation data.
+          const generationsData = [];
+          for (let num in data.data) {
+            if (num <= generation) {
+              generationsData.push(data.data[num].values);
+              console.log("Added generation no.: ", num);
+            }
+          }
+
+          const clientData = {
+            generation,
+            data: generationsData,
+            time: data.updatedAt,
+          };
+          console.log("Client data: ", clientData);
+
+          // Send the generations data to the client
+          socket.emit("data", clientData);
         }
+      } else {
+        console.log(
+          `Unable to find data for ${dataId} for generation ${generation}`
+        );
+      }
       // } else {
-        // console.log(`Unable to find run with data ID: `, dataId);
+      // console.log(`Unable to find run with data ID: `, dataId);
       // }
     });
   });

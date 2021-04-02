@@ -26,9 +26,14 @@ export interface Run {
   updatedAt: string;
 }
 
+// Allow for multi-dimensional number arrays;
+// could be normally a 2D array or list with 1D, 2D etc.
+type GenerationData = GenerationDataArray;
+interface GenerationDataArray extends Array<GenerationData | number> {}
+
 export type Data = {
   generation: number;
-  data: number[][];
+  data: GenerationData;
   time: Date;
   completed: boolean;
 } | null;

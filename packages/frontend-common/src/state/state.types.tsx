@@ -9,7 +9,6 @@ export interface SettingsUrls {
 
 export interface Run {
   _id: string;
-  dataId: string;
   title: string;
   problem: string;
   algorithm: string;
@@ -21,13 +20,20 @@ export interface Run {
   totalGenerations: number;
   graphs: string[];
   completed: boolean;
+  previousData: boolean;
+  dataId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+// Allow for multi-dimensional number arrays;
+// could be normally a 2D array or list with 1D, 2D etc.
+export type GenerationData = GenerationDataArray;
+export interface GenerationDataArray extends Array<GenerationData | number> {}
+
 export type Data = {
   generation: number;
-  data: number[][];
+  data: GenerationData;
   time: Date;
   completed: boolean;
 } | null;

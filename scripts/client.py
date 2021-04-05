@@ -6,7 +6,8 @@ import time
 import requests
 import socketio
 
-# http://opt-vis-backend.herokuapp.com/
+# NOTE: Do not add trailing forward slashes.
+# http://opt-vis-backend.herokuapp.com
 # http://localhost:9000
 BACKEND_URL = "http://localhost:9000"
 # PORT = "33585"
@@ -68,13 +69,13 @@ class DataNamespace(socketio.ClientNamespace):
 
 class OptimiserClient():
     sio = None
-    population_size = -1
+    # population_size = -1
 
     data_namespace = None
 
-    def __init__(self, population_size):
+    def __init__(self):
         # Set population size
-        self.population_size = population_size
+        # self.population_size = population_size
 
         # Create the data namespace
         self.data_namespace = DataNamespace('/data')
@@ -86,7 +87,7 @@ class OptimiserClient():
         self.sio.connect(BACKEND_URL)
 
     # generations
-    def createRun(self, title, problem, algorithm, populationSize, totalGenerations, algorithmParameters={}, graphs=[]):
+    def createRun(self, title, problem, algorithm, populationSize, totalGenerations, algorithmParameters={}, graphs=[], previousData=False):
         # Create a new optimisation run given the parameters
         data = {
             "title": title,
@@ -95,7 +96,8 @@ class OptimiserClient():
             "populationSize": populationSize,
             "totalGenerations": totalGenerations,
             "algorithmParameters": algorithmParameters,
-            "graphs": graphs
+            "graphs": graphs,
+            "previousData": previousData
         }
         print("Creating optimisation run: ", data)
 

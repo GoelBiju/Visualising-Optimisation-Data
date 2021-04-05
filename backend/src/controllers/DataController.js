@@ -68,6 +68,7 @@ const addBatchData = async (runId, dataId, batch) => {
         // Add the new data as a new generation property.
         // console.log("retrieved data: ", data);
         const optimiserData = data.data;
+        // console.log("Batch received: ", batch);
         optimiserData.set(`${generation + 1}`, {
           values: batch,
         });

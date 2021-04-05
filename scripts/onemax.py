@@ -3,7 +3,11 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+import client
+
 dirname = os.path.dirname(__file__)
+
+optimiserClient = client.OptimiserClient()
 
 
 def get_pathname(path):
@@ -55,9 +59,12 @@ def ga(N, P, ngens):
     Y = np.array([evaluate(X[i]) for i in range(N)])
 
     # Keep a list of the fitnesses at each generation.
+    # Create fitness array with N rows and ngens columns ()
     Ys = np.zeros((N, ngens))
 
     for gen in range(ngens):
+        # print(gen)
+
         Xp = np.zeros((N, P))
         Yp = np.zeros(N)
         for i in range(N):
@@ -76,7 +83,12 @@ def ga(N, P, ngens):
         X = Zx[I[:N]]                           # minimises, so invert the
         Y = Zy[I[:N]]                           # fitnesses with 1 / Zy.
 
+        # print(Y)
         Ys[:, gen] = Y
+
+        # Send the population
+        # print(Y.tolist())
+        optimiserClient.addBatch(Y.tolist())
 
     # Return the best solution.
     idx = np.argmax(Y)
@@ -88,6 +100,9 @@ def experiment(N, P, ngens):
     Run an experiment with the parametrisation specfied.
     """
     x, y, Ys = ga(N, P, ngens)
+    # print("Fitness: ", Ys)
+    # print(np.median(Ys[0]))
+    # print("Median: ", np.median(Ys, axis=0))
 
     plt.figure()
     plt.axhline(P, 0, ngens, linestyle="--", color="k")
@@ -103,17 +118,24 @@ def experiment(N, P, ngens):
 
 
 if __name__ == "__main__":
+    # Create our run (provide previous data parameter to use data from
+    # the generations before in the visualisation)
+    optimiserClient.createRun("OneMax", "OneMax", "GA", 10, 20, {
+                              "P": 800}, graphs=["line"], previousData=True)
+
     # Run the GA.
-    experiment(10, 8, 20)
-    plt.savefig(get_pathname("figs/ga_10_8_20.pdf"), bbox_inches="tight")
+    # Experiment (population size, probability, total generations)
+    # experiment(10, 8, 20)
+    # plt.savefig(get_pathname("figs/ga_10_8_20.pdf"), bbox_inches="tight")
 
     experiment(10, 800, 20)
-    plt.savefig(get_pathname("figs/ga_10_800_20.pdf"), bbox_inches="tight")
+    # plt.savefig(get_pathname("figs/ga_10_800_20.pdf"), bbox_inches="tight")
 
-    experiment(10, 800, 1000)
-    plt.savefig(get_pathname("figs/ga_10_800_1000.pdf"), bbox_inches="tight")
+    # experiment(10, 800, 1000)
+    # plt.savefig(get_pathname("figs/ga_10_800_1000.pdf"), bbox_inches="tight")
 
-    experiment(100, 800, 1000)
-    plt.savefig(get_pathname("figs/ga_100_800_1000.pdf"), bbox_inches="tight")
+    # experiment(100, 800, 1000)
+    # plt.savefig(get_pathname("figs/ga_100_800_1000.pdf"), bbox_inches="tight")
 
-    plt.show()
+    print("Finished experiment")
+    # plt.show()

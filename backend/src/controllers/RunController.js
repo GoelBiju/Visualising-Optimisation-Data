@@ -13,6 +13,7 @@ const createRun = async (req, res, next) => {
       populationSize,
       totalGenerations,
       graphs,
+      previousData
     } = req.body;
 
     // Get a created data document
@@ -27,6 +28,7 @@ const createRun = async (req, res, next) => {
         populationSize,
         totalGenerations,
         graphs,
+        previousData,
         dataId,
         completed: false,
       });
@@ -63,6 +65,8 @@ const createRun = async (req, res, next) => {
   }
 };
 
+
+// Get all the runs stored
 const getRuns = async (req, res, next) => {
   await Run.find()
     .exec()
@@ -79,6 +83,8 @@ const getRuns = async (req, res, next) => {
     });
 };
 
+
+// Get a specific run based on its ID
 const getRun = async (req, res, next) => {
   try {
     const runId = req.params.runId;
@@ -106,6 +112,8 @@ const getRun = async (req, res, next) => {
   }
 };
 
+
+// Get a specific property from a run
 const getProperty = async (req, res, next) => {
   try {
     // Get the property name

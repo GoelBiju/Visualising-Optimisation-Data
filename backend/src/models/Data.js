@@ -9,7 +9,6 @@ const DataSchema = mongoose.Schema(
     //     //   type: Number,
     //     //   required: true,
     //     // },
-    //     // Support 2 objectives
     //     values: {
     //       type: [Number, Number],
     //       required: true,
@@ -24,7 +23,7 @@ const DataSchema = mongoose.Schema(
     data: {
       type: mongoose.SchemaTypes.Map,
       of: {
-        values: [[Number, Number]],
+        values: [Number] | [[Number]] ,
         time: { type: Date, default: Date.now },
       },
       default: {},

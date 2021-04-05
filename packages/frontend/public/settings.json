@@ -6,6 +6,12 @@
             "src": "http://localhost:5000/main.js",
             "enable": true,
             "location": "main"
+        },
+        {
+            "name": "line",
+            "src": "http://localhost:5001/main.js",
+            "enable": true,
+            "location": "main"
         }
     ]
 }

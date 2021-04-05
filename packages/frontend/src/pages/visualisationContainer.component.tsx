@@ -60,7 +60,7 @@ interface VCDispatchProps {
     setVisualisationName: (visualisationName: string) => Action;
     initiateSocket: (runId: string) => Promise<void>;
     subscribeToGenerations: (runId: string) => Promise<void>;
-    fetchData: (dataId: string, generation: number) => Promise<void>;
+    fetchData: (dataId: string, generation: number, includePrevious: boolean) => Promise<void>;
     setData: (data: Data) => Action;
     unsubscribeFromGenerations: (runId: string) => Promise<void>;
 }
@@ -298,7 +298,7 @@ const VisualisationContainer = (props: VCProps): React.ReactElement => {
             console.log('Next generation from queue: ', generation);
             if (generation && generation !== -1) {
                 console.log(`Requesting data for generation ${generation}`);
-                fetchData(selectedRun.dataId, generation);
+                fetchData(selectedRun.dataId, generation, selectedRun.previousData);
             }
         }
     }, [fetchingRun, fetchingData, generationQueue]);
@@ -599,7 +599,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StateType, null, AnyAction>)
     setVisualisationName: (visualisationName: string) => dispatch(setVisualisationName(visualisationName)),
     initiateSocket: (runId: string) => dispatch(initiateSocket(runId)),
     subscribeToGenerations: (runId: string) => dispatch(subscribeToGenerations(runId)),
-    fetchData: (dataId: string, generation: number) => dispatch(fetchData(dataId, generation)),
+    fetchData: (dataId: string, generation: number, includePrevious: boolean) =>
+        dispatch(fetchData(dataId, generation, includePrevious)),
     setData: (data: Data) => dispatch(setData(data)),
     unsubscribeFromGenerations: (runId: string) => dispatch(unsubscribeFromGenerations(runId)),
 });

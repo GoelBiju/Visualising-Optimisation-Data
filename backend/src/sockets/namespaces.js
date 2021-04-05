@@ -66,16 +66,17 @@ function setupNamespaces(io) {
           for (let num in data.data) {
             if (num <= generation) {
               generationsData.push(data.data[num].values);
-              console.log("Added generation no.: ", num);
+              // console.log("Added generation no.: ", num);
             }
           }
 
+          // Create the client data to send back.
           const clientData = {
             generation,
             data: generationsData,
             time: data.updatedAt,
           };
-          console.log("Client data: ", clientData);
+          // console.log("Client data: ", clientData);
 
           // Send the generations data to the client
           socket.emit("data", clientData);

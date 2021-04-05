@@ -87,7 +87,7 @@ def ga(N, P, ngens):
         Ys[:, gen] = Y
 
         # Send the population
-        print(Y.tolist())
+        # print(Y.tolist())
         optimiserClient.addBatch(Y.tolist())
 
     # Return the best solution.
@@ -121,14 +121,14 @@ if __name__ == "__main__":
     # Create our run (provide previous data parameter to use data from
     # the generations before in the visualisation)
     optimiserClient.createRun("OneMax", "OneMax", "GA", 10, 20, {
-                              "P": 8}, graphs=["line"], previousData=True)
+                              "P": 800}, graphs=["line"], previousData=True)
 
     # Run the GA.
     # Experiment (population size, probability, total generations)
-    experiment(10, 8, 20)
+    # experiment(10, 8, 20)
     # plt.savefig(get_pathname("figs/ga_10_8_20.pdf"), bbox_inches="tight")
 
-    # experiment(10, 800, 20)
+    experiment(10, 800, 20)
     # plt.savefig(get_pathname("figs/ga_10_800_20.pdf"), bbox_inches="tight")
 
     # experiment(10, 800, 1000)

@@ -1,37 +1,37 @@
 import * as d3 from "d3";
-// import { Data, StateType } from "frontend-common";
+import { Data, StateType } from "frontend-common";
 import React from "react";
-// import { connect } from "react-redux";
+import { connect } from "react-redux";
 
-// interface VCProps {
-//   data: Data;
-// }
+interface VCProps {
+  data: Data;
+}
 
-const data = [
-  [6.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 4.0],
-  [7.0, 6.0, 6.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
-  [7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0, 5.0, 5.0, 5.0],
-  [7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0],
-  [7.0, 7.0, 7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0],
-  [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0],
-  [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
-  [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
-  [8.0, 8.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
-  [8.0, 8.0, 8.0, 8.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0, 7.0, 7.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-  [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-];
+// Test 2D data in the form of number[][].
+// const data = [
+//   [6.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 4.0],
+//   [7.0, 6.0, 6.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+//   [7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0, 5.0, 5.0, 5.0],
+//   [7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0],
+//   [7.0, 7.0, 7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0, 6.0],
+//   [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 6.0, 6.0, 6.0, 6.0],
+//   [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+//   [7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+//   [8.0, 8.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+//   [8.0, 8.0, 8.0, 8.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0, 7.0, 7.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+//   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
+// ];
 
-const VisualisationComponent = (): React.ReactElement => {
-  // props: VCProps
+const VisualisationComponent = (props: VCProps): React.ReactElement => {
   const chartRef: React.RefObject<SVGSVGElement> = React.createRef<SVGSVGElement>();
 
   const margin = {
@@ -70,7 +70,7 @@ const VisualisationComponent = (): React.ReactElement => {
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // Add x axis
-    const xAxis = xScale.domain([0, data.length]);
+    const xAxis = xScale.domain([0, 1.0]);
     svg
       .append("g")
       .attr("class", "line-chart-xaxis")
@@ -109,6 +109,7 @@ const VisualisationComponent = (): React.ReactElement => {
       d3.axisBottom(xAxis)(svg.select("g.line-chart-xaxis"));
 
       // TODO: Y axis needs to be calculated based on: P+max(1, np.ceil(P/10))
+      //       P can be retrieved from algorithm parameters in run information in state
       // Update the y-axis with the max of all the arrays
       const yAxis = yScale.domain([
         0,
@@ -116,7 +117,8 @@ const VisualisationComponent = (): React.ReactElement => {
       ]);
       d3.axisLeft(yAxis)(svg.select("g.line-chart-yaxis"));
 
-      // TODO: Remove the old points
+      // NOTE: Remove the old points (this might not be an issue right
+      //       now since we are changing the whole line?)
       // svg.selectAll("g.path").remove();
 
       var line = d3
@@ -138,9 +140,9 @@ const VisualisationComponent = (): React.ReactElement => {
 
   // Build or update chart when data changes
   React.useEffect(() => {
-    // const data = props.data ? props.data.data : [];
+    // Convert from the GenerationData/Array to the exact array type (number[][])
+    const data: number[][] = props.data ? (props.data.data as number[][]) : [];
     // console.log("Render: ", data);
-    // const data: number[] | number[][] = []
 
     // Build chart initially otherwise update for data
     if (!builtChart) {
@@ -149,7 +151,7 @@ const VisualisationComponent = (): React.ReactElement => {
     } else {
       updateChart(data);
     }
-  }, [buildChart, builtChart, updateChart]); // props.data
+  }, [buildChart, builtChart, updateChart, props.data]);
 
   return (
     <div id="chartContainer">
@@ -158,11 +160,11 @@ const VisualisationComponent = (): React.ReactElement => {
   );
 };
 
-// const mapStateToProps = (state: StateType): VCProps => {
-//   return {
-//     data: state.frontend.data,
-//   };
-// };
+const mapStateToProps = (state: StateType): VCProps => {
+  return {
+    data: state.frontend.data,
+  };
+};
 
-// export default connect(mapStateToProps)(VisualisationComponent);
-export default VisualisationComponent;
+export default connect(mapStateToProps)(VisualisationComponent);
+// export default VisualisationComponent;

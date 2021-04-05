@@ -57,3 +57,14 @@ jobs:
         on:
           repo: GoelBiju/Visualising-Optimisation-Data
           branch: main
+
+    - stage: Deploy Line (plugin)
+      script: skip
+      deploy:
+        provider: heroku
+        api_key:
+          secure: NrwfeICKXUeaNHoFBZplagGXvR9PeHWe5wIDtpfEyEtOf3EGPNoU0fPDR5Ad8q1yxEFP1j9Gvm1XVn7VFEKddcbCMUktm96UbbhtvaAlEykg4+nb/4dnDU9qDJZmvEiKuSWixfcXv5PSiq3wLhEx1L7wA8S3U8rvjOnfTig5avEt2WjV3wxws/mHseX5SYhjtE/KEOfa0a0aGKuU/uQKbpOieuvFCWmIf5EXcliklXiUSi6oIrwltfVvNsPrwB3nXGapFHGiDUgHwe44rqcBchQPCOHZr8KMnu711SbzI6vQgRO1DR46ZndfKvhbXyeW0bPKn3H2CHv2zqIfQJLEA2+PiSJrXBAihDi2QEq84TlijEERJR1a6JzaCmIS7gk2FyMiZkDd/pqzAYd3LmhpxHGxf8QFVbCMgm+xc/BQToe59BQ1dJ2rnPr+U5Ic4+JlqIr6LHE4c9d1qkLixkEcsxfajYcV0gqpUx6sYnAaE5vzGvTaTKFfSGGvyOXNQceJr0oKQ+H7+Qhl3JU4L9hg7s5dHx+FlHjiJlziZD8DAGMKczpdgQUYhenzxkgbDEA8VEvM1471iS29UsosNUv5PZi84YZURfJHv4plkep7/TC746SREDEi4oytAx2d/zEEPbJ+09FTHoB6kWP7oFZ3Ze9JohePnyActilVDK0nUxg=
+        app: opt-vis-line
+        on:
+          repo: GoelBiju/Visualising-Optimisation-Data
+          branch: main

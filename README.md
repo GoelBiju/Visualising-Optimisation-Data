@@ -48,7 +48,9 @@ python scripts/dtlz2.py
 
 ## Plugins
 
-To configure a plugin give a specific name you will have to change:
+To create a plugin you can copy any of the existing plugins in the `packages` folder.
+
+To configure the plugin to work with the frontend, you will need to set its name and description through the files in the plugin folder:
 
 1. `webpackConfig.output.library` in `craco.config.js` to the plugin name,
 

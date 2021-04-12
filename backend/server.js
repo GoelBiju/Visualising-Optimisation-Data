@@ -10,14 +10,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const runApiRoute = require("./src/routes/run");
-
 const { setupNamespaces } = require("./src/sockets/namespaces");
 
-// Connection information.
+// Connection information (connects to custom MongoDB provided by
+// environment variable "MONGO_URI" or just uses local).
 let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";
 let PORT = process.env.PORT || 9000;
 
-// Connect
 mongoose.connect(url, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
@@ -30,7 +29,7 @@ let server = http.createServer(app);
 // Configure app.
 app.use(morgan("dev"));
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, "resources")));
 
 // Define routes.

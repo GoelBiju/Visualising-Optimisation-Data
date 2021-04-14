@@ -5,7 +5,7 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, '/build')));
 
@@ -16,5 +16,5 @@ app.get('*', function (req, res) {
 });
 
 app.listen(PORT, () => {
-    console.log('Listening on ' + PORT);
+    console.log('[frontend - serve-build.js] Listening on ' + PORT);
 });

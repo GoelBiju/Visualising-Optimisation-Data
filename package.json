@@ -11,11 +11,14 @@
     "tsc": "lerna run tsc",
     "backend": "yarn --cwd backend dev",
     "frontend": "yarn workspace frontend start",
+    "frontend:serve": "yarn workspace frontend serve:build",
     "pareto": "yarn workspace pareto-front serve:build",
     "line": "yarn workspace line serve:build",
     "heroku-postbuild": "yarn workspaces run build",
     "lint:frontend": "yarn workspace frontend lint",
-    "test:frontend": "yarn workspace frontend test"
+    "test:frontend": "yarn workspace frontend test",
+    "e2e": "start-server-and-test frontend:serve 3000 cy:run",
+    "cy:run": "cypress run"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,7 @@
   },
   "homepage": "https://github.com/GoelBiju/Visualising-Optimisation-Data#readme",
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "start-server-and-test": "^1.12.1"
   }
 }

@@ -11,14 +11,17 @@
     "tsc": "lerna run tsc",
     "backend": "yarn --cwd backend dev",
     "frontend": "yarn workspace frontend start",
-    "frontend:serve": "yarn workspace frontend serve:build",
     "pareto": "yarn workspace pareto-front serve:build",
     "line": "yarn workspace line serve:build",
     "heroku-postbuild": "yarn workspaces run build",
     "lint:frontend": "yarn workspace frontend lint",
     "test:frontend": "yarn workspace frontend test",
-    "e2e": "start-server-and-test frontend:serve 3000 cy:run",
-    "cy:run": "cypress run"
+    "stack": "concurrently -n backend,pareto-plugin,frontend \"yarn --cwd backend start\" \"yarn pareto\" \"yarn workspace frontend serve:build\"",
+    "e2e": "start-server-and-test stack 3000 cy:run",
+    "e2e:interactive": "start-server-and-test stack 3000 cy:open",
+    "wait-stack": "wait-on http-get://localhost:9000 http-get://localhost:5000",
+    "cy:run": "yarn wait-stack && cypress run",
+    "cy:open": "yarn wait-stack && cypress open"
   },
   "repository": {
     "type": "git",
@@ -31,7 +34,9 @@
   },
   "homepage": "https://github.com/GoelBiju/Visualising-Optimisation-Data#readme",
   "devDependencies": {
+    "concurrently": "^6.0.2",
     "lerna": "^3.22.1",
-    "start-server-and-test": "^1.12.1"
+    "start-server-and-test": "^1.12.1",
+    "wait-on": "^5.3.0"
   }
 }

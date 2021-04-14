@@ -1,0 +1,11 @@
+{
+    "backendUrl": "http://localhost:9000",
+    "plugins":[
+        {
+            "name": "pareto-front",
+            "src": "http://localhost:5000/main.js",
+            "enable": true,
+            "location": "main"
+        }
+    ]
+}

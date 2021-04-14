@@ -12,6 +12,8 @@ const cors = require("cors");
 const runApiRoute = require("./src/routes/run");
 const { setupNamespaces } = require("./src/sockets/namespaces");
 
+console.log("Backend - e2e testing: ", process.env.E2E_TESTING);
+
 // Connection information (connects to custom MongoDB provided by
 // environment variable "MONGO_URI" or just uses local).
 let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";

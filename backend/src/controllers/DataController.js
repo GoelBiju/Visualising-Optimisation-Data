@@ -35,24 +35,6 @@ const createData = async () => {
 const addBatchData = async (runId, dataId, batch) => {
   let added = null;
 
-  // await getData(id).then(async (optimiserData) => {
-  //   if (optimiserData) {
-  //     // Add new data
-  //     for (let i = 0; i < batch.length; i++) {
-  //       optimiserData.data.push({
-  //         // generation,
-  //         values: batch[i],
-  //       });
-  //     }
-
-  //     // Save the data
-  //     await optimiserData.save();
-  //     // console.log("Added new data for ", optimiserData._id);
-
-  //     added = true;
-  //   }
-  // });
-
   // Find the run given the id
   console.log("querying for run: ", runId);
   const run = await Run.findById(runId).exec();

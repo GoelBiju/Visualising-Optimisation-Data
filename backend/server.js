@@ -23,83 +23,91 @@ const {
 let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";
 let PORT = process.env.PORT || 9000;
 
-mongoose
-  .connect(url, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  })
-  .then(async () => {
-    console.log("Backend - e2e testing: ", process.env.E2E_TESTING);
-    if (process.env.E2E_TESTING) {
-      // Test run information
-      const runInfo = {
-        title: "Test Run",
-        problem: "Test Problem",
-        algorithm: "Test Algorithm",
-        algorithmParameters: {
-          testParameter: 1,
-        },
-        populationSize: 100,
-        totalGenerations: 100,
-      };
+mongoose.connect(url, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+});
 
-      const testRun = await Run.findOne(runInfo).lean();
-      console.log("Found: ", testRun);
-      if (testRun) {
-        // Delete for the existing test run
-        Run.deleteOne(runInfo).then(() => {
-          console.log("Found existing test run and removed");
+const db = mongoose.connection;
 
-          // Delete the test data that was associated with the run
-          Data.deleteOne({ _id: testRun.dataId }).then(() => {
-            console.log(
-              "Deleted data related to run with ID: ",
-              testRun.dataId
-            );
-          });
+db.on("error", (err) => {
+  console.log("Mongoose connection error in server.js");
+  console.log(err);
+});
+
+db.once("open", async () => {
+  console.log("Connected to database");
+  // mongoose.set("debug", true);
+
+  console.log("Backend - e2e testing: ", process.env.E2E_TESTING);
+  if (process.env.E2E_TESTING) {
+    // Test run information
+    const runInfo = {
+      title: "Test Run",
+      problem: "Test Problem",
+      algorithm: "Test Algorithm",
+      algorithmParameters: {
+        testParameter: 1,
+      },
+      populationSize: 100,
+      totalGenerations: 100,
+    };
+
+    const testRun = await Run.findOne(runInfo).lean();
+    console.log("Found: ", testRun);
+    if (testRun) {
+      // Delete for the existing test run
+      Run.deleteOne(runInfo).then(() => {
+        console.log("Found existing test run and removed");
+
+        // Delete the test data that was associated with the run
+        Data.deleteOne({ _id: testRun.dataId }).then(() => {
+          console.log("Deleted data related to run with ID: ", testRun.dataId);
         });
-      }
-
-      // Create test data
-      const dataId = await createData();
-      console.log("Got dataID: ", dataId);
-
-      // Create a test run
-      let run = new Run({
-        ...runInfo,
-        graphs: ["pareto-front"],
-        previousData: false,
-        dataId,
-        completed: false,
       });
-
-      // Save the test run
-      run.save().then(async (run) => {
-        console.log("Created test run with ID: ", run._id);
-
-        // Add test data
-        const setOne = [
-          [5, 5],
-          [10, 10],
-          [20, 20],
-        ];
-
-        const setTwo = [
-          [2, 4],
-          [15, 30],
-          [25, 40],
-        ];
-
-        const addedOne = await addBatchData(run._id, dataId, setOne);
-        console.log("Added set one: ", addedOne);
-
-        const addedTwo = await addBatchData(run._id, dataId, setTwo);
-        console.log("Added set two: ", addedTwo);
-      });
-
-      console.log("Added test data");
     }
-  });
+
+    // Create test data
+    const dataId = await createData();
+    console.log("Got dataID: ", dataId);
+
+    // Create a test run
+    let run = new Run({
+      ...runInfo,
+      graphs: ["pareto-front"],
+      previousData: false,
+      dataId,
+      completed: false,
+    });
+
+    // Save the test run
+    run.save().then(async (run) => {
+      console.log("Created test run with ID: ", run._id);
+
+      // Add test data
+      const setOne = [
+        [5, 5],
+        [10, 10],
+        [20, 20],
+      ];
+
+      const setTwo = [
+        [2, 4],
+        [15, 30],
+        [25, 40],
+      ];
+
+      const addedOne = await addBatchData(run._id, dataId, setOne);
+      console.log("Added set one: ", addedOne);
+
+      const addedTwo = await addBatchData(run._id, dataId, setTwo);
+      console.log("Added set two: ", addedTwo);
+    });
+
+    console.log("Added test data");
+  }
+});
 
 // Set up the app and server.
 let app = express();
@@ -127,3 +135,15 @@ app.get("/", (req, res) => {
 server.listen(PORT, () => {
   console.log(`Backend listening on ${PORT} (WebSocket)`);
 });
+
+function stop() {
+  mongoose.connection.close(() => {
+    server.close();
+    console.log("Stopped database connection and closed server");
+  });
+}
+
+module.exports = {
+  server,
+  stop,
+};

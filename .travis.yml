@@ -36,6 +36,12 @@ jobs:
     #   name: Frontend
     #   script: yarn test:frontend
 
+    - stage: Backend Tests
+      script: yarn test:backend
+
+    - stage: E2E Tests
+      script: yarn e2e
+
     - stage: Deploy Frontend
       script: skip
       deploy:

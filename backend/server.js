@@ -18,11 +18,19 @@ const {
   addBatchData,
 } = require("./src/controllers/DataController");
 
+// Set if we are e2e testing
+console.log("Backend - e2e testing: ", process.env.E2E_TESTING);
+const E2E_TESTING = process.env.E2E_TESTING ? true : false;
+
 // Connection information (connects to custom MongoDB provided by
 // environment variable "MONGO_URI" or just uses local).
-let url = process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation";
+// NOTE: When in E2E testing, we just create a separate database.
+let url = !E2E_TESTING
+  ? process.env.MONGODB_URI || "mongodb://localhost:27017/optimisation"
+  : "mongodb://localhost:27017/e2e";
 let PORT = process.env.PORT || 9000;
 
+// Connect to the database
 mongoose.connect(url, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
@@ -38,10 +46,11 @@ db.on("error", (err) => {
 
 db.once("open", async () => {
   console.log("Connected to database");
-  // mongoose.set("debug", true);
 
-  console.log("Backend - e2e testing: ", process.env.E2E_TESTING);
   if (process.env.E2E_TESTING) {
+    // Turn on mongoose debugging
+    mongoose.set("debug", true);
+
     // Test run information
     const runInfo = {
       title: "Test Run",
@@ -50,8 +59,8 @@ db.once("open", async () => {
       algorithmParameters: {
         testParameter: 1,
       },
-      populationSize: 100,
-      totalGenerations: 100,
+      populationSize: 3,
+      totalGenerations: 2,
     };
 
     const testRun = await Run.findOne(runInfo).lean();
@@ -105,7 +114,7 @@ db.once("open", async () => {
       console.log("Added set two: ", addedTwo);
     });
 
-    console.log("Added test data");
+    console.log("Added test run and data");
   }
 });
 

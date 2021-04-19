@@ -16,6 +16,20 @@ install:
 
 jobs:
   include:
+    - stage: Backend Tests
+      script: yarn test:backend
+
+    # - stage: Lint
+    #   name: Frontend
+    #   script: yarn lint:frontend
+
+    # - stage: Unit Tests
+    #   name: Frontend
+    #   script: yarn test:frontend
+
+    - stage: E2E Tests
+      script: yarn e2e
+
     - stage: Deploy Backend
       script: skip
       before_deploy:
@@ -28,20 +42,6 @@ jobs:
         on:
           repo: GoelBiju/Visualising-Optimisation-Data
           branch: main
-
-    # - stage: Lint
-    #   name: Frontend
-    #   script: yarn lint:frontend
-
-    # - stage: Unit Tests
-    #   name: Frontend
-    #   script: yarn test:frontend
-
-    - stage: Backend Tests
-      script: yarn test:backend
-
-    - stage: E2E Tests
-      script: yarn e2e
 
     - stage: Deploy Frontend
       script: skip

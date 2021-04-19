@@ -11,6 +11,7 @@ cache:
     - node_modules
 
 install:
+  - yarn --cwd backend install
   - yarn install --frozen-lockfile
 
 jobs:

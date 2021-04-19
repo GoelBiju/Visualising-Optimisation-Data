@@ -43,7 +43,7 @@
   "scripts": {
     "start": "react-scripts start",
     "serve:plugins": "node micro-frontend-tools/serve-plugins.js",
-    "build": "react-scripts build && cp ./public/{settings.json,deploy-settings.json} ./build",
+    "build": "react-scripts build && cp ./public/{settings.json,deploy-settings.json,e2e-settings.json} ./build",
     "serve:build": "yarn build && node serve-build.js",
     "test": "jest --env=jsdom --coverage --watchAll=false",
     "lint": "eslint --ext=tsx --ext=ts --ext=js --ext=jsx --fix ./src && yarn build",

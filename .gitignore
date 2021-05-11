@@ -24,5 +24,4 @@ yarn-error.log*
 
 build/
 lib/
-
 .nyc_output

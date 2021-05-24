@@ -21,9 +21,36 @@ The web platform will provide:
 
 ## Installation
 
+The following pieces of software is needed to be installed on your machine before proceeding with the instructions below to set up a local development environment:
+
+- NodeJS (https://nodejs.org/en/)
+- MongoDB (https://www.mongodb.com/try/download/community)
+- Yarn (installed through NPM from NodeJS, see https://yarnpkg.com/)
+- Python 3.8.10 (https://yarnpkg.com/) (for running the client optimiser scripts); ensure that python and pip is added to environment variables (for Windows) and that it can be called from the command line/terminal
+
+Once the required software has been installed, you can proceed with setting up the codebase and installing packages:
+
+1. Clone the repository from GitHub using the following command:
+
+```bash
+git clone https://github.com/GoelBiju/Visualising-Optimisation-Data.git
+```
+
+2. Install the packages required for the frontend and plugins:
+
+```bash
+yarn install
+```
+
+3. Install the packages required for the backend by changing the directory into the backend and using the following command:
+
+```bash
+cd backend && yarn install
+```
+
 ## Optimiser Client
 
-The examples provided make use of Python 3.9.
+The examples provided make use of Python 3.8.10.
 
 To run and test the sample data already provided, install the Python dependencies in the root of the project:
 
@@ -32,7 +59,7 @@ pip install -r requirements.txt --user
 
 ```
 
-The scripts are in the /scripts folder, you can run from them the root with the following:
+The scripts are in the "/scripts" folder, you can run from them the root with the following:
 
 Run DTLZ1:
 
@@ -76,7 +103,8 @@ The backend application does not require any further configuration and uses the 
 
 ## Deploying frontend and plugins to Heroku
 
-The Heroku deployment is not necessary if the project is to be hosted elsewhere, but, if you want to host on Heroku then you will need to make use of the [Heroku multi-procfile buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-multi-procfile).
+The Heroku deployment is not necessary if the project is to be hosted elsewhere,
+but, if you want to host on Heroku then you will need to make use of the [Heroku multi-procfile buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-multi-procfile).
 
 1. Create your apps for the frontend and plugins,
 
@@ -88,7 +116,7 @@ The Heroku deployment is not necessary if the project is to be hosted elsewhere,
 
 5. In the frontend application add a "REACT_APP_SETTINGS" key with the value of the name of the settings.json which will be used in the deployed environment (i.e. Heroku) e.g. this can be set to the default "deploy-settings.json",
 
-6. For each plugin application add a "PROCFILE" configuration key and set the value to the location of the Procfile for the plugin (with respect to the project root) e.g. packages/pareto-fronted/Procfile or packages/line/Procfile
+6. For each plugin application add a "PROCFILE" configuration key and set the value to the location of the Procfile for the plugin (with respect to the project root) e.g. packages/pareto-front/Procfile or packages/line/Procfile
 
 After this has been set up the application should be deployed from the main branch of the repository.
 

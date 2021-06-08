@@ -1,7 +1,6 @@
 import json
 import queue
 import threading
-import time
 
 import requests
 import socketio

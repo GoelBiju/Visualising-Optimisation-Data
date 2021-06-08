@@ -44,7 +44,6 @@ for values in dtlz2_data:
         # print("Sending generation: ", generation)
         optimiserClient.addBatch(data_batch)
         data_batch = []
-
         count = 1
         # print("Next Generation: ", generation)
 

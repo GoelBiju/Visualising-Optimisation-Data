@@ -5,7 +5,7 @@ import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
-import { AnyAction, createStore, Store } from "redux";
+import { AnyAction, Store } from "redux";
 // import { applyMiddleware, compose, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
@@ -68,7 +68,7 @@ class App extends React.Component<{ dev?: boolean }, AppState> {
 
   public componentDidCatch(error: Error | null): void {
     this.setState({ ...this.state, hasError: true });
-    log.error(`pareto-front failed with error: ${error}`);
+    log.error(`line failed with error: ${error}`);
   }
 
   public render(): React.ReactNode {

@@ -11,15 +11,6 @@ const createData = async () => {
   await data
     .save()
     .then(async (data) => {
-      // Get the run information and create the generations objects
-      // for (num in generations) {
-      //   data.data[num] = {
-      //     values: [],
-      //   };
-      // }
-      // data.markModified("data");
-      // await data.save();
-
       console.log("Created data store: ", data._id);
       dataId = data._id;
     })
@@ -34,24 +25,6 @@ const createData = async () => {
 // We need the runId to update the generation number afterwards
 const addBatchData = async (runId, dataId, batch) => {
   let added = null;
-
-  // await getData(id).then(async (optimiserData) => {
-  //   if (optimiserData) {
-  //     // Add new data
-  //     for (let i = 0; i < batch.length; i++) {
-  //       optimiserData.data.push({
-  //         // generation,
-  //         values: batch[i],
-  //       });
-  //     }
-
-  //     // Save the data
-  //     await optimiserData.save();
-  //     // console.log("Added new data for ", optimiserData._id);
-
-  //     added = true;
-  //   }
-  // });
 
   // Find the run given the id
   console.log("querying for run: ", runId);

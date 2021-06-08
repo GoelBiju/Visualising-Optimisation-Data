@@ -6,7 +6,8 @@ module.exports = {
         "react-dom": "ReactDOM", // Case matters here
       };
 
-      if (env === "production" && !process.env.REACT_APP_E2E_TESTING) {
+      if (env === "production") {
+        // && !process.env.REACT_APP_E2E_TESTING (we will need the redux state, so we must build it)
         webpackConfig.output.library = "pareto-front";
         webpackConfig.output.libraryTarget = "window";
 

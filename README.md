@@ -19,6 +19,8 @@ The web platform will provide:
 - the playback of saved optimisation runs,
 - a deployed web platform acting as a single tool which collects all appropriate visualisations for optimisation runs.
 
+A demonstration of the project is available on [YouTube](https://www.youtube.com/watch?v=7goXb3EpkKE).
+
 ## Installation
 
 The following pieces of software is needed to be installed on your machine before proceeding with the instructions below to set up a local development environment:

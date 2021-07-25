@@ -1,26 +1,37 @@
 import { Data, StateType } from "frontend-common";
 import React from "react";
 import { connect } from "react-redux";
-import * as Plotly from "plotly.js";
+
+// import Plot from "react-plotly.js";
+
+import createPlotlyComponent from "react-plotly.js/factory";
+const Plotly = window.Plotly;
+const Plot = createPlotlyComponent(Plotly);
 
 interface VCProps {
   data: Data;
 }
 
-const VisualisationComponent = (props: VCProps): React.ReactElement => {
-  // const chartRef: React.RefObject<SVGSVGElement> = React.createRef<SVGSVGElement>();
-
-  // const margin = {
-  //   top: 50,
-  //   right: 30,
-  //   bottom: 30,
-  //   left: 60,
-  // };
-
-  // const width = 760 - margin.left - margin.right;
-  // const height = 450 - margin.top - margin.bottom;
-
-  return <div id="chartContainer"></div>;
+const VisualisationComponent = (): React.ReactElement => {
+  // props: VCProps
+  return (
+    <div id="chartContainer">
+      <Plot
+        data={[
+          {
+            x: [1, 2, 3],
+            y: [2, 6, 3],
+            type: "scatter",
+            mode: "lines+markers",
+            marker: { color: "red" },
+          },
+          { type: "bar", x: [1, 2, 3], y: [2, 5, 3] },
+        ]}
+        layout={{ width: 500, height: 500, title: "A Fancy Plot" }}
+      />
+      {/* Test */}
+    </div>
+  );
 };
 
 const mapStateToProps = (state: StateType): VCProps => {
@@ -29,5 +40,5 @@ const mapStateToProps = (state: StateType): VCProps => {
   };
 };
 
-export default connect(mapStateToProps)(VisualisationComponent);
-// export default VisualisationComponent;
+// export default connect(mapStateToProps)(VisualisationComponent);
+export default VisualisationComponent;

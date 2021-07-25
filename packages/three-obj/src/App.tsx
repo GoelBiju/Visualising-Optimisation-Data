@@ -12,6 +12,11 @@ import thunk from "redux-thunk";
 import "./App.css";
 import VisualisationComponent from "./visualisation.component";
 
+//
+// const VisualisationComponent = React.lazy(
+//   () => import("./visualisation.component")
+// );
+
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
 if (process.env.NODE_ENV === "development") {

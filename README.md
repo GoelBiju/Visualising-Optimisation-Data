@@ -165,3 +165,5 @@ After this has been set up the application should be deployed from the main bran
 Frontend: http://opt-vis-frontend.herokuapp.com/
 
 Backend: http://opt-vis-backend.herokuapp.com/
+
+Plugins: https://opt-vis-pareto-front.herokuapp.com/ (Pareto Front), https://opt-vis-line.herokuapp.com/ (Line Graph)

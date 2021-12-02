@@ -23,14 +23,14 @@ A demonstration of the project is available on [YouTube](https://www.youtube.com
 
 ## Installation
 
-The following pieces of software is needed to be installed on your machine before proceeding with the instructions below to set up a local development environment:
+The following pieces of software need to be installed on your machine in order to set up the local development environment:
 
 - NodeJS (https://nodejs.org/en/)
 - MongoDB (https://www.mongodb.com/try/download/community)
 - Yarn (installed through NPM from NodeJS, see https://yarnpkg.com/)
-- Python 3.8.10 (https://yarnpkg.com/) (for running the client optimiser scripts); ensure that python and pip is added to environment variables (for Windows) and that it can be called from the command line/terminal
+- Python 3.8+ (https://yarnpkg.com/) (for running the client optimiser scripts); ensure that python and pip is added to environment variables (for Windows) and that it can be called from the command line/terminal
 
-Once the required software has been installed, you can proceed with setting up the codebase and installing packages:
+Once the required software has been installed, you can proceed with setting up the codebase and installing packages/dependencies:
 
 1. Clone the repository from GitHub using the following command:
 
@@ -50,32 +50,68 @@ yarn install
 cd backend && yarn install
 ```
 
-## Optimiser Client
+## Running frontend and backend
 
-The examples provided make use of Python 3.8.10.
+Once all the packages/dependencies have been installed for both the frontend and backend, the stack can be run in the following order:
 
-To run and test the sample data already provided, install the Python dependencies in the root of the project:
+1. Start the backend from the root of the project:
 
 ```bash
-pip install -r requirements.txt --user
+yarn backend
+```
+
+2. Run the frontend from the root using:
+
+```bash
+yarn frontend
+```
+
+3. At present there are two plugin examples:
+
+For the _Pareto Front_ plugin, run:
+
+```bash
+yarn pareto
+```
+
+for the _Line Graph_ plugin, run:
+
+```bash
+yarn line
+```
+
+In order to feed in data to the database and see real-time visualisation, see the section below to run optimser clients.
+
+## Running Optimiser Clients
+
+The current examples provided make use of Python 3.8.10.
+
+To run and test the sample data already provided, install the Python dependencies from the root of the project:
+
+```bash
+pip install --user -r requirements.txt
 
 ```
 
-The scripts are in the "/scripts" folder, you can run from them the root with the following:
+The optimiser client scripts are in the "/scripts" folder, you can run from them the root of the project with the following:
 
-Run DTLZ1:
+Run _DTLZ1_:
 
 ```bash
 python scripts/dtlz1.py
 ```
 
-Run DTLZ2:
+Run _DTLZ2_:
 
 ```bash
 python scripts/dtlz2.py
 ```
 
-## Plugins
+The frontend will show all active optmiser client runs once the script has been started and any completed runs stored in the database.
+
+## Development
+
+### Creating Plugins
 
 To create a plugin you can copy any of the existing plugins in the `packages` folder.
 
@@ -97,7 +133,7 @@ To configure the plugin to work with the frontend, you will need to set its name
 
 8. web dyno start in `Procfile` for plugin project (if you are using Heroku).
 
-## Deploying backend to Heroku
+### Deploying backend to Heroku
 
 You will need to create a backend application on Heroku and add the GitHub repository to it.
 
@@ -105,7 +141,7 @@ The backend requires you to make use of an external MongoDB service. For this re
 
 The backend application does not require any further configuration and uses the default "heroku/nodejs" buildpack which will automatically be recognised when the application is first deployed which triggers `npm start` on its web dyno.
 
-## Deploying frontend and plugins to Heroku
+### Deploying frontend and plugins to Heroku
 
 The Heroku deployment is not necessary if the project is to be hosted elsewhere,
 but, if you want to host on Heroku then you will need to make use of the [Heroku multi-procfile buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-multi-procfile).
@@ -124,7 +160,7 @@ but, if you want to host on Heroku then you will need to make use of the [Heroku
 
 After this has been set up the application should be deployed from the main branch of the repository.
 
-## Deployments
+### Deployments
 
 Frontend: http://opt-vis-frontend.herokuapp.com/
 

@@ -162,8 +162,11 @@ After this has been set up the application should be deployed from the main bran
 
 ### Deployments
 
-Frontend: http://opt-vis-frontend.herokuapp.com/
+All of the components of the system have already been deployed as a demonstration of the service. The following table shows the deployed applications and their respective locations:
 
-Backend: http://opt-vis-backend.herokuapp.com/
-
-Plugins: https://opt-vis-pareto-front.herokuapp.com/ (Pareto Front), https://opt-vis-line.herokuapp.com/ (Line Graph)
+| Application           | Deployed Location                           |
+| --------------------- | ------------------------------------------- |
+| Frontend              | http://opt-vis-frontend.herokuapp.com/      |
+| Backend               | http://opt-vis-backend.herokuapp.com/       |
+| Pareto-front (plugin) | https://opt-vis-pareto-front.herokuapp.com/ |
+| Line Graph (plugin)   | https://opt-vis-line.herokuapp.com/         |

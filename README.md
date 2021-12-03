@@ -50,7 +50,7 @@ yarn install
 cd backend && yarn install
 ```
 
-## Running frontend and backend
+## Running frontend, backend and plugins 
 
 Once all the packages/dependencies have been installed for both the frontend and backend, the stack can be run in the following order:
 

@@ -82,7 +82,7 @@ yarn line
 
 In order to feed in data to the database and see real-time visualisation, see the section below to run optimser clients.
 
-## Running Optimiser Clients
+## Running client scripts 
 
 The current examples provided make use of Python 3.8.10.
 

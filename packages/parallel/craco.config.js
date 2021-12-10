@@ -8,7 +8,7 @@ module.exports = {
 
       if (env === "production") {
         // && !process.env.REACT_APP_E2E_TESTING (we will need the redux state, so we must build it)
-        webpackConfig.output.library = "parellel";
+        webpackConfig.output.library = "parallel";
         webpackConfig.output.libraryTarget = "window";
 
         webpackConfig.output.filename = "[name].js";

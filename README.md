@@ -109,7 +109,7 @@ The frontend will show all active optmiser client runs once the script has been 
 
 ## Development
 
-### Creating Plugins
+### Creating and configuring plugins
 
 To create a plugin, begin by copying an existing plugin in the `packages` folder i.e. "pareto-front" plugin folder and rename appropriately.
 
@@ -127,11 +127,13 @@ To configure the plugin to work with the frontend, you will need to set its name
 
 6. `pluginName` in `src/index.tsx`,
 
-7. `plugins` command in `package.json` to add the plugin to start with the command,
+7. `plugins` command in `package.json` at project root to add the plugin to start with the command,
 
 8. web dyno start in `Procfile` for plugin project (if you are using Heroku).
 
-##
+### Developing and testing plugins
+
+TODO: Individually developing and testing plugins without having to serve it
 
 ### Deploying backend to Heroku
 

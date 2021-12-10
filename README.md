@@ -50,7 +50,14 @@ yarn install
 cd backend && yarn install
 ```
 
-## Running frontend, backend and plugins 
+The examples provided for client optimisers make use of Python 3.8.10. To run and test with the sample data provided, install the Python dependencies from the root of the project with the following:
+
+```bash
+pip install --user -r requirements.txt
+
+```
+
+## Running frontend, backend and plugins
 
 Once all the packages/dependencies have been installed for both the frontend and backend, the stack can be run in the following order:
 
@@ -82,16 +89,7 @@ yarn line
 
 In order to feed in data to the database and see real-time visualisation, see the section below to run optimser clients.
 
-## Running client scripts 
-
-The current examples provided make use of Python 3.8.10.
-
-To run and test the sample data already provided, install the Python dependencies from the root of the project:
-
-```bash
-pip install --user -r requirements.txt
-
-```
+## Running client scripts
 
 The optimiser client scripts are in the "/scripts" folder, you can run from them the root of the project with the following:
 
@@ -113,13 +111,13 @@ The frontend will show all active optmiser client runs once the script has been 
 
 ### Creating Plugins
 
-To create a plugin you can copy any of the existing plugins in the `packages` folder.
+To create a plugin, begin by copying an existing plugin in the `packages` folder i.e. "pareto-front" plugin folder and rename appropriately.
 
 To configure the plugin to work with the frontend, you will need to set its name and description through the files in the plugin folder:
 
 1. `webpackConfig.output.library` in `craco.config.js` to the plugin name,
 
-2. `settings.json/deploy-settings.json` to add the plugin details (look at examples already provided),
+2. `settings.json/deploy-settings.json` to add the plugin details (look at examples already provided) (TODO: Clarify...),
 
 3. `name` in `package.json` of the plugin project,
 
@@ -132,6 +130,8 @@ To configure the plugin to work with the frontend, you will need to set its name
 7. `plugins` command in `package.json` to add the plugin to start with the command,
 
 8. web dyno start in `Procfile` for plugin project (if you are using Heroku).
+
+##
 
 ### Deploying backend to Heroku
 

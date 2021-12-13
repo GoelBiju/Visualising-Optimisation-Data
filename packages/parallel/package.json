@@ -11,13 +11,17 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-plotly.js": "^2.5.0",
     "@types/react-redux": "^7.1.16",
     "@types/react-router": "^5.1.11",
     "@types/redux-logger": "^3.0.8",
     "connected-react-router": "^6.8.0",
+    "frontend-common": "0.1.0",
     "loglevel": "^1.7.1",
+    "plotly.js": "^2.8.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-plotly.js": "^2.5.1",
     "react-redux": "^7.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
@@ -27,8 +31,7 @@
     "redux-thunk": "^2.3.0",
     "serve": "^11.3.2",
     "single-spa-react": "^3.0.0",
-    "typescript": "^4.1.2",
-    "frontend-common": "0.1.0"
+    "typescript": "^4.1.2"
   },
   "scripts": {
     "dev": "craco start",

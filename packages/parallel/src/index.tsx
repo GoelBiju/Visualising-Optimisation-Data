@@ -10,21 +10,30 @@ const pluginName = "parallel";
 
 let reactLifecycles: singleSpaReact.Lifecycles;
 
+// const render = (): void => {
+//   console.log("Calling render");
+//   let el = document.getElementById(pluginName);
+//   // Attempt to re-render the plugin if the corresponding div is present.
+//   if (el) {
+//     // ReactDOM.render(<App dev={true} />, document.getElementById(pluginName));
+//     // For connecting single-spa to frontend:
+//     reactLifecycles = singleSpaReact({
+//       React,
+//       ReactDOM,
+//       rootComponent: App,
+//       domElementGetter,
+//     });
+//   }
+// };
+
 // This for local development.
 const render = (): void => {
   console.log("Calling render");
-  let el = document.getElementById(pluginName);
+  const el = document.getElementById(pluginName);
+
   // Attempt to re-render the plugin if the corresponding div is present.
   if (el) {
-    ReactDOM.render(<App dev />, document.getElementById(pluginName));
-
-    // For connecting single-spa to frontend
-    // reactLifecycles = singleSpaReact({
-    //   React,
-    //   ReactDOM,
-    //   rootComponent: App,
-    //   domElementGetter,
-    // });
+    ReactDOM.render(<App dev={true} />, document.getElementById(pluginName));
   }
 };
 

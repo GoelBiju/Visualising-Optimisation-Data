@@ -1,7 +1,12 @@
-import * as d3 from "d3";
 import { Data, StateType } from "frontend-common";
 import React from "react";
 import { connect } from "react-redux";
+
+import createPlotlyComponent from "react-plotly.js/factory";
+
+// Set up Plotly
+const Plotly = window.Plotly;
+const Plot = createPlotlyComponent(Plotly);
 
 interface VCProps {
   data?: Data;
@@ -9,105 +14,9 @@ interface VCProps {
 }
 
 const VisualisationComponent = (props: VCProps): React.ReactElement => {
-  const chartRef: React.RefObject<SVGSVGElement> = React.createRef<SVGSVGElement>();
+  // const [builtChart, setBuiltChart] = React.useState(false);
 
-  const margin = {
-    top: 50,
-    right: 30,
-    bottom: 30,
-    left: 60,
-  };
-
-  const width = 760 - margin.left - margin.right;
-  const height = 450 - margin.top - margin.bottom;
-
-  const xScale: d3.ScaleLinear<number, number> = d3
-    .scaleLinear()
-    .range([0, width]);
-  const yScale: d3.ScaleLinear<number, number> = d3
-    .scaleLinear()
-    .range([height, 0]);
-
-  const [builtChart, setBuiltChart] = React.useState(false);
-
-  // Get current chart a D3 selection
-  const currentChart = React.useCallback(
-    (): d3.Selection<SVGSVGElement | null, unknown, null, undefined> =>
-      d3.select(chartRef.current),
-    [chartRef]
-  );
-
-  // Build the chart initially.
-  const buildChart = React.useCallback(() => {
-    // Adjust the svg.
-    const svg = currentChart()
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-    // Add x axis
-    const xAxis = xScale.domain([0, 1.0]);
-    svg
-      .append("g")
-      .attr("class", "scatter-chart-xaxis")
-      .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(xAxis));
-
-    // Add y axis
-    const yAxis = yScale.domain([0, 1.0]);
-    svg
-      .append("g")
-      .attr("class", "scatter-chart-yaxis")
-      .call(d3.axisLeft(yAxis));
-
-    // Add dots
-    svg.append("g").attr("class", "scatter-chart-points");
-  }, [
-    currentChart,
-    height,
-    margin.bottom,
-    margin.left,
-    margin.right,
-    margin.top,
-    width,
-    xScale,
-    yScale,
-  ]);
-
-  // Update the chart when with new data.
-  const updateChart = React.useCallback(
-    (data: number[][]) => {
-      // Get the current SVG of the chart
-      const svg = currentChart();
-
-      // Update the x-axis
-      const xAxis = xScale.domain([0, d3.max(data, (d) => d[0]) as number]);
-      // NOTE: This is a shorthand to update the axis without using .call
-      //       (using .call had type issues with .select).
-      d3.axisBottom(xAxis)(svg.select("g.scatter-chart-xaxis"));
-
-      // Update the y-axis
-      const yAxis = yScale.domain([0, d3.max(data, (d) => d[1]) as number]);
-      d3.axisLeft(yAxis)(svg.select("g.scatter-chart-yaxis"));
-
-      // Remove the old points
-      svg.selectAll("circle").remove();
-
-      // Append the new points
-      svg
-        .select("g.scatter-chart-points")
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", (d) => xScale(d[0]) as number)
-        .attr("cy", (d) => yScale(d[1]) as number)
-        .attr("r", 3)
-        .style("fill", "blue");
-    },
-    [currentChart, xScale, yScale]
-  );
+  const [revision, setRevision] = React.useState(1);
 
   // Build or update chart when data changes
   React.useEffect(() => {
@@ -137,17 +46,66 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
     console.log("Render graph data: ", graphData);
 
     // Build chart initially otherwise update for data
-    if (!builtChart) {
-      buildChart();
-      setBuiltChart(true);
-    } else {
-      updateChart(graphData);
-    }
-  }, [buildChart, builtChart, props.data, props.dev, updateChart]);
+    // if (!builtChart) {
+    //   buildChart();
+    //   setBuiltChart(true);
+    // } else {
+    //   updateChart(graphData);
+    // }
+  }, [props.data, props.dev]);
+
+  var trace = {
+    type: "parcoords",
+    line: {
+      color: "blue",
+    },
+
+    // TODO: We need to calculate the max/min from generation data
+    //       in order to get the range values.
+    // Pre-processing:
+    //  1. Split the generation data into n arrays (depending on n objectives)
+    //     Each array needs to only contain only the values to show on its respective y-axis for that objective
+    dimensions: [
+      {
+        // range: [1, 5],
+        // constraintrange: [1, 2],
+        label: "Objective 1",
+        values: [1, 4],
+      },
+      {
+        // range: [1, 5],
+        label: "Objective 2",
+        values: [revision, 1.5],
+        // tickvals: [1.5, 3, 4.5],
+      },
+      // {
+      //   range: [1, 5],
+      //   label: "C",
+      //   values: [2, 4],
+      //   tickvals: [1, 2, 4, 5],
+      //   ticktext: ["text 1", "text 2", "text 4", "text 5"],
+      // },
+      // {
+      //   range: [1, 5],
+      //   label: "D",
+      //   values: [4, 2],
+      // },
+    ],
+  } as Plotly.Data;
 
   return (
     <div id="chartContainer">
-      <svg ref={chartRef}></svg>
+      <Plot
+        data={[trace]}
+        layout={{
+          width: 900,
+          height: 800,
+          title: `Parallel Coordinate Plot (PCP)`,
+        }}
+        revision={revision}
+      />
+      <button onClick={() => setRevision(revision + 1)}>Increment</button>
+      {revision}
     </div>
   );
 };

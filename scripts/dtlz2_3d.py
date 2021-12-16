@@ -14,25 +14,26 @@ print("Total population size: ", len(dtlz2_3d_data))
 populationSize = 100
 
 print("Total generations: ", round(len(dtlz2_3d_data) / populationSize))
-totalGenerations = round(len(dtlz2_3d_data) / populationSize) # 106
+totalGenerations = round(len(dtlz2_3d_data) / populationSize)  # 106
 
 # Create an optimiser client
 optimiserClient = client.OptimiserClient()
 
 # Algorithm parameters
-algorithmParameters = {
-    "Function Evaluations": 10000
-}
+algorithmParameters = {"Function Evaluations": 10000}
 
 # Create the optimisation run
 optimiserClient.createRun("Pareto front estimation of DTLZ2", "DTLZ2",
-                          "NGSA-II", populationSize, totalGenerations, algorithmParameters, ["pareto-front"])
+                          "NGSA-II", populationSize, totalGenerations,
+                          algorithmParameters, ["pareto-front"])
 
 # Send generation data to the server
 count = 1
 data_batch = []
 generation = 0
 for values in dtlz2_3d_data:
+    print(values, count)
+
     # Add the data to the batch to send
     data_batch.append(values.tolist())
 
@@ -47,4 +48,3 @@ for values in dtlz2_3d_data:
         count = 1
         generation += 1
         print("Generation: ", generation)
-

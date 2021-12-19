@@ -38,8 +38,9 @@ async function loadApp(name: string, appURL: string, store: Store<unknown, AnyAc
     singleSpa.registerApplication(
         name,
         () => loadReactApp(name),
+        // TODO: Investigate about making the application active at all times?
         () => true,
-        customProps,
+        customProps, // Pass our state with data to plugins
     );
 }
 

@@ -54,7 +54,7 @@ const updatePlugins = (
   }
 
   log.error(
-    `Duplicate plugin route identified: ${payload.link}. ${payload.plugin}: '${payload.displayName} not registered`
+    `Duplicate plugin route identified: ${payload.link}. ${payload.plugin}: '${payload.displayName} not registered'`
   );
   return existingPlugins;
 };

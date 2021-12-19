@@ -41,8 +41,9 @@ const registerRouteAction = {
   type: "frontend:api:register_route",
   payload: {
     section: "Test",
-    // TODO: Remove this, this should be declared from parent
-    link: "/runs/:runId/visualisations/frontend-plugin/data",
+    // TODO: Remove this, this should be declared from parent (what about custom routes/do we need this?)
+    link: "/runs/:runId/visualisations/parallel/data",
+    // TODO: When we check for future plugins, just check name?
     plugin: "parallel",
     displayName: "Parallel Coordinate",
   },

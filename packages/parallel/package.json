@@ -37,7 +37,7 @@
     "dev": "craco start",
     "build": "craco build",
     "start": "serve build",
-    "dev:start": "serve build -l 5000",
+    "dev:start": "serve build -l 5002",
     "serve:build": "yarn build && yarn dev:start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

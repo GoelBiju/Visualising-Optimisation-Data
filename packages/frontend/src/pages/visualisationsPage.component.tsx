@@ -54,18 +54,20 @@ const VisualisationsPage = (props: VisualisationsPageCombinedProps): React.React
             <Grid container spacing={3}>
                 {selectedRun ? (
                     plugins.length > 0 ? (
-                        plugins.map(
-                            (p, i) =>
-                                selectedRun.graphs.includes(p.plugin) && (
-                                    <Grid key={i} item xs={3}>
-                                        <VisualisationCard
-                                            runId={runId}
-                                            visualisationName={p.plugin}
-                                            displayName={p.displayName}
-                                        />
-                                    </Grid>
-                                ),
-                        )
+                        plugins
+                            .sort((a, b) => a.displayName.localeCompare(b.displayName))
+                            .map(
+                                (p, i) =>
+                                    selectedRun.graphs.includes(p.plugin) && (
+                                        <Grid key={i} item xs={3}>
+                                            <VisualisationCard
+                                                runId={runId}
+                                                visualisationName={p.plugin}
+                                                displayName={p.displayName}
+                                            />
+                                        </Grid>
+                                    ),
+                            )
                     ) : (
                         <Typography>No plugins have been loaded for visualisation</Typography>
                     )

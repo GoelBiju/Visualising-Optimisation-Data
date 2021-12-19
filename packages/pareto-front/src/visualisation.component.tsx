@@ -112,7 +112,7 @@ const VisualisationComponent = (props: VCProps): React.ReactElement => {
   React.useEffect(() => {
     // Convert from the GenerationData/Array to the exact array type (number[][])
     const data: number[][] = props.data ? (props.data.data as number[][]) : [];
-    // console.log("Render: ", data);
+    console.log("Render: ", data);
 
     // Build chart initially otherwise update for data
     if (!builtChart) {

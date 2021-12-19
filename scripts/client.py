@@ -5,7 +5,8 @@ import threading
 import requests
 import socketio
 
-# NOTE: Do not add trailing forward slashes.
+# TODO: Add this to configuration in README
+# NOTE: Do not add trailing forward slashes to the URL.
 # http://opt-vis-backend.herokuapp.com
 # http://localhost:9000
 BACKEND_URL = "http://localhost:9000"
@@ -62,7 +63,8 @@ class DataNamespace(socketio.ClientNamespace):
                 }
                 self.emit("data", data)
 
-                # prevent any further data beng sent
+                # Prevent any further data being sent
+                # until we receive receipt of data from server
                 self.sending_data = True
 
 
@@ -86,7 +88,15 @@ class OptimiserClient():
         self.sio.connect(BACKEND_URL)
 
     # generations
-    def createRun(self, title, problem, algorithm, populationSize, totalGenerations, algorithmParameters={}, graphs=[], previousData=False):
+    def createRun(self,
+                  title,
+                  problem,
+                  algorithm,
+                  populationSize,
+                  totalGenerations,
+                  algorithmParameters={},
+                  graphs=[],
+                  previousData=False):
         # Create a new optimisation run given the parameters
         data = {
             "title": title,
@@ -101,11 +111,13 @@ class OptimiserClient():
         print("Creating optimisation run: ", data)
 
         # Send the request to create the run
-        response = requests.post(
-            API_URL + "/runs", json.dumps(data), headers=headers).json()
+        response = requests.post(API_URL + "/runs",
+                                 json.dumps(data),
+                                 headers=headers).json()
         print(response)
 
-        if (response["created"] and "runId" in response and "dataId" in response):
+        if (response["created"] and "runId" in response
+                and "dataId" in response):
             # Initialise the queue and provide data id to the data namespace
             self.data_namespace.run_id = response["runId"]
             self.data_namespace.data_id = response["dataId"]

@@ -38,8 +38,9 @@ async function loadApp(name: string, appURL: string, store: Store<unknown, AnyAc
     singleSpa.registerApplication(
         name,
         () => loadReactApp(name),
+        // TODO: Investigate about making the application active at all times?
         () => true,
-        customProps,
+        customProps, // Pass our state with data to plugins
     );
 }
 
@@ -56,13 +57,13 @@ async function init(plugins: Plugin[], store: Store<unknown, AnyAction>) {
                     log.debug(`Successfully loaded plugin ${p.name} from ${p.src}`);
                 })
                 .catch(() => {
-                    log.error(`Failed to load plugin ${p.name} from ${p.src}`);
+                    log.error(`Failed to load plugin "${p.name}" from ${p.src}`);
                     document.dispatchEvent(
                         new CustomEvent(microFrontendMessageId, {
                             detail: {
                                 type: NotificationType,
                                 payload: {
-                                    message: `Failed to load plugin ${p.name} from ${p.src}. 
+                                    message: `Failed to load plugin "${p.name}" from ${p.src}. 
                             Try reloading the page and if the error persists contact the support team.`,
                                     severity: 'error',
                                 },

@@ -13,6 +13,7 @@
     "frontend": "yarn workspace frontend start",
     "pareto": "yarn workspace pareto-front serve:build",
     "line": "yarn workspace line serve:build",
+    "parallel": "yarn workspace parallel serve:build",
     "stack": "concurrently -n backend,pareto-plugin,frontend \"yarn --cwd backend start\" \"yarn pareto\" \"yarn workspace frontend serve:build\"",
     "test:backend": "yarn --cwd backend test",
     "test:frontend": "yarn workspace frontend test",

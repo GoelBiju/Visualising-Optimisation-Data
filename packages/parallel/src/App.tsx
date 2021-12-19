@@ -1,16 +1,19 @@
 import { routerMiddleware } from "connected-react-router";
-// import AppReducer from "./state/reducers/App.reducer";
 import { microFrontendMessageId } from "frontend-common";
 import { createBrowserHistory } from "history";
 import * as log from "loglevel";
 import React from "react";
 import { Provider } from "react-redux";
 import { AnyAction, Store } from "redux";
-// import { applyMiddleware, compose, createStore } from "redux";
+
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import "./App.css";
 import VisualisationComponent from "./visualisation.component";
+import { DevVisualisationComponent } from "./visualisation.component";
+
+// import AppReducer from "./state/reducers/App.reducer";
+// import { applyMiddleware, compose, createStore } from "redux";
 
 const history = createBrowserHistory();
 const middleware = [thunk, routerMiddleware(history)];
@@ -38,10 +41,11 @@ const registerRouteAction = {
   type: "frontend:api:register_route",
   payload: {
     section: "Test",
-    // TODO: Remove this, this should be declared from parent
-    link: "/runs/:runId/visualisations/pareto-front/data",
-    plugin: "pareto-front",
-    displayName: "Pareto Front",
+    // TODO: Remove this, this should be declared from parent (what about custom routes/do we need this?)
+    link: "/runs/:runId/visualisations/parallel/data",
+    // TODO: When we check for future plugins, just check name?
+    plugin: "parallel",
+    displayName: "Parallel Coordinate",
   },
 };
 
@@ -58,17 +62,20 @@ interface AppState {
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-class App extends React.Component<unknown, AppState> {
+class App extends React.Component<{ dev?: boolean }, AppState> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  public constructor(props: AppState) {
+  public constructor(props: { dev: boolean } & AppState) {
     super(props);
-    this.state = { hasError: false, store: props.store };
+    this.state = {
+      hasError: false,
+      store: props.store,
+    };
     console.log("Props: ", props);
   }
 
   public componentDidCatch(error: Error | null): void {
     this.setState({ ...this.state, hasError: true });
-    log.error(`pareto-front failed with error: ${error}`);
+    log.error(`parallel failed with error: ${error}`);
   }
 
   public render(): React.ReactNode {
@@ -76,15 +83,17 @@ class App extends React.Component<unknown, AppState> {
       return (
         <div className="error">An error occurred when loading the plugin.</div>
       );
-    } else if (!this.state.store) {
+    } else if (!this.state.store && !this.props.dev) {
       return (
         <div className="error">Did not receive a store from the parent.</div>
       );
     } else {
-      return (
+      return !this.props.dev ? (
         <Provider store={this.state.store}>
           <VisualisationComponent />
         </Provider>
+      ) : (
+        <DevVisualisationComponent />
       );
     }
   }

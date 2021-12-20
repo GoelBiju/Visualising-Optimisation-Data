@@ -86,6 +86,16 @@ In order to feed in data to the database and see real-time visualisation, see th
 
 The current examples provided make use of Python 3.8.10.
 
+(Optional) Set up a virtual environment:
+
+```bash
+python -m venv --system-site-packages .\venv
+```
+
+```bash
+.\venv\Scripts\activate
+```
+
 To run and test the sample data already provided, install the Python dependencies from the root of the project:
 
 ```bash

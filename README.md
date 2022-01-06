@@ -50,7 +50,7 @@ yarn install
 cd backend && yarn install
 ```
 
-The examples provided for client optimisers make use of Python 3.8.10. To run and test with the sample data provided, install the Python dependencies from the root of the project with the following:
+The examples provided for client optimisers make use of Python 3.8.10. To run and test with the sample data provided, install the Python dependencies from the root of the project with the following (installing Python packages to user directory, optionally create a virtual environment and remove "--user" argument):
 
 ```bash
 pip install --user -r requirements.txt
